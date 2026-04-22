@@ -1,0 +1,28 @@
+@use 'fonts';
+@use 'reset';
+@use 'variables';
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--light-colors-white---light);
+  color: var(--light-colors-black---light);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-container {
+  $min-width: 320px;
+  $max-width: 1440px;
+  max-width: $max-width;
+  margin: 0 auto;
+  padding-block: 0;
+  padding-inline: globalFunctions.fluidValue(16px, 96px, $min-width, $max-width);
+  width: 100%;
+}
+
+@include globalMixins.custom-scrollbar;
