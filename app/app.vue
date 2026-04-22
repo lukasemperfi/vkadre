@@ -1,4 +1,20 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const client = useSupabaseClient();
+
+const {
+  data: services,
+  pending,
+  error,
+} = await useAsyncData("services", async () => {
+  const { data } = await client
+    .from("services")
+    .select("*")
+    .order("created_at", { ascending: false });
+  console.log("data", data);
+
+  return data;
+});
+</script>
 
 <template>
   <div>

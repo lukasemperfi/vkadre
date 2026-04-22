@@ -1,11 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 
-  css: ['@/assets/styles/main.scss'],
+  css: ["@/assets/styles/main.scss"],
 
-  modules: ['@nuxtjs/supabase'],
+  modules: ["@nuxtjs/supabase"],
+
+  supabase: {
+    types: "~~/types/supabase.ts",
+  },
 
   vite: {
     css: {
@@ -21,4 +25,4 @@ export default defineNuxtConfig({
       },
     },
   },
-})
+});
