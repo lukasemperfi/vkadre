@@ -3,6 +3,11 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 
+  // Nested paths under app/composables/ are not auto-scanned by default
+  imports: {
+    dirs: ["~/composables", "~/composables/**"],
+  },
+
   css: ["@/assets/styles/main.scss"],
 
   modules: ["@nuxtjs/supabase"],
