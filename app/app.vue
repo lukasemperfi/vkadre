@@ -15,14 +15,18 @@ const servicesApi = useServicesApi();
 //   photographersApi.getPhotographer("e6962b83-8db9-4665-9552-56d9bc9ed3ae"),
 // );
 
-const { data: services } = await useAsyncData("services", () =>
-  servicesApi.getServices(),
-);
+// const { data: services } = await useAsyncData("services", () =>
+//   servicesApi.getServices(),
+// );
 
-console.log("services", services.value);
+// const { data: service } = await useAsyncData("service", () =>
+//   servicesApi.getService("0c500e26-cdbf-4472-a87f-da2da0e7bafd"),
+// );
 
 // console.log("photographers", photographers.value);
 // console.log("photographer", photographer.value);
+// console.log("services", services.value);
+// console.log("service", service.value);
 </script>
 
 <template>
