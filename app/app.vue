@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const portfolioApi = usePortfolioApi();
 const photographersApi = usePhotographersApi();
+const servicesApi = useServicesApi();
 
 // const { data } = await useAsyncData("portfolio", () =>
 //   portfolioApi.getPortfolios(),
@@ -13,6 +14,12 @@ const photographersApi = usePhotographersApi();
 // const { data: photographer } = await useAsyncData("photographer", () =>
 //   photographersApi.getPhotographer("e6962b83-8db9-4665-9552-56d9bc9ed3ae"),
 // );
+
+const { data: services } = await useAsyncData("services", () =>
+  servicesApi.getServices(),
+);
+
+console.log("services", services.value);
 
 // console.log("photographers", photographers.value);
 // console.log("photographer", photographer.value);
