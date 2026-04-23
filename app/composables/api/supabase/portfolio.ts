@@ -1,9 +1,5 @@
-import type { Database } from "~~/types/supabase";
-
-export type PortfolioRow = Database["public"]["Tables"]["portfolio"]["Row"];
-
 export const usePortfolioApi = () => {
-  const supabase = useSupabaseClient<Database>();
+  const supabase = useSupabaseClient();
   return {
     async getPortfolios(): Promise<PortfolioRow[]> {
       const { data, error } = await supabase.from("portfolio").select("*");
