@@ -22,10 +22,17 @@
   $k: math.div($f-max-num - $f-min-num, $w-max-num - $w-min-num);
   $b: $f-min-num - $k * $w-min-num;
 
-  $actual-min: if($f-min-num < $f-max-num, $f-min-num, $f-max-num);
-  $actual-max: if($f-min-num > $f-max-num, $f-min-num, $f-max-num);
-  $actual-min-unit: if($f-min-num < $f-max-num, $f-min-unit, $f-max-unit);
-  $actual-max-unit: if($f-min-num > $f-max-num, $f-min-unit, $f-max-unit);
+  $actual-min: $f-min-num;
+  $actual-max: $f-max-num;
+  $actual-min-unit: $f-min-unit;
+  $actual-max-unit: $f-max-unit;
+
+  @if $f-min-num > $f-max-num {
+    $actual-min: $f-max-num;
+    $actual-max: $f-min-num;
+    $actual-min-unit: $f-max-unit;
+    $actual-max-unit: $f-min-unit;
+  }
 
   @return clamp(
     #{$actual-min}#{$actual-min-unit},
