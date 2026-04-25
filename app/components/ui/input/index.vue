@@ -159,6 +159,10 @@ defineExpose({
     line-height: 140%;
     text-transform: uppercase;
 
+    @media (max-width: globalBreakpoints.$breakpoint-xs) {
+      font-weight: 500;
+    }
+
     &::placeholder {
       color: var(--black);
       opacity: 0.2;
