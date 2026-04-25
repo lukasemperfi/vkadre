@@ -62,6 +62,7 @@ const locationReviewsApi = useLocationReviewsApi();
     <h1>Hello World</h1>
     <UiButton />
     <!-- <button @click="submit">Submit</button> -->
+    <UiInput />
     <UiIcon name="cross" />
   </div>
 </template>

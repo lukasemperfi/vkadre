@@ -155,7 +155,7 @@ defineExpose({
     color: var(--black);
     font: inherit;
     font-weight: 600;
-    font-size: 16px;
+    font-size: globalFunctions.fluidValue(14px, 16px, 320px, 1440px);
     line-height: 140%;
     text-transform: uppercase;
 

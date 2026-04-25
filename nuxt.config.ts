@@ -9,7 +9,7 @@ export default defineNuxtConfig({
 
   css: ["@/assets/styles/main.scss"],
 
-  modules: ["@nuxtjs/supabase", "@nuxtjs/storybook"],
+  modules: ["@nuxtjs/supabase"],
 
   supabase: {
     types: "~~/types/supabase.ts",
@@ -17,16 +17,16 @@ export default defineNuxtConfig({
 
   vite: {
     optimizeDeps: {
-      include: ["@mdx-js/react"],
+      include: ["@mdx-js/react", "@vue/devtools-core", "@vue/devtools-kit"],
     },
     css: {
       preprocessorOptions: {
         scss: {
           additionalData: `
-            @use "@/assets/styles/_functions.scss" as globalFunctions;
-            @use "@/assets/styles/_variables.scss" as globalVariables;
-            @use "@/assets/styles/_mixins.scss" as globalMixins;
-            @use "@/assets/styles/_breakpoints.scss" as globalBreakpoints;
+            @use "~~/app/assets/styles/_functions.scss" as globalFunctions;
+            @use "~~/app/assets/styles/_variables.scss" as globalVariables;
+            @use "~~/app/assets/styles/_mixins.scss" as globalMixins;
+            @use "~~/app/assets/styles/_breakpoints.scss" as globalBreakpoints;
           `,
         },
       },
