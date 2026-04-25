@@ -135,7 +135,7 @@ defineExpose({
     width: 100%;
     height: 38px;
 
-    border-bottom: 1px solid var(--black);
+    border-bottom: 1px solid var(--gray);
   }
 
   &_is-disabled &__control {
@@ -164,12 +164,21 @@ defineExpose({
       opacity: 0.2;
     }
 
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+    }
+
     &:disabled {
       cursor: not-allowed;
     }
+  }
 
-    &:focus-visible {
-    }
+  &__control:focus-within {
+    border-bottom-color: var(--black);
+  }
+
+  &_has-error &__control:focus-within {
+    border-bottom-color: var(--error);
   }
 
   &__affix {
