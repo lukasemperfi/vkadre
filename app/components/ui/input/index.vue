@@ -133,9 +133,8 @@ defineExpose({
     display: flex;
     align-items: center;
     width: 100%;
-    height: 38px;
-
     border-bottom: 1px solid var(--gray);
+    padding-bottom: globalFunctions.fluidValue(10px, 17px, 320px, 1440px);
   }
 
   &_is-disabled &__control {
@@ -156,7 +155,6 @@ defineExpose({
     font: inherit;
     font-weight: 600;
     font-size: globalFunctions.fluidValue(14px, 16px, 320px, 1440px);
-    line-height: 140%;
     text-transform: uppercase;
 
     @media (max-width: globalBreakpoints.$breakpoint-xs) {

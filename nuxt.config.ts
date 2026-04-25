@@ -9,7 +9,7 @@ export default defineNuxtConfig({
 
   css: ["@/assets/styles/main.scss"],
 
-  modules: ["@nuxtjs/supabase"],
+  modules: ["@nuxtjs/supabase", "@vueuse/nuxt", "@nuxtjs/storybook"],
 
   supabase: {
     types: "~~/types/supabase.ts",

@@ -28,7 +28,7 @@ export const Default: Story = {
       return { args };
     },
     template: `
-      <div style="width: 360px;">
+      <div>
         <Input v-bind="args" />
       </div>
     `,
@@ -45,7 +45,7 @@ export const WithLeftAndRightSlots: Story = {
       return { args };
     },
     template: `
-      <div style="width: 360px;">
+      <div>
         <Input v-bind="args">
           <template #left>
             <UiIcon name="phone-m" />
@@ -70,7 +70,7 @@ export const Error: Story = {
       return { args };
     },
     template: `
-      <div style="width: 360px; padding-bottom: 26px;">
+      <div>
         <Input v-bind="args">
           <template #left>
             <UiIcon name="email-m" />
