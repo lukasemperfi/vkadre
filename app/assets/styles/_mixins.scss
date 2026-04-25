@@ -1,31 +1,22 @@
 @mixin form-control-base {
   width: 100%;
-  background-color: #1d2228;
-  border-radius: 8px;
-
-  border: none;
-  outline: none;
-  padding: 0 16px;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 14px;
-
-  transition: opacity 0.2s ease;
+  background-color: #ffffff;
+  color: var(--black);
 
   &::placeholder {
     color: #565e67;
   }
 
   &:focus {
-    background-color: #272d35;
+    background-color: #ffffff;
   }
 
   &:-webkit-autofill,
   &:-webkit-autofill:hover,
   &:-webkit-autofill:focus,
   &:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px #272d35 inset !important;
-    -webkit-text-fill-color: #ffffff !important;
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: var(--black) !important;
     transition: background-color 5000s ease-in-out 0s;
   }
 }
