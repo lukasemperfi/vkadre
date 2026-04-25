@@ -7,10 +7,25 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     label: { control: "text" },
+    variant: {
+      control: "select",
+      options: ["solid", "outline"],
+    },
+    size: {
+      control: "select",
+      options: ["lg"],
+    },
+    type: {
+      control: "select",
+      options: ["button", "submit", "reset"],
+    },
     disabled: { control: "boolean" },
   },
   args: {
-    label: "Button",
+    label: "Заказать фотосессию",
+    variant: "outline",
+    size: "lg",
+    type: "button",
     disabled: false,
   },
 } satisfies Meta<typeof UiButton>;
@@ -18,10 +33,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Playground: Story = {};
 
 export const Disabled: Story = {
   args: { disabled: true },
+};
+
+export const Outline: Story = {
+  args: {
+    label: "Заказать фотосессию",
+    variant: "outline",
+  },
+};
+
+export const Solid: Story = {
+  args: {
+    label: "Оплатить",
+    variant: "solid",
+  },
 };
 
 export const WithSlot: Story = {
