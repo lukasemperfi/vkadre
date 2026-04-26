@@ -32,6 +32,7 @@ export const WithIconButtonTrigger: Story = {
     setup: () => ({ args }),
     template: `
     <div style="padding: 100px;">
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
       <UiInfoTooltip v-bind="args">
         <template #trigger>
             <UiIcon name="box-info" />
