@@ -31,17 +31,13 @@ const template = `
       v-model:is-open="isOpen"
       v-bind="args"
     >
-      <UiModalOverlay />
+    
       <UiModalDrawerContent>
-        <UiModalHeader>
-          <div style="display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px;">
-            <span style="font-size: 18px; font-weight: 600;">Панель</span>
-            <UiModalCloseButton />
-          </div>
-        </UiModalHeader>
+        <UiModalHeader>Панель</UiModalHeader>
+        <UiModalCloseButton />
         <UiModalBody>
           <p style="margin: 0; line-height: 1.5;">
-            Контент выезжает справа. Клик по затемнению, кнопка закрытия и Escape ведут себя так же, как у модалки.
+            Контент выезжает справа. Закрытие: Escape, кнопка в шапке или в футере. Клик вне панели (по пустой области слева) закрывает даже без оверлея; с «UiModalOverlay» клик по затемнению тоже закрывает.
           </p>
         </UiModalBody>
         <UiModalFooter>

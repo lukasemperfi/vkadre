@@ -16,13 +16,11 @@ defineOptions({
   z-index: 1;
   background: #ffffff;
   box-shadow: 0px 25px 40px rgba(0, 0, 0, 0.05);
-  border-radius: 32px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   font-family: var(--font-family);
-  width: 654px;
-  min-height: 200px;
+  width: 552px;
   max-height: 90vh;
   color: var(--black);
 

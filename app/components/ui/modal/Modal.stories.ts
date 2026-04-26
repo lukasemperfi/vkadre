@@ -33,21 +33,14 @@ const template = `
     >
       <UiModalOverlay />
       <UiModalContent>
-        <UiModalHeader>
-          <div style="display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px;">
-            <span style="font-size: 18px; font-weight: 600;">Заголовок</span>
-            <UiModalCloseButton />
-          </div>
-        </UiModalHeader>
+       
+        <UiModalHeader>Заголовок</UiModalHeader>
+        <UiModalCloseButton />
         <UiModalBody>
           <p style="margin: 0; line-height: 1.5;">
-            Пример текста. Клик по затемнению, по кнопке закрытия или Escape закрывают окно.
+            Пример текста. Закрытие: Escape или кнопка закрытия. Клик вне модалки (по пустой области вокруг) закрывает даже без оверлея; с «UiModalOverlay» клик по затемнению тоже закрывает.
           </p>
         </UiModalBody>
-        <UiModalFooter>
-          <UiButton variant="outline" @click="isOpen = false">Закрыть</UiButton>
-          <UiButton variant="solid">Второй экшен</UiButton>
-        </UiModalFooter>
       </UiModalContent>
     </UiModal>
   </div>

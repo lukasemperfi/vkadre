@@ -13,10 +13,7 @@
   justify-content: flex-end;
   gap: 12px;
   margin-top: auto;
-  padding: 0 24px 31px;
-
-  @media (max-width: globalBreakpoints.$breakpoint-sm) {
-    padding-bottom: 24px;
-  }
+  padding-bottom: 40px;
+  padding-inline: globalFunctions.fluidValue(24px, 47px, 320px, 1440px);
 }
 </style>

@@ -40,7 +40,10 @@ provide(UI_MODAL_INJECTION_KEY, context);
   <Teleport to="body">
     <Transition name="ui-modal-drawer" :css="!props.disableTransition">
       <div v-if="isOpen" class="ui-modal-drawer-group">
-        <div class="ui-modal-drawer-group__positioner">
+        <div
+          class="ui-modal-drawer-group__positioner"
+          @click.self="close"
+        >
           <slot />
         </div>
       </div>

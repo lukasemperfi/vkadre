@@ -30,9 +30,7 @@ defineOptions({
   min-height: 100vh;
   max-width: none;
   border-radius: 0;
-  box-shadow: none;
-  border: 1px solid var(--gray);
-  border-right: none;
+  box-shadow: 0 14px 40px 0 rgba(0, 0, 0, 0.15);
   color: var(--black);
 
   @media (max-width: globalBreakpoints.$breakpoint-sm) {
