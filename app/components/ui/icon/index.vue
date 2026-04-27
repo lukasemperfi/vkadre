@@ -64,8 +64,6 @@ const mergedAttrs = computed(() => {
 .icon {
   display: inline-block;
   flex-shrink: 0;
-  width: 100%;
-  height: 100%;
 }
 
 .icon :deep(svg) {

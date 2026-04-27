@@ -13,6 +13,7 @@ export default defineNuxtConfig({
 
   supabase: {
     types: "~~/types/supabase.ts",
+    redirect: false,
   },
 
   vite: {

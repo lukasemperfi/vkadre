@@ -59,17 +59,6 @@ const locationReviewsApi = useLocationReviewsApi();
 
 <template>
   <div>
-    <h1>Hello World</h1>
-    <UiButton />
-    <!-- <button @click="submit">Submit</button> -->
-    <UiInput />
-    <UiIcon name="cross" />
+    <NuxtPage />
   </div>
 </template>
-
-<style scoped lang="scss">
-h1 {
-  font-family: var(--font-family);
-  font-size: globalFunctions.fluidValue(16px, 32px, 320px, 1440px);
-}
-</style>
