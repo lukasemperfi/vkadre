@@ -63,72 +63,35 @@ onBeforeUnmount(() => {
         aria-modal="true"
         aria-label="Меню"
       >
-        <div class="mobile-menu__top">
-          <div class="mobile-menu__profile">
-            <UiIconButton class="mobile-menu__profile-btn" @click="close">
-              <UiIcon name="user-m" class="mobile-menu__profile-icon" />
-            </UiIconButton>
-            <div class="mobile-menu__profile-text">
-              {{ props.isAuth ? "Личный кабинет" : "Войти" }}
+        <div class="app-container">
+          <div class="mobile-menu__top">
+            <div class="mobile-menu__profile">
+              <UiIconButton class="mobile-menu__profile-btn" @click="close">
+                <UiIcon name="user-m" class="mobile-menu__profile-icon" />
+              </UiIconButton>
+              <div class="mobile-menu__profile-text">
+                {{ props.isAuth ? "Личный кабинет" : "Войти" }}
+              </div>
             </div>
+
+            <UiIconButton
+              class="mobile-menu__close"
+              aria-label="Close menu"
+              @click="close"
+            >
+              <UiIcon name="cross" class="mobile-menu__close-icon" />
+            </UiIconButton>
           </div>
 
-          <UiIconButton
-            class="mobile-menu__close"
-            aria-label="Close menu"
-            @click="close"
-          >
-            <UiIcon name="strong-cross" class="mobile-menu__close-icon" />
-          </UiIconButton>
-        </div>
+          <UiMenu :items="props.items" class="mobile-menu__nav" />
 
-        <nav class="mobile-menu__nav" aria-label="Меню">
-          <ul class="mobile-menu__items" role="list">
-            <li
-              v-for="item in props.items"
-              :key="item.id"
-              class="mobile-menu__item"
-            >
-              <NuxtLink
-                v-if="item.to"
-                v-slot="{ href, navigate, isActive }"
-                :to="item.to"
-                custom
-              >
-                <a
-                  :href="href"
-                  class="mobile-menu__link"
-                  :aria-current="isActive ? 'page' : undefined"
-                  @click="
-                    (e) => {
-                      navigate(e);
-                      close();
-                    }
-                  "
-                >
-                  <UiIcon
-                    v-show="isActive"
-                    name="menu-arrow"
-                    class="mobile-menu__active-icon"
-                    aria-hidden="true"
-                  />
-                  <span class="mobile-menu__link-text">{{ item.label }}</span>
-                </a>
-              </NuxtLink>
-              <span v-else class="mobile-menu__link mobile-menu__link--static">
-                <span class="mobile-menu__link-text">{{ item.label }}</span>
-              </span>
-            </li>
-          </ul>
-        </nav>
-
-        <div class="mobile-menu__bottom">
-          <div class="mobile-menu__divider" />
-          <ul class="mobile-menu__contacts" role="list">
-            <li>+380971234567</li>
-            <li>FB.COM/VKADRE</li>
-            <li>VKADRE@GMAIL.COM</li>
-          </ul>
+          <div class="mobile-menu__bottom">
+            <ul class="mobile-menu__contacts" role="list">
+              <li>+380971234567</li>
+              <li>FB.COM/VKADRE</li>
+              <li>VKADRE@GMAIL.COM</li>
+            </ul>
+          </div>
         </div>
       </div>
     </Transition>
@@ -136,31 +99,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped lang="scss">
-.mobile-menu-enter-active,
-.mobile-menu-leave-active {
-  transition:
-    opacity 180ms ease,
-    transform 220ms ease;
-}
-
-.mobile-menu-enter-from,
-.mobile-menu-leave-to {
-  opacity: 0;
-  transform: translateY(0px);
-}
-
-.mobile-menu-enter-to,
-.mobile-menu-leave-from {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .mobile-menu-enter-active,
-  .mobile-menu-leave-active {
-    transition: none;
-  }
-}
+@use "./_variables.scss" as *;
 
 .mobile-menu {
   position: fixed;
@@ -168,18 +107,31 @@ onBeforeUnmount(() => {
   z-index: 1000;
   background: #fff;
   color: var(--black);
-  display: flex;
+  display: none;
   flex-direction: column;
-  padding: 24px;
+  min-height: 0;
   min-height: 100vh;
   min-height: 100dvh;
 
+  @media (max-width: 900px) {
+    display: flex;
+  }
+
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
   &__top {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 48px;
+    padding-top: $padding-top;
   }
 
   &__profile {
@@ -209,41 +161,31 @@ onBeforeUnmount(() => {
   }
 
   &__nav {
-    flex: 1;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     display: flex;
-    align-items: center;
-  }
-
-  &__items {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
     align-items: flex-start;
-    gap: 32px;
-  }
+    padding-block: 13.75vh;
 
-  &__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--black);
-    font-family: var(--font-family);
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 140%;
-    text-transform: uppercase;
-
-    &:focus-visible {
-      outline: 2px solid #d8d8d8;
-      outline-offset: 3px;
+    :deep(.menu__items) {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 35px;
     }
 
-    &--static {
-      cursor: default;
-      opacity: 0.6;
+    :deep(.menu__link) {
+      font-weight: 600;
+      font-size: 24px;
+      text-transform: uppercase;
+      gap: 12px;
     }
   }
 
@@ -254,7 +196,11 @@ onBeforeUnmount(() => {
   }
 
   &__bottom {
-    margin-top: 40px;
+    flex: 0 0 auto;
+    margin-top: auto;
+    border-top: 1px solid var(--gray);
+    padding-top: 40px;
+    padding-bottom: 48px;
   }
 
   &__divider {
@@ -276,6 +222,30 @@ onBeforeUnmount(() => {
     font-size: 14px;
     line-height: 140%;
     text-transform: uppercase;
+  }
+}
+
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+  transition:
+    opacity 180ms ease,
+    transform 220ms ease;
+}
+
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+  opacity: 0;
+}
+
+.mobile-menu-enter-to,
+.mobile-menu-leave-from {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu-enter-active,
+  .mobile-menu-leave-active {
+    transition: none;
   }
 }
 </style>

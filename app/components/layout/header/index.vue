@@ -3,6 +3,15 @@ const menuItems = [
   { id: "portfolio", label: "Портфолио", to: "/portfolio" },
   { id: "services", label: "Услуги", to: "/services" },
   { id: "locations", label: "Локации", to: "/locations" },
+  { id: "portfolio", label: "Портфолио", to: "/portfolio" },
+  { id: "services", label: "Услуги", to: "/services" },
+  { id: "locations", label: "Локации", to: "/locations" },
+  { id: "portfolio", label: "Портфолио", to: "/portfolio" },
+  { id: "services", label: "Услуги", to: "/services" },
+  { id: "locations", label: "Локации", to: "/locations" },
+  { id: "portfolio", label: "Портфолио", to: "/portfolio" },
+  { id: "services", label: "Услуги", to: "/services" },
+  { id: "locations", label: "Локации", to: "/locations" },
 ];
 
 const isMenuOpen = ref(false);
@@ -68,7 +77,6 @@ const closeMenu = () => {
           </UiIconButton>
         </div>
 
-        <!-- Mobile menu -->
         <LayoutHeaderMobileMenu
           v-model="isMenuOpen"
           :items="menuItems"
@@ -80,10 +88,11 @@ const closeMenu = () => {
 </template>
 
 <style lang="scss" scoped>
+@use "./_variables.scss" as *;
 .header {
   width: 100%;
   background: #fff;
-  padding-top: 22px;
+  padding-top: $padding-top;
 
   &__shell {
     display: flex;
@@ -221,6 +230,13 @@ const closeMenu = () => {
     text-transform: uppercase;
     align-self: center;
     color: var(--black);
+  }
+
+  &__mobile-menu {
+    display: none;
+    @media (max-width: 900px) {
+      display: block;
+    }
   }
 }
 </style>
