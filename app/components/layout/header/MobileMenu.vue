@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useEventListener } from "@vueuse/core";
+
 type MenuItem = {
   id: string;
   label: string;
@@ -24,6 +26,10 @@ const isOpen = computed({
 function close() {
   isOpen.value = false;
 }
+
+useEventListener(window, "resize", () => {
+  if (isOpen.value) close();
+});
 
 function onKeydown(e: KeyboardEvent) {
   if (!isOpen.value) return;
