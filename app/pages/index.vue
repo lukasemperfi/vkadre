@@ -17,10 +17,10 @@ const prev = () => carouselRef.value?.slidePrev();
   <div class="home-page">
     <div class="app-container">Home page</div>
     <!-- <NuxtImg src="/images/home-hero.jpg" alt="hero image" format="webp" /> -->
-    <div class="custom-navigation">
+    <!-- <div class="custom-navigation">
       <UiCarouselPrevNav
         @click="prev"
-        :disabled="carouselRef?.isBeginning"
+        :carousel="carouselRef"
         variant="arrow"
       />
       <UiCarouselNextNav
@@ -28,7 +28,9 @@ const prev = () => carouselRef.value?.slidePrev();
         :disabled="carouselRef?.isEnd"
         variant="arrow"
       />
-    </div>
+    </div> -->
+
+    <UiCarouselNavButtons :carousel="carouselRef" />
     <UiCarousel
       ref="carouselRef"
       :items="slides"

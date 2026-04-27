@@ -2,13 +2,17 @@
 const props = withDefaults(
   defineProps<{
     variant?: "chevron" | "arrow";
-    disabled?: boolean;
+    carousel?: any;
   }>(),
   {
     variant: "chevron",
-    disabled: false,
+    carousel: null,
   },
 );
+
+const isDisabled = computed(() => {
+  return props.carousel?.isEnd ?? false;
+});
 </script>
 
 <template>
@@ -17,7 +21,7 @@ const props = withDefaults(
     type="button"
     aria-label="Следующий слайд"
     v-bind="$attrs"
-    :disabled="disabled"
+    :disabled="isDisabled"
   >
     <slot>
       <UiIcon v-if="variant === 'chevron'" name="chevron-right" />
