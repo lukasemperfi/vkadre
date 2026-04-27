@@ -9,12 +9,15 @@ const props = withDefaults(
     carousel: null,
   },
 );
+
+const next = () => props.carousel?.slideNext();
+const prev = () => props.carousel?.slidePrev();
 </script>
 
 <template>
   <div class="nav-buttons" :class="`variant_${variant}`">
-    <UiCarouselPrevNav :carousel="carousel" :variant="variant" />
-    <UiCarouselNextNav :carousel="carousel" :variant="variant" />
+    <UiCarouselPrevNav @click="prev" :carousel="carousel" :variant="variant" />
+    <UiCarouselNextNav @click="next" :carousel="carousel" :variant="variant" />
   </div>
 </template>
 

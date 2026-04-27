@@ -62,16 +62,10 @@ defineExpose({
 </script>
 
 <template>
-  <div class="carousel">
-    <Swiper
-      v-bind="swiperConfig"
-      @swiper="onSwiper"
-      @slideChange="onSlideChange"
-    >
-      <SwiperSlide v-for="(item, index) in items" :key="index">
-        <slot name="item" :item="item" :index="index" />
-      </SwiperSlide>
-      <slot name="controls" :slideNext="slideNext" :slidePrev="slidePrev" />
-    </Swiper>
-  </div>
+  <Swiper v-bind="swiperConfig" @swiper="onSwiper" @slideChange="onSlideChange">
+    <SwiperSlide v-for="(item, index) in items" :key="index">
+      <slot name="item" :item="item" :index="index" />
+    </SwiperSlide>
+    <slot name="controls" :slideNext="slideNext" :slidePrev="slidePrev" />
+  </Swiper>
 </template>
