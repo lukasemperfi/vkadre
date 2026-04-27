@@ -6,7 +6,7 @@
     <main class="main-content">
       <slot />
     </main>
-    <div>footer</div>
+    <LayoutFooter />
   </div>
 </template>
 
