@@ -6,6 +6,7 @@ const menuItems = [
 ];
 
 const isMenuOpen = ref(false);
+const isAuth = ref(true);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -23,7 +24,7 @@ const closeMenu = () => {
         <div class="header__row">
           <div class="header__logo-wrapper">
             <NuxtLink to="/" class="header__logo" @click="closeMenu">
-              <UiIcon name="logo" />
+              <UiIcon name="logo" class="header__logo-icon" />
             </NuxtLink>
             <div class="header__logo-text">
               <div>Качественные</div>
@@ -46,24 +47,25 @@ const closeMenu = () => {
 
               <div class="header__profile profile">
                 <UiIconButton class="profile__icon-btn">
-                  <UiIcon name="user-m" class="profile__icon" />
+                  <UiIcon v-if="isAuth" name="user-m" class="profile__icon" />
+                  <UiIcon v-else name="key" />
                 </UiIconButton>
 
-                <div class="profile__text header__text">личный кабинет</div>
+                <div class="profile__text header__text">
+                  {{ isAuth ? "Личный кабинет" : "Войти" }}
+                </div>
               </div>
-
-              <button
-                type="button"
-                class="header__menu-btn"
-                :aria-expanded="isMenuOpen"
-                aria-controls="header-mobile-menu"
-                aria-label="Open menu"
-                @click="toggleMenu"
-              >
-                <UiIcon name="menu" class="header__icon header__icon--menu" />
-              </button>
             </div>
           </div>
+          <UiIconButton
+            class="header__menu-btn"
+            :aria-expanded="isMenuOpen"
+            aria-controls="header-mobile-menu"
+            aria-label="Open menu"
+            @click="toggleMenu"
+          >
+            <UiIcon name="menu-m" class="header__menu-btn-icon" />
+          </UiIconButton>
         </div>
 
         <!-- <HeaderMobileMenu
@@ -77,7 +79,6 @@ const closeMenu = () => {
 
 <style lang="scss" scoped>
 .header {
-  $bottom-padding: 24px;
   width: 100%;
   background: #fff;
   padding-top: 22px;
@@ -94,12 +95,16 @@ const closeMenu = () => {
     justify-content: space-between;
     gap: globalFunctions.fluidValue(12px, 47px, 320px, 1440px);
     border-bottom: 1px solid var(--gray);
-    padding-bottom: $bottom-padding;
+    padding-bottom: globalFunctions.fluidValue(20px, 24px, 320px, 1440px);
 
     @media (max-width: 1440px) {
       display: grid;
       grid-template-columns: repeat(4, max-content);
       justify-content: space-between;
+    }
+
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(2, max-content);
     }
   }
 
@@ -109,10 +114,15 @@ const closeMenu = () => {
     gap: globalFunctions.fluidValue(12px, 50px, 320px, 1440px);
   }
 
+  &__logo-icon {
+    width: globalFunctions.fluidValue(40px, 69px, 320px, 1440px);
+    height: globalFunctions.fluidValue(40px, 72px, 320px, 1440px);
+  }
+
   &__logo-text {
     display: flex;
     flex-direction: column;
-    gap: globalFunctions.fluidValue(4px, 9px, 320px, 1440px);
+    gap: globalFunctions.fluidValue(0px, 9px, 320px, 1440px);
     text-transform: uppercase;
     font-family: var(--font-family);
     font-weight: 400;
@@ -129,6 +139,10 @@ const closeMenu = () => {
     @media (max-width: 1440px) {
       grid-template-columns: subgrid;
       grid-column: 2/-1;
+    }
+
+    @media (max-width: 900px) {
+      display: none;
     }
   }
 
@@ -192,15 +206,9 @@ const closeMenu = () => {
 
   &__menu-btn {
     display: none;
-    @media (max-width: 768px) {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      background: transparent;
-      color: var(--light-colors-black---light);
-      cursor: pointer;
-      align-self: baseline;
+
+    @media (max-width: 900px) {
+      display: flex;
     }
   }
 
