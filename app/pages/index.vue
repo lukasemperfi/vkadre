@@ -1,13 +1,7 @@
-<script setup lang="ts">
-const items = [
-  { id: "home", label: "Главная", to: "/" },
-  { id: "services", label: "Услуги", to: "/services" },
-  { id: "contacts", label: "Контакты", to: "/contacts" },
-];
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div>
-    <UiMenu :items="items" />
+  <div class="home-page">
+    <div class="app-container">Home page</div>
   </div>
 </template>

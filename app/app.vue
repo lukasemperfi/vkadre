@@ -1,9 +1,9 @@
 <script setup lang="ts">
-const portfolioApi = usePortfolioApi();
-const photographersApi = usePhotographersApi();
-const servicesApi = useServicesApi();
-const locationsApi = useLocationsApi();
-const locationReviewsApi = useLocationReviewsApi();
+// const portfolioApi = usePortfolioApi();
+// const photographersApi = usePhotographersApi();
+// const servicesApi = useServicesApi();
+// const locationsApi = useLocationsApi();
+// const locationReviewsApi = useLocationReviewsApi();
 
 // const { data } = await useAsyncData("portfolio", () =>
 //   portfolioApi.getPortfolios(),
