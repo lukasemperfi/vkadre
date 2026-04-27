@@ -108,11 +108,5 @@ withDefaults(defineProps<Props>(), {
   &__link-text {
     min-width: 0;
   }
-
-  &__icon {
-    width: 1em;
-    min-width: 1em;
-    height: 1em;
-  }
 }
 </style>

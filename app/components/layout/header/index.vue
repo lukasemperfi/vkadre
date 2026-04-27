@@ -3,15 +3,6 @@ const menuItems = [
   { id: "portfolio", label: "Портфолио", to: "/portfolio" },
   { id: "services", label: "Услуги", to: "/services" },
   { id: "locations", label: "Локации", to: "/locations" },
-  { id: "portfolio", label: "Портфолио", to: "/portfolio" },
-  { id: "services", label: "Услуги", to: "/services" },
-  { id: "locations", label: "Локации", to: "/locations" },
-  { id: "portfolio", label: "Портфолио", to: "/portfolio" },
-  { id: "services", label: "Услуги", to: "/services" },
-  { id: "locations", label: "Локации", to: "/locations" },
-  { id: "portfolio", label: "Портфолио", to: "/portfolio" },
-  { id: "services", label: "Услуги", to: "/services" },
-  { id: "locations", label: "Локации", to: "/locations" },
 ];
 
 const isMenuOpen = ref(false);
