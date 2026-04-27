@@ -56,6 +56,10 @@ onBeforeUnmount(() => {
   lockScroll(false);
   window.removeEventListener("keydown", onKeydown);
 });
+
+function onItemClick(payload: { item: MenuItem; event: MouseEvent }) {
+  close();
+}
 </script>
 
 <template>
@@ -89,7 +93,11 @@ onBeforeUnmount(() => {
             </UiIconButton>
           </div>
 
-          <UiMenu :items="props.items" class="mobile-menu__nav" />
+          <UiMenu
+            :items="props.items"
+            class="mobile-menu__nav"
+            @item-click="onItemClick"
+          />
 
           <div class="mobile-menu__bottom">
             <ul class="mobile-menu__contacts" role="list">

@@ -12,6 +12,15 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   ariaLabel: "Меню",
 });
+
+const emit = defineEmits<{
+  "item-click": [payload: { item: MenuItem; event: MouseEvent }];
+}>();
+
+function onItemClick(e: MouseEvent, item: MenuItem, navigate: (e: MouseEvent) => void) {
+  emit("item-click", { item, event: e });
+  navigate(e);
+}
 </script>
 
 <template>
@@ -29,7 +38,7 @@ withDefaults(defineProps<Props>(), {
             class="menu__link"
             :class="{ 'menu__link--active': isActive }"
             :aria-current="isActive ? 'page' : undefined"
-            @click="(e) => navigate(e)"
+            @click="(e) => onItemClick(e, item, navigate)"
           >
             <UiIcon
               v-show="isActive"
