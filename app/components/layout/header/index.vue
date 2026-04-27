@@ -68,10 +68,12 @@ const closeMenu = () => {
           </UiIconButton>
         </div>
 
-        <!-- <HeaderMobileMenu
-          :open="isMenuOpen"
-          @close="closeMenu"
-        /> -->
+        <!-- Mobile menu -->
+        <LayoutHeaderMobileMenu
+          v-model="isMenuOpen"
+          :items="menuItems"
+          :is-auth="isAuth"
+        />
       </div>
     </div>
   </header>
