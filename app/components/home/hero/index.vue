@@ -1,8 +1,36 @@
 <script setup lang="ts">
-const carouselSlides = Array.from({ length: 6 }, (_, index) => ({
-  src: `https://picsum.photos/seed/vkadre-gallery-${index}/380/280.webp`,
-  alt: `Галерея работ — кадр ${index + 1}`,
-}));
+const carouselSlides = [
+  {
+    id: 1,
+    src: "/images/home-hero-slide-1.jpg",
+    alt: "Галерея работ — кадр 1",
+  },
+  {
+    id: 2,
+    src: "/images/home-hero-slide-2.jpg",
+    alt: "Галерея работ — кадр 2",
+  },
+  {
+    id: 3,
+    src: "/images/home-hero-slide-3.jpg",
+    alt: "Галерея работ — кадр 3",
+  },
+  {
+    id: 4,
+    src: "/images/home-hero-slide-1.jpg",
+    alt: "Галерея работ — кадр 4",
+  },
+  {
+    id: 5,
+    src: "/images/home-hero-slide-2.jpg",
+    alt: "Галерея работ — кадр 5",
+  },
+  {
+    id: 6,
+    src: "/images/home-hero-slide-3.jpg",
+    alt: "Галерея работ — кадр 6",
+  },
+];
 
 const galleryCarouselOptions = {
   slidesPerView: 1.15,
@@ -42,7 +70,10 @@ const galleryCarouselRef = ref(null);
 
         <div class="home-hero__column">
           <h1 class="home-hero__title">
-            Фотосессии №1 в Одессе, Южном и Черноморске поляне
+            Фотосессии №1 <br class="home-hero__title-br" />
+            в Одессе, Южном <br class="home-hero__title-br" />
+            и Черноморске <br class="home-hero__title-br" />
+            поляне
           </h1>
 
           <div class="home-hero__features features">
@@ -106,13 +137,12 @@ const galleryCarouselRef = ref(null);
 $_hero-mobile-max: 1000px;
 
 .home-hero {
-  padding-block-start: 18px;
-  padding-block-end: 24px;
-
   &__layout {
     display: grid;
     grid-template-columns: 501fr 610fr;
     gap: 24px;
+    padding-bottom: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+    border-bottom: 1px solid var(--gray);
 
     @media (max-width: 1250px) {
       grid-template-columns: 1fr;
@@ -153,10 +183,6 @@ $_hero-mobile-max: 1000px;
       justify-self: start;
       max-width: 100%;
     }
-
-    @media (max-width: 768px) {
-      border-bottom: 1px solid var(--gray);
-    }
   }
 
   &__title {
@@ -166,9 +192,8 @@ $_hero-mobile-max: 1000px;
     text-transform: uppercase;
     color: var(--black);
     line-height: globalFunctions.fluidValue(34px, 66px, 320px, 1440px);
-    transform: translateY(-6%);
+    transform: translateY(-4%);
     margin-bottom: -17px;
-    max-width: 458px;
 
     @media (max-width: 1250px) {
       max-width: 100%;
@@ -299,7 +324,7 @@ $_hero-mobile-max: 1000px;
 
     @media (max-width: 768px) {
       max-width: 100%;
-      margin-bottom: 40px;
+      margin-bottom: 0;
     }
 
     :deep(.ui-button) {
@@ -358,6 +383,18 @@ $_hero-mobile-max: 1000px;
   :deep(.swiper-slide) {
     // max-width: 100%;
     // aspect-ratio: 254/186;
+  }
+
+  &__title-br {
+    display: block;
+
+    @media (min-width: 551px) and (max-width: 1250px) {
+      display: none;
+    }
+
+    @media (max-width: 550px) {
+      display: block;
+    }
   }
 }
 </style>

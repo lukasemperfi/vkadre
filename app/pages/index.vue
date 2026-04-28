@@ -36,3 +36,11 @@
     </UiCarousel> -->
   </div>
 </template>
+
+<style lang="scss" scoped>
+.home-page {
+  :deep(.home-hero) {
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+  }
+}
+</style>
