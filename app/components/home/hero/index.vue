@@ -130,6 +130,7 @@ const galleryCarouselRef = ref(null);
         </div>
       </div>
     </div>
+    <UiSpline class="home-hero__spline" />
   </section>
 </template>
 
@@ -137,6 +138,8 @@ const galleryCarouselRef = ref(null);
 $_hero-mobile-max: 1000px;
 
 .home-hero {
+  position: relative;
+  overflow-x: clip;
   &__layout {
     display: grid;
     grid-template-columns: 501fr 610fr;
@@ -395,6 +398,13 @@ $_hero-mobile-max: 1000px;
     @media (max-width: 550px) {
       display: block;
     }
+  }
+
+  &__spline {
+    top: 177px;
+    right: -57px;
+    width: 692px;
+    height: 654px;
   }
 }
 </style>
