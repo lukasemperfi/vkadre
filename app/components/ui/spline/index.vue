@@ -8,6 +8,7 @@
 .spline {
   position: absolute;
   z-index: -1;
+  max-width: none;
 
   //  Comment for development(Pixel Perfect)
   //   filter: blur(270px);
