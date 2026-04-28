@@ -67,51 +67,33 @@ const galleryCarouselRef = ref(null);
             поляне
           </h1>
 
-          <div class="home-hero__features home-hero__features_desktop">
-            <div class="home-hero__tier">
-              <div class="home-hero__tier-accent" aria-hidden="true">
-                <span />
-                <span />
-              </div>
-              <p class="home-hero__tier-caption">10 мин — 10 фото</p>
-              <p class="home-hero__tier-price">990 грн.</p>
+          <div class="home-hero__features features">
+            <div class="features__item">
+              <div class="features__item-accent" aria-hidden="true"></div>
+              <p class="features__item-caption">
+                10 мин - 10 фото
+                <span class="features__item-price">990 грн.</span>
+              </p>
             </div>
-            <div class="home-hero__tier home-hero__tier_mid">
-              <div class="home-hero__tier-accent" aria-hidden="true">
-                <span />
-                <span />
-              </div>
-              <p class="home-hero__tier-caption">20 мин — 20 фото</p>
-              <p class="home-hero__tier-price">1990 грн.</p>
+            <div class="features__item">
+              <div class="features__item-accent" aria-hidden="true"></div>
+              <p class="features__item-caption">
+                20 мин - 20 фото
+                <span class="features__item-price">1990 грн.</span>
+              </p>
             </div>
-            <div class="home-hero__tier home-hero__tier_wide">
-              <div class="home-hero__tier-accent" aria-hidden="true">
-                <span />
-                <span />
-              </div>
-              <p class="home-hero__tier-only">Готовые фото на следующий день</p>
+            <div class="features__item">
+              <div class="features__item-accent" aria-hidden="true"></div>
+              <p class="features__item-only">Готовые фото на следующий день</p>
             </div>
           </div>
 
-          <ul class="home-hero__features home-hero__features_mobile">
-            <li class="home-hero__mobile-row">
-              <span class="home-hero__bullet" aria-hidden="true" />
-              <span class="home-hero__mobile-label">10 мин — 10 фото</span>
-              <span class="home-hero__mobile-price">990 грн.</span>
-            </li>
-            <li class="home-hero__mobile-row">
-              <span class="home-hero__bullet" aria-hidden="true" />
-              <span class="home-hero__mobile-label">20 мин — 20 фото</span>
-              <span class="home-hero__mobile-price">1990 грн.</span>
-            </li>
-            <li class="home-hero__mobile-extra">
-              <span class="home-hero__bullet" aria-hidden="true" />
-              Готовые фото на следующий день
-            </li>
-          </ul>
-
           <div class="home-hero__cta">
-            <UiButton variant="outline" size="lg" label="Заказать фотосессию" />
+            <UiButton
+              variant="outline"
+              size="lg"
+              label="Заказать экспресс-фотосессию"
+            />
           </div>
         </div>
       </div>
@@ -171,31 +153,116 @@ $_hero-mobile-max: 1000px;
     //   max-width: none;
     //   justify-self: stretch;
     // }
+  }
 
-    & > .home-hero__gallery-wrap {
-      order: 4;
-      margin-top: 8px;
+  &__features {
+    margin-bottom: globalFunctions.fluidValue(24px, 64px, 320px, 1440px);
+  }
 
-      //   @media (max-width: $_hero-mobile-max) {
-      //     order: 0;
-      //     margin-top: 0;
-      //   }
+  .features {
+    display: grid;
+    grid-template-columns: 128fr 132fr 162fr;
+    gap: 50px;
+    max-width: 522px;
+
+    @media (max-width: 1439px) {
+      max-width: 100%;
     }
 
-    & > .home-hero__title {
-      order: 1;
+    @media (max-width: 1150px) {
+      grid-template-columns: 1fr;
+      gap: globalFunctions.fluidValue(8px, 24px, 320px, 1440px);
     }
 
-    & > .home-hero__features_desktop {
-      order: 2;
+    &__item {
+      display: grid;
+      position: relative;
+      padding-left: 0;
+
+      @media (max-width: 1150px) {
+        padding-left: 12px;
+      }
+
+      &::before {
+        display: none;
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--black);
+        top: 50%;
+        transform: translateY(-50%);
+
+        @media (max-width: 1150px) {
+          display: block;
+        }
+      }
     }
 
-    & > .home-hero__features_mobile {
-      order: 2;
+    &__item-accent {
+      height: 3px;
+      position: relative;
+      width: 72px;
+      margin-bottom: 21px;
+
+      @media (max-width: 1150px) {
+        display: none;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 1px;
+        background: var(--gray);
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 25px;
+        height: 100%;
+        border-radius: 2px;
+        background: var(--black);
+      }
     }
 
-    & > .home-hero__cta {
-      order: 3;
+    &__item-caption {
+      margin: 0;
+      font-weight: 500;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: rgba(0, 0, 0, 0.6);
+      line-height: 20px;
+
+      @media (max-width: 1150px) {
+        display: flex;
+        gap: 16px;
+      }
+    }
+
+    &__item-price {
+      font-weight: 500;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--black);
+      line-height: 20px;
+    }
+
+    &__item-only {
+      margin: 0;
+      font-weight: 500;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--black);
+      line-height: 20px;
     }
   }
 
@@ -258,98 +325,14 @@ $_hero-mobile-max: 1000px;
     font-size: globalFunctions.fluidValue(24px, 48px, 320px, 1440px);
     text-transform: uppercase;
     color: var(--black);
-    line-height: globalFunctions.fluidValue(34px, 67px, 320px, 1440px);
+    line-height: globalFunctions.fluidValue(34px, 66px, 320px, 1440px);
     transform: translateY(-6%);
+    margin-bottom: -17px;
 
-    // @media (max-width: $_hero-mobile-max) {
-    //   font-size: 24px;
-    //   max-width: none;
-    // }
-  }
-
-  &__features_desktop {
-    display: flex;
-    align-items: flex-start;
-    gap: 50px;
-
-    // @media (max-width: $_hero-mobile-max) {
-    //   display: none !important;
-    // }
-  }
-
-  &__tier {
-    flex: none;
-    width: 128px;
-
-    &_mid {
-      width: 132px;
+    @media (max-width: 1150px) {
+      transform: translateY(0);
+      margin-bottom: 24px;
     }
-
-    &_wide {
-      width: 162px;
-    }
-  }
-
-  &__tier-accent {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    margin-bottom: 10px;
-    height: 3px;
-
-    span:first-child {
-      width: 25px;
-      flex-shrink: 0;
-      border-radius: 1.5px;
-      height: 100%;
-      background: var(--black);
-    }
-
-    span:last-child {
-      flex: 1;
-      min-width: 48px;
-      height: 100%;
-      background: rgb(23 26 30 / 30%);
-    }
-  }
-
-  &__tier-caption {
-    margin: 0;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 140%;
-    text-transform: uppercase;
-    color: var(--black);
-    opacity: 0.6;
-  }
-
-  &__tier-price {
-    margin: 4px 0 0;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 140%;
-    text-transform: uppercase;
-    color: var(--black);
-  }
-
-  &__tier-only {
-    margin: 0;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 140%;
-    text-transform: uppercase;
-    color: var(--black);
-  }
-
-  &__features_mobile {
-    display: none;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    // @media (max-width: $_hero-mobile-max) {
-    //   display: block;
-    // }
   }
 
   &__mobile-row {
