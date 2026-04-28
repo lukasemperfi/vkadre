@@ -133,6 +133,7 @@ $_hero-mobile-max: 1000px;
   &__layout {
     display: grid;
     grid-template-columns: 501fr 610fr;
+    gap: 24px;
 
     // @media (max-width: $_hero-mobile-max) {
     //   grid-template-columns: 1fr;
@@ -238,9 +239,9 @@ $_hero-mobile-max: 1000px;
   &__slide {
     height: 140px;
 
-    @media (max-width: $_hero-mobile-max) {
-      height: 186px;
-    }
+    // @media (max-width: $_hero-mobile-max) {
+    //   height: 186px;
+    // }
 
     img {
       display: block;
@@ -254,11 +255,11 @@ $_hero-mobile-max: 1000px;
   &__title {
     margin: 0;
     font-weight: 600;
-    font-size: 48px;
+    font-size: globalFunctions.fluidValue(24px, 48px, 320px, 1440px);
     text-transform: uppercase;
     color: var(--black);
-    line-height: 67px;
-    margin-top: -18px;
+    line-height: globalFunctions.fluidValue(34px, 67px, 320px, 1440px);
+    transform: translateY(-6%);
 
     // @media (max-width: $_hero-mobile-max) {
     //   font-size: 24px;
