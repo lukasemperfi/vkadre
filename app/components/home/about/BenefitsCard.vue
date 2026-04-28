@@ -19,12 +19,11 @@
 
 <style scoped lang="scss">
 .benefits-card {
-  width: 252px;
-  height: 207px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   color: var(--black);
+  position: relative;
 
   &__icon {
     display: grid;

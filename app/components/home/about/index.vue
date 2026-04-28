@@ -145,8 +145,28 @@ const stats = [
   }
 
   .benefits {
+    $gap: globalFunctions.fluidValue(24px, 80px, 320px, 1440px);
+
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 252fr);
+    gap: $gap;
+
+    :deep(.benefits-card:not(:last-child):after) {
+      content: "";
+      display: block;
+      width: 1px;
+      height: 50%;
+      background: var(--gray);
+      position: absolute;
+      right: calc($gap / 2 * -1);
+      top: 0;
+    }
+
+    :deep(.benefits-card:first-child) {
+      .benefits-card__content {
+        max-width: 247px;
+      }
+    }
 
     .benefits-card__content-icon {
       width: 16px;
