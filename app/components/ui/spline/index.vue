@@ -7,6 +7,7 @@
 <style scoped lang="scss">
 .spline {
   position: absolute;
+  z-index: -1;
 
   //  Comment for development(Pixel Perfect)
   //   filter: blur(270px);

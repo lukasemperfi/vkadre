@@ -139,6 +139,7 @@ $_hero-mobile-max: 1000px;
 
 .home-hero {
   position: relative;
+  z-index: 0;
   overflow-x: clip;
   &__layout {
     display: grid;
