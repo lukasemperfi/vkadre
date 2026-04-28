@@ -9,7 +9,7 @@ const galleryCarouselOptions = {
   spaceBetween: 20,
   autoplay: false,
   breakpoints: {
-    1024: {
+    1300: {
       slidesPerView: 3,
       spaceBetween: 20,
     },
@@ -33,38 +33,8 @@ const galleryCarouselRef = ref(null);
         </figure>
 
         <div class="home-hero__column">
-          <!-- <div class="home-hero__gallery-wrap">
-            <div class="home-hero__gallery-controls">
-              <UiCarouselNavButtons
-                variant="arrow"
-                :carousel="galleryCarouselRef"
-              />
-            </div>
-
-            <UiCarousel
-              ref="galleryCarouselRef"
-              class="home-hero__swiper"
-              :items="carouselSlides"
-              :options="galleryCarouselOptions"
-            >
-              <template #item="{ item }">
-                <div class="home-hero__slide">
-                  <img
-                    :src="item.src"
-                    :alt="item.alt"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </template>
-            </UiCarousel>
-          </div> -->
-
           <h1 class="home-hero__title">
-            Фотосессии №1 <br />
-            в Одессе, Южном <br />
-            и Черноморске <br />
-            поляне
+            Фотосессии №1 в Одессе, Южном и Черноморске поляне
           </h1>
 
           <div class="home-hero__features features">
@@ -89,12 +59,37 @@ const galleryCarouselRef = ref(null);
           </div>
 
           <div class="home-hero__cta">
-            <UiButton
-              variant="outline"
-              size="lg"
-              label="Заказать экспресс-фотосессию"
-            />
+            <UiButton variant="outline" label="Заказать фотосессию" />
           </div>
+
+          <!-- <div class="home-hero__gallery-wrap">
+            <div class="home-hero__gallery-controls">
+              <UiCarouselNavButtons
+                variant="arrow"
+                :carousel="galleryCarouselRef"
+              />
+            </div>
+
+            <UiCarousel
+              ref="galleryCarouselRef"
+              class="home-hero__swiper"
+              :items="carouselSlides"
+              :options="galleryCarouselOptions"
+            >
+              <template #item="{ item }">
+                <div class="home-hero__slide">
+                  <NuxtImg
+                    :src="item.src"
+                    :alt="item.alt"
+                    width="190"
+                    height="140"
+                    format="webp"
+                    class="home-hero__slide-image"
+                  />
+                </div>
+              </template>
+            </UiCarousel>
+          </div> -->
         </div>
       </div>
     </div>
@@ -108,19 +103,15 @@ $_hero-mobile-max: 1000px;
   padding-block-start: 18px;
   padding-block-end: 24px;
 
-  //   @media (max-width: $_hero-mobile-max) {
-  //     padding-block: 24px;
-  //   }
-
   &__layout {
     display: grid;
     grid-template-columns: 501fr 610fr;
     gap: 24px;
 
-    // @media (max-width: $_hero-mobile-max) {
-    //   grid-template-columns: 1fr;
-    //   gap: 28px;
-    // }
+    @media (max-width: 1250px) {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
   }
 
   &__figure {
@@ -129,9 +120,10 @@ $_hero-mobile-max: 1000px;
     width: 100%;
     max-width: 501px;
     aspect-ratio: 501 / 717;
-    // @media (max-width: $_hero-mobile-max) {
-    //   display: none;
-    // }
+
+    @media (max-width: 1250px) {
+      display: none;
+    }
   }
 
   &__photo {
@@ -147,12 +139,31 @@ $_hero-mobile-max: 1000px;
     max-width: 610px;
     justify-self: end;
     width: 100%;
+    display: flex;
+    flex-direction: column;
 
-    // @media (max-width: $_hero-mobile-max) {
-    //   gap: 24px;
-    //   max-width: none;
-    //   justify-self: stretch;
-    // }
+    @media (max-width: 1250px) {
+      justify-self: start;
+      max-width: 100%;
+    }
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: 600;
+    font-size: globalFunctions.fluidValue(24px, 48px, 320px, 1440px);
+    text-transform: uppercase;
+    color: var(--black);
+    line-height: globalFunctions.fluidValue(34px, 66px, 320px, 1440px);
+    transform: translateY(-6%);
+    margin-bottom: -17px;
+    max-width: 458px;
+
+    @media (max-width: 1250px) {
+      max-width: 100%;
+      transform: translateY(0);
+      margin-bottom: 24px;
+    }
   }
 
   &__features {
@@ -169,7 +180,7 @@ $_hero-mobile-max: 1000px;
       max-width: 100%;
     }
 
-    @media (max-width: 1150px) {
+    @media (max-width: 1024px) {
       grid-template-columns: 1fr;
       gap: globalFunctions.fluidValue(8px, 24px, 320px, 1440px);
     }
@@ -179,7 +190,7 @@ $_hero-mobile-max: 1000px;
       position: relative;
       padding-left: 0;
 
-      @media (max-width: 1150px) {
+      @media (max-width: 1024px) {
         padding-left: 12px;
       }
 
@@ -193,10 +204,9 @@ $_hero-mobile-max: 1000px;
         height: 4px;
         border-radius: 50%;
         background: var(--black);
-        top: 50%;
-        transform: translateY(-50%);
+        top: 7px;
 
-        @media (max-width: 1150px) {
+        @media (max-width: 1024px) {
           display: block;
         }
       }
@@ -208,7 +218,7 @@ $_hero-mobile-max: 1000px;
       width: 72px;
       margin-bottom: 21px;
 
-      @media (max-width: 1150px) {
+      @media (max-width: 1024px) {
         display: none;
       }
 
@@ -242,7 +252,7 @@ $_hero-mobile-max: 1000px;
       color: rgba(0, 0, 0, 0.6);
       line-height: 20px;
 
-      @media (max-width: 1150px) {
+      @media (max-width: 1250px) {
         display: flex;
         gap: 16px;
       }
@@ -270,10 +280,7 @@ $_hero-mobile-max: 1000px;
     align-self: flex-start;
     width: 100%;
     max-width: 366px;
-
-    @media (max-width: $_hero-mobile-max) {
-      max-width: 272px;
-    }
+    flex: 1;
 
     :deep(.ui-button) {
       width: 100%;
@@ -281,13 +288,12 @@ $_hero-mobile-max: 1000px;
   }
 
   &__gallery-wrap {
-    width: 100%;
   }
 
   &__gallery-controls {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 16px;
+    margin-bottom: 32px;
     opacity: 0.5;
 
     @media (max-width: $_hero-mobile-max) {
@@ -296,102 +302,9 @@ $_hero-mobile-max: 1000px;
   }
 
   &__swiper {
-    width: 100%;
-
-    :deep(.swiper) {
-      overflow: visible;
-    }
   }
 
   &__slide {
-    height: 140px;
-
-    // @media (max-width: $_hero-mobile-max) {
-    //   height: 186px;
-    // }
-
-    img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      background-color: #c4c4c4;
-    }
-  }
-
-  &__title {
-    margin: 0;
-    font-weight: 600;
-    font-size: globalFunctions.fluidValue(24px, 48px, 320px, 1440px);
-    text-transform: uppercase;
-    color: var(--black);
-    line-height: globalFunctions.fluidValue(34px, 66px, 320px, 1440px);
-    transform: translateY(-6%);
-    margin-bottom: -17px;
-
-    @media (max-width: 1150px) {
-      transform: translateY(0);
-      margin-bottom: 24px;
-    }
-  }
-
-  &__mobile-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    padding-left: 12px;
-    position: relative;
-  }
-
-  &__mobile-row + &__mobile-row {
-    margin-top: 8px;
-  }
-
-  &__bullet {
-    position: absolute;
-    left: 0;
-    top: 0.5em;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--black);
-  }
-
-  &__mobile-label {
-    flex: 1;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 140%;
-    text-transform: uppercase;
-    color: var(--black);
-    opacity: 0.6;
-  }
-
-  &__mobile-price {
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 140%;
-    text-transform: uppercase;
-    color: var(--black);
-  }
-
-  &__mobile-extra {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-top: 8px;
-    padding-left: 12px;
-    position: relative;
-    max-width: 260px;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 140%;
-    text-transform: uppercase;
-    color: var(--black);
-
-    .home-hero__bullet {
-      top: 0.45em;
-    }
   }
 }
 </style>

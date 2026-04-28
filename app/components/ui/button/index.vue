@@ -74,7 +74,7 @@ const className = computed(() => [
 
   &_size_lg {
     padding-block: 17px;
-    padding-inline: 38px;
+    padding-inline: 34px;
   }
 
   &_variant_outline {
