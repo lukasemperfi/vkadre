@@ -1,21 +1,8 @@
-<script setup lang="ts">
-const slides = [
-  { src: "/images/home-hero.jpg", alt: "hero image 1" },
-  { src: "/images/home-hero.jpg", alt: "hero image 2" },
-  { src: "/images/home-hero.jpg", alt: "hero image 3" },
-  { src: "/images/home-hero.jpg", alt: "hero image 4" },
-  { src: "/images/home-hero.jpg", alt: "hero image 5" },
-];
-
-const carouselRef = ref<any>(null);
-
-const next = () => carouselRef.value?.slideNext();
-const prev = () => carouselRef.value?.slidePrev();
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="home-page">
-    <div class="app-container">Home page</div>
+    <HomeHero />
     <!-- <NuxtImg src="/images/home-hero.jpg" alt="hero image" format="webp" /> -->
     <!-- <div class="custom-navigation">
       <UiCarouselPrevNav
@@ -30,7 +17,7 @@ const prev = () => carouselRef.value?.slidePrev();
       />
     </div> -->
 
-    <UiCarouselNavButtons :carousel="carouselRef" />
+    <!-- <UiCarouselNavButtons :carousel="carouselRef" />
     <UiCarousel
       ref="carouselRef"
       :items="slides"
@@ -46,6 +33,6 @@ const prev = () => carouselRef.value?.slidePrev();
       <template #item="{ item, index }">
         <div>{{ item.alt }}</div>
       </template>
-    </UiCarousel>
+    </UiCarousel> -->
   </div>
 </template>
