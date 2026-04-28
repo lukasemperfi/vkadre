@@ -62,7 +62,7 @@ const galleryCarouselRef = ref(null);
             <UiButton variant="outline" label="Заказать фотосессию" />
           </div>
 
-          <!-- <div class="home-hero__gallery-wrap">
+          <div class="home-hero__gallery-wrap">
             <div class="home-hero__gallery-controls">
               <UiCarouselNavButtons
                 variant="arrow"
@@ -89,7 +89,7 @@ const galleryCarouselRef = ref(null);
                 </div>
               </template>
             </UiCarousel>
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
