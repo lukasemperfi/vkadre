@@ -9,7 +9,15 @@ const galleryCarouselOptions = {
   spaceBetween: 20,
   autoplay: false,
   breakpoints: {
-    1300: {
+    550: {
+      slidesPerView: 2.15,
+      spaceBetween: 20,
+    },
+    769: {
+      slidesPerView: 3,
+      spaceBetween: 20,
+    },
+    1250: {
       slidesPerView: 3,
       spaceBetween: 20,
     },
@@ -77,12 +85,10 @@ const galleryCarouselRef = ref(null);
               :options="galleryCarouselOptions"
             >
               <template #item="{ item }">
-                <div class="home-hero__slide">
+                <div class="home-hero__slide-image-wrap">
                   <NuxtImg
                     :src="item.src"
                     :alt="item.alt"
-                    width="190"
-                    height="140"
                     format="webp"
                     class="home-hero__slide-image"
                   />
@@ -141,10 +147,15 @@ $_hero-mobile-max: 1000px;
     width: 100%;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 
     @media (max-width: 1250px) {
       justify-self: start;
       max-width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      border-bottom: 1px solid var(--gray);
     }
   }
 
@@ -282,12 +293,26 @@ $_hero-mobile-max: 1000px;
     max-width: 366px;
     flex: 1;
 
+    @media (max-width: 1250px) {
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      max-width: 100%;
+      margin-bottom: 40px;
+    }
+
     :deep(.ui-button) {
       width: 100%;
     }
   }
 
   &__gallery-wrap {
+    @media (max-width: 768px) {
+      margin-right: globalFunctions.fluidValue(-24px, -96px, 320px, 1440px);
+      order: -1;
+      margin-bottom: 24px;
+    }
   }
 
   &__gallery-controls {
@@ -296,15 +321,43 @@ $_hero-mobile-max: 1000px;
     margin-bottom: 32px;
     opacity: 0.5;
 
-    @media (max-width: $_hero-mobile-max) {
-      margin-bottom: 12px;
+    @media (max-width: 768px) {
+      display: none;
     }
   }
 
   &__swiper {
   }
 
-  &__slide {
+  &__slide-image-wrap {
+    aspect-ratio: 190/140;
+    max-width: 190px;
+
+    @media (min-width: 769px) and (max-width: 1250px) {
+      aspect-ratio: auto;
+      max-width: 348px;
+    }
+
+    @media (min-width: 551px) and (max-width: 768px) {
+      aspect-ratio: auto;
+      max-width: 321px;
+    }
+
+    @media (max-width: 550px) {
+      aspect-ratio: 254/186;
+      max-width: 100%;
+    }
+  }
+
+  &__slide-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  :deep(.swiper-slide) {
+    // max-width: 100%;
+    // aspect-ratio: 254/186;
   }
 }
 </style>
