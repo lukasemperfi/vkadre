@@ -130,7 +130,7 @@ const galleryCarouselRef = ref(null);
         </div>
       </div>
     </div>
-    <UiSpline class="home-hero__spline" />
+    <!-- <UiSpline class="home-hero__spline" /> -->
   </section>
 </template>
 
