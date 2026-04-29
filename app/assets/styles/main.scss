@@ -1,6 +1,7 @@
 @use "fonts";
 @use "reset";
 @use "variables";
+@use "globals";
 
 body {
   font-family: var(--font-family);

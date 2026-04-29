@@ -74,7 +74,7 @@ const className = computed(() => [
 
   &_size_lg {
     padding-block: 17px;
-    padding-inline: 34px;
+    padding-inline: globalFunctions.fluidValue(16px, 38px, 320px, 1440px);
   }
 
   &_variant_outline {
