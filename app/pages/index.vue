@@ -4,6 +4,7 @@
   <div class="home-page">
     <HomeHero />
     <HomeAbout />
+    <HomeWorks />
   </div>
 </template>
 
