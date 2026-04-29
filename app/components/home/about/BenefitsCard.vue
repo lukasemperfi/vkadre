@@ -31,6 +31,7 @@
     flex: none;
     width: 56px;
     height: 56px;
+    margin-bottom: 40px;
 
     @media (max-width: globalBreakpoints.$breakpoint-sm) {
       width: 36px;
@@ -69,7 +70,6 @@
   }
 
   &__body {
-    margin-top: 40px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;

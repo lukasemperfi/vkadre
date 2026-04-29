@@ -121,8 +121,9 @@ const stats = [
   &__header {
     display: flex;
     justify-content: space-between;
-    gap: 40px;
-    margin-bottom: globalFunctions.fluidValue(40px, 60px, 320px, 1440px);
+    flex-wrap: wrap;
+    gap: globalFunctions.fluidValue(16px, 40px, 320px, 1440px);
+    margin-bottom: globalFunctions.fluidValue(44px, 60px, 320px, 1440px);
   }
 
   &__title {
@@ -144,22 +145,43 @@ const stats = [
     max-width: 715px;
   }
 
+  &__benefits {
+    padding-bottom: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+    border-bottom: 1px solid var(--gray);
+  }
+
   .benefits {
     $gap: globalFunctions.fluidValue(24px, 80px, 320px, 1440px);
+    $col-min: 200px;
 
     display: grid;
-    grid-template-columns: repeat(4, 252fr);
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(#{$col-min}, 100%), 1fr)
+    );
     gap: $gap;
 
-    :deep(.benefits-card:not(:last-child):after) {
+    :deep(.benefits-card) {
+      @media (max-width: globalBreakpoints.$breakpoint-xs) {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 24px;
+      }
+    }
+
+    .benefits-card:not(:last-child):after {
       content: "";
       display: block;
       width: 1px;
-      height: 50%;
-      background: var(--gray);
+      height: 71.5%;
+      background: rgba(0, 0, 0, 0.1);
       position: absolute;
       right: calc($gap / 2 * -1);
       top: 0;
+
+      @media (max-width: 1439px) {
+        display: none;
+      }
     }
 
     :deep(.benefits-card:first-child) {
@@ -175,9 +197,17 @@ const stats = [
     }
   }
 
+  &__stats {
+    padding-top: globalFunctions.fluidValue(40px, 64px, 320px, 1440px);
+    padding-bottom: globalFunctions.fluidValue(40px, 60px, 320px, 1440px);
+    border-bottom: 1px solid var(--gray);
+  }
+
   .stats {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(110px, 110px));
+    gap: 20px;
+    justify-content: space-between;
   }
 }
 </style>
