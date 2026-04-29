@@ -51,16 +51,9 @@ console.log(slidePhotos.value);
 const galleryCarouselRef = ref(null);
 
 const worksCarouselOptions = {
-  slidesPerView: 0.75,
+  slidesPerView: 1,
   spaceBetween: 20,
   autoplay: false,
-
-  breakpoints: {
-    1024: {
-      slidesPerView: 1,
-      spaceBetween: 20,
-    },
-  },
 };
 </script>
 
@@ -108,6 +101,7 @@ const worksCarouselOptions = {
 
 <style lang="scss" scoped>
 .works {
+  $tablet-breakpoint: 959px;
   &__title {
     margin-bottom: globalFunctions.fluidValue(16px, 60px, 320px, 1440px);
   }
@@ -120,6 +114,10 @@ const worksCarouselOptions = {
     display: flex;
     justify-content: flex-end;
     margin-bottom: -11px;
+
+    @media (max-width: $tablet-breakpoint) {
+      display: none;
+    }
   }
 
   .photo-grid {
