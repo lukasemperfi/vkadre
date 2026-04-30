@@ -17,5 +17,9 @@
   :deep(.works) {
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }
+
+  :deep(.services) {
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+  }
 }
 </style>

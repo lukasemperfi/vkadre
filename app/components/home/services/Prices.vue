@@ -14,7 +14,7 @@ function formatPackageLabel(p: ServicePackageRow) {
   if (duration && photos) return `${duration} - ${photos}`;
   if (duration) return duration;
   if (photos) return photos;
-  return "Пакет";
+  return "Исходники (весь отснятый материал)";
 }
 
 function formatPrice(p: ServicePackageRow) {
@@ -22,10 +22,21 @@ function formatPrice(p: ServicePackageRow) {
   return `${p.price} ${currency}`;
 }
 
+function isSourceMaterialsPackage(p: ServicePackageRow) {
+  return !p.duration_minutes && !p.photo_count;
+}
+
 const sortedPackages = computed(() =>
-  [...(props.packages ?? [])].sort(
-    (a, b) => a.duration_minutes - b.duration_minutes,
-  ),
+  [...(props.packages ?? [])].sort((a, b) => {
+    const aIsSource = isSourceMaterialsPackage(a);
+    const bIsSource = isSourceMaterialsPackage(b);
+
+    if (aIsSource !== bIsSource) return aIsSource ? 1 : -1;
+
+    const aDuration = a.duration_minutes ?? Number.POSITIVE_INFINITY;
+    const bDuration = b.duration_minutes ?? Number.POSITIVE_INFINITY;
+    return aDuration - bDuration;
+  }),
 );
 </script>
 

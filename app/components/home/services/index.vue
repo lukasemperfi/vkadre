@@ -50,6 +50,9 @@ const onTabClick = (item: MenuItem) => {
             </UiMenu>
           </div>
           <div class="services-tabs__content">
+            <div class="services-tabs__content-title">
+              {{ activeService?.title }}
+            </div>
             <HomeServicesCard v-if="activeService" :service="activeService" />
           </div>
         </div>
@@ -72,22 +75,42 @@ const onTabClick = (item: MenuItem) => {
   .services-tabs {
     display: flex;
     justify-content: space-between;
-    gap: globalFunctions.fluidValue(24px, 48px, 320px, 1440px);
+    gap: globalFunctions.fluidValue(24px, 138px, 320px, 1440px);
 
     @media (max-width: 1024px) {
       flex-direction: column;
       align-items: flex-start;
     }
 
-    &__content {
-      flex: 1;
-      display: flex;
-      justify-content: flex-end;
+    &__aside {
+      border: 1px solid var(--gray);
+      padding-top: 31px;
+      padding-left: 34px;
+      padding-right: 4px;
+      padding-bottom: 54px;
+      flex: 1 1 396px;
 
-      @media (max-width: 1024px) {
-        width: 100%;
-        justify-content: flex-start;
+      :deep(.menu) {
+        max-height: 617px;
+        overflow-y: auto;
+        .menu__items {
+          gap: 35px;
+        }
+
+        .menu__link {
+          gap: 13px;
+          font-family: var(--font-family);
+          font-weight: 500;
+          font-size: 18px;
+          color: var(--black);
+        }
       }
+    }
+    &__title {
+      margin-bottom: globalFunctions.fluidValue(16px, 41px, 320px, 1440px);
+    }
+    &__content {
+      flex: 1 1 715px;
     }
   }
 }
