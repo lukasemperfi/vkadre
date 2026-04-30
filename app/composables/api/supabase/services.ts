@@ -4,7 +4,8 @@ export const useServicesApi = () => {
     async getServices(): Promise<ServiceWithRelations[]> {
       const { data, error } = await supabase
         .from("services")
-        .select("*,portfolio(*),service_packages(*)");
+        .select("*,portfolio(*),service_packages(*)")
+        .order("sort_order", { ascending: true });
 
       if (error) throw error;
 

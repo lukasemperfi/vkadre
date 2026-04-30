@@ -111,6 +111,16 @@ const onTabClick = (item: MenuItem) => {
     }
     &__content {
       flex: 1 1 715px;
+      padding-top: globalFunctions.fluidValue(24px, 33px, 320px, 1440px);
+
+      &-title {
+        font-family: var(--font-family);
+        font-weight: 600;
+        font-size: globalFunctions.fluidValue(18px, 24px, 320px, 1440px);
+        text-transform: uppercase;
+        color: var(--black);
+        margin-bottom: globalFunctions.fluidValue(16px, 33px, 320px, 1440px);
+      }
     }
   }
 }

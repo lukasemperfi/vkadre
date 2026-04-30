@@ -8,7 +8,7 @@ type Props = {
 const props = defineProps<Props>();
 
 function formatPackageLabel(p: ServicePackageRow) {
-  const duration = p.duration_minutes ? `${p.duration_minutes} мин` : "";
+  const duration = p.duration_minutes ? `${p.duration_minutes} минут` : "";
   const photos = p.photo_count ? `${p.photo_count} фото` : "";
 
   if (duration && photos) return `${duration} - ${photos}`;
@@ -18,7 +18,12 @@ function formatPackageLabel(p: ServicePackageRow) {
 }
 
 function formatPrice(p: ServicePackageRow) {
-  const currency = (p.currency ?? "грн.").trim();
+  const currencies = {
+    UAH: "грн.",
+    USD: "$",
+    EUR: "€",
+  };
+  const currency = currencies[p.currency as keyof typeof currencies];
   return `${p.price} ${currency}`;
 }
 
@@ -44,8 +49,10 @@ const sortedPackages = computed(() =>
   <div class="service-prices">
     <ul class="service-prices__list" role="list">
       <li v-for="p in sortedPackages" :key="p.id" class="service-prices__row">
-        <span class="service-prices__label">{{ formatPackageLabel(p) }}</span>
-        <span class="service-prices__dots" aria-hidden="true"></span>
+        <div class="service-prices__label-wrapper">
+          <span class="service-prices__label">{{ formatPackageLabel(p) }}</span>
+          <span class="service-prices__dots" aria-hidden="true"></span>
+        </div>
         <span class="service-prices__price">{{ formatPrice(p) }}</span>
       </li>
     </ul>
@@ -56,24 +63,34 @@ const sortedPackages = computed(() =>
 .service-prices {
   width: 100%;
   border: 1px solid rgba(23, 26, 30, 0.1);
-  padding: globalFunctions.fluidValue(14px, 20px, 320px, 1440px);
+  padding-top: 20px;
+  padding-left: 27px;
+  padding-right: 109px;
+  padding-bottom: 20px;
 }
 
 .service-prices__list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr max-content;
   gap: 8px;
 }
 
 .service-prices__row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: subgrid;
   align-items: baseline;
   gap: 12px;
   min-width: 0;
+  grid-column: 1/-1;
+}
+
+.service-prices__label-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
 }
 
 .service-prices__label {
@@ -85,6 +102,7 @@ const sortedPackages = computed(() =>
 }
 
 .service-prices__dots {
+  flex: 1;
   height: 1px;
   opacity: 0.1;
   background-image: radial-gradient(

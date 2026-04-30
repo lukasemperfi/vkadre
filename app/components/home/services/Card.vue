@@ -5,7 +5,9 @@ type Props = {
   service: ServiceWithRelations;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+console.log(props.service);
 </script>
 
 <template>
@@ -22,9 +24,11 @@ defineProps<Props>();
     </figure>
 
     <div class="service-card__body">
-      <p v-if="service.description" class="service-card__description">
-        {{ service.description }}
-      </p>
+      <div
+        v-if="service.description"
+        v-html="service.description"
+        class="service-card__description"
+      ></div>
 
       <HomeServicesPrices
         v-if="service.service_packages?.length"
@@ -41,19 +45,16 @@ defineProps<Props>();
 
 <style scoped lang="scss">
 .service-card {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: globalFunctions.fluidValue(16px, 24px, 320px, 1440px);
   width: 100%;
   max-width: 715px;
 }
 
 .service-card__figure {
-  margin: 0;
   width: 100%;
   aspect-ratio: 715 / 239;
   background: #c4c4c4;
   overflow: hidden;
+  margin-bottom: globalFunctions.fluidValue(24px, 41px, 320px, 1440px);
 }
 
 .service-card__image {
@@ -70,19 +71,22 @@ defineProps<Props>();
 }
 
 .service-card__body {
-  display: grid;
-  gap: globalFunctions.fluidValue(14px, 20px, 320px, 1440px);
 }
 
 .service-card__description {
+  display: flex;
+  flex-direction: column;
+  gap: 27px;
   margin: 0;
   font-weight: 400;
   font-size: 16px;
   line-height: 160%;
   color: var(--black);
+  margin-bottom: globalFunctions.fluidValue(24px, 40px, 320px, 1440px);
 }
 
 .service-card__cta {
+  margin-top: globalFunctions.fluidValue(24px, 40px, 320px, 1440px);
   max-width: 276px;
   width: 100%;
 
