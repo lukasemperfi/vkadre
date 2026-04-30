@@ -1,5 +1,5 @@
 <script setup lang="ts">
-interface MenuItem {
+export interface MenuItem {
   id: string;
   label: string;
   to?: string;
@@ -17,8 +17,16 @@ const emit = defineEmits<{
   "item-click": [payload: { item: MenuItem; event: MouseEvent }];
 }>();
 
-function onItemClick(e: MouseEvent, item: MenuItem, navigate: (e: MouseEvent) => void) {
+function emitItemClick(e: MouseEvent, item: MenuItem) {
   emit("item-click", { item, event: e });
+}
+
+function onItemClick(
+  e: MouseEvent,
+  item: MenuItem,
+  navigate: (e: MouseEvent) => void,
+) {
+  emitItemClick(e, item);
   navigate(e);
 }
 </script>
@@ -27,31 +35,20 @@ function onItemClick(e: MouseEvent, item: MenuItem, navigate: (e: MouseEvent) =>
   <nav class="menu" :aria-label="ariaLabel">
     <ul class="menu__items" role="list">
       <li v-for="item in items" :key="item.id" class="menu__item">
-        <NuxtLink
-          v-if="item.to"
-          v-slot="{ isActive, href, navigate }"
-          :to="item.to"
-          custom
-        >
-          <a
-            :href="href"
-            class="menu__link"
-            :class="{ 'menu__link--active': isActive }"
-            :aria-current="isActive ? 'page' : undefined"
-            @click="(e) => onItemClick(e, item, navigate)"
-          >
-            <UiIcon
-              v-show="isActive"
-              name="menu-arrow"
-              class="menu__icon"
-              aria-hidden="true"
-            />
+        <template v-if="$slots.item">
+          <slot name="item" :item="item" :onItemClick="(e: MouseEvent) => emitItemClick(e, item)" />
+        </template>
+        <template v-else>
+          <UiMenuLink
+            v-if="item.to"
+            :to="item.to"
+            :label="item.label"
+            @click="emitItemClick($event, item)"
+          />
+          <span v-else class="menu__link menu__link--static">
             <span class="menu__link-text">{{ item.label }}</span>
-          </a>
-        </NuxtLink>
-        <span v-else class="menu__link menu__link--static">
-          <span class="menu__link-text">{{ item.label }}</span>
-        </span>
+          </span>
+        </template>
       </li>
     </ul>
   </nav>
@@ -71,50 +68,6 @@ function onItemClick(e: MouseEvent, item: MenuItem, navigate: (e: MouseEvent) =>
 
   &__item {
     display: block;
-    min-width: 0;
-  }
-
-  &__link {
-    display: inline-flex;
-    align-items: center;
-    gap: globalFunctions.fluidValue(4px, 6px, 320px, 1440px);
-    max-width: 100%;
-    font-family: var(--font-family);
-    font-size: globalFunctions.fluidValue(14px, 16px, 320px, 1440px);
-    font-weight: 500;
-    line-height: 1.3;
-    color: var(--black);
-    text-decoration: none;
-    border-radius: 2px;
-    transition: color 0.2s ease;
-
-    &--static {
-      cursor: default;
-      color: var(--gray);
-    }
-
-    &--active {
-      color: var(--black);
-    }
-
-    &:not(.menu__link--static) {
-      cursor: pointer;
-
-      &:focus-visible {
-        outline: 2px solid #d8d8d8;
-        outline-offset: 3px;
-      }
-    }
-  }
-
-  &__item:hover .menu__link:not(.menu__link--static) .menu__link-text {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    text-decoration-color: currentColor;
-  }
-
-  &__link-text {
     min-width: 0;
   }
 }

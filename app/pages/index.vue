@@ -5,6 +5,7 @@
     <HomeHero />
     <HomeAbout />
     <HomeWorks />
+    <HomeServices />
   </div>
 </template>
 

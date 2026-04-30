@@ -1,0 +1,53 @@
+@use "~/assets/styles/functions" as globalFunctions;
+
+.menu__link {
+  display: inline-flex;
+  align-items: center;
+  gap: globalFunctions.fluidValue(4px, 6px, 320px, 1440px);
+  max-width: 100%;
+  font-family: var(--font-family);
+  font-size: globalFunctions.fluidValue(14px, 16px, 320px, 1440px);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--black);
+  text-decoration: none;
+  border-radius: 2px;
+  transition: color 0.2s ease;
+}
+
+.menu__link--static {
+  cursor: default;
+  color: var(--gray);
+}
+
+.menu__link--active {
+  color: var(--black);
+}
+
+.menu__link:not(.menu__link--static) {
+  cursor: pointer;
+}
+
+.menu__link:not(.menu__link--static):focus-visible {
+  outline: 2px solid #d8d8d8;
+  outline-offset: 3px;
+}
+
+.menu__item:hover .menu__link:not(.menu__link--static) .menu__link-text {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: currentColor;
+}
+
+.menu__link-text {
+  min-width: 0;
+}
+
+button.menu__link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+}
