@@ -65,8 +65,12 @@ const sortedPackages = computed(() =>
   border: 1px solid rgba(23, 26, 30, 0.1);
   padding-top: 20px;
   padding-left: 27px;
-  padding-right: 109px;
+  padding-right: 27px;
   padding-bottom: 20px;
+
+  @media (max-width: 1440px) {
+    padding: 16px;
+  }
 }
 
 .service-prices__list {

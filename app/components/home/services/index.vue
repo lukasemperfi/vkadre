@@ -75,11 +75,10 @@ const onTabClick = (item: MenuItem) => {
   .services-tabs {
     display: flex;
     justify-content: space-between;
-    gap: globalFunctions.fluidValue(24px, 138px, 320px, 1440px);
+    gap: globalFunctions.fluidValue(24px, 138px, 768px, 1440px);
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1250px) {
       flex-direction: column;
-      align-items: flex-start;
     }
 
     &__aside {
@@ -93,8 +92,23 @@ const onTabClick = (item: MenuItem) => {
       :deep(.menu) {
         max-height: 617px;
         overflow-y: auto;
+
+        @media (max-width: 1250px) {
+          max-height: 335px;
+        }
+
         .menu__items {
           gap: 35px;
+          margin-right: 34px;
+
+          @media (max-width: 1250px) {
+            display: grid;
+            grid-template-columns: repeat(
+              auto-fill,
+              minmax(260px, max-content)
+            );
+            justify-content: space-between;
+          }
         }
 
         .menu__link {
@@ -103,6 +117,7 @@ const onTabClick = (item: MenuItem) => {
           font-weight: 500;
           font-size: 18px;
           color: var(--black);
+          white-space: nowrap;
         }
       }
     }

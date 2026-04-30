@@ -46,7 +46,6 @@ console.log(props.service);
 <style scoped lang="scss">
 .service-card {
   width: 100%;
-  max-width: 715px;
 }
 
 .service-card__figure {
@@ -83,6 +82,14 @@ console.log(props.service);
   line-height: 160%;
   color: var(--black);
   margin-bottom: globalFunctions.fluidValue(24px, 40px, 320px, 1440px);
+}
+
+:deep(.service-prices) {
+  padding-right: 109px;
+
+  @media (max-width: 1440px) {
+    padding-right: 16px;
+  }
 }
 
 .service-card__cta {
