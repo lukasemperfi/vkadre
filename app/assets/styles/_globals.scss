@@ -1,4 +1,5 @@
 @use "functions" as functions;
+@use "mixins" as mixins;
 
 .h-2 {
   font-family: var(--font-family);
@@ -9,3 +10,5 @@
   color: var(--black);
   white-space: nowrap;
 }
+
+@include mixins.custom-scrollbar;

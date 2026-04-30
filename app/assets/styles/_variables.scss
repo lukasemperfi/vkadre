@@ -6,6 +6,7 @@
   --gray: #171a1e33;
 
   --sb-track-color: transparent;
-  --sb-thumb-color: rgba(255, 255, 255, 0.5);
-  --sb-size: 5px;
+  --sb-thumb-color: var(--black);
+  --sb-thumb-color-hover: rgba(23, 26, 30, 0.5);
+  --sb-size: 2px;
 }

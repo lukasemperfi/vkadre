@@ -29,12 +29,14 @@
 
   *::-webkit-scrollbar-track {
     background: var(--sb-track-color);
-    border-radius: 99px;
   }
 
   *::-webkit-scrollbar-thumb {
     background: var(--sb-thumb-color);
-    border-radius: 99px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--sb-thumb-color-hover, var(--sb-thumb-color));
   }
 
   @supports not selector(::-webkit-scrollbar) {
