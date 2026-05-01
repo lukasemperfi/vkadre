@@ -6,6 +6,12 @@ const { data: photographers } = await useAsyncData("home-team", () =>
 );
 
 const teamCarouselRef = ref(null);
+const isSliderReady = ref(false);
+
+onMounted(async () => {
+  await nextTick();
+  isSliderReady.value = true;
+});
 
 const teamCarouselOptions = {
   slidesPerView: 1.15,
@@ -34,11 +40,17 @@ const teamCarouselOptions = {
       <div class="team__wrapper">
         <div class="team__header">
           <h2 class="team__title h-2">Наша команда</h2>
-          <UiCarouselNavButtons variant="arrow" :carousel="teamCarouselRef" />
+          <UiCarouselNavButtons
+            variant="arrow"
+            :carousel="teamCarouselRef"
+            v-show="isSliderReady"
+          />
         </div>
 
         <div class="team__slider">
+          <HomeTeamSkeleton v-if="!isSliderReady" />
           <UiCarousel
+            v-else
             ref="teamCarouselRef"
             class="team__swiper"
             :items="photographers ?? []"
