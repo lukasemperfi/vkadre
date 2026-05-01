@@ -62,6 +62,11 @@ const locationsCarouselOptions = {
 
 <style scoped lang="scss">
 .locations {
+  &__wrapper {
+    border-bottom: 1px solid var(--gray);
+    padding-bottom: globalFunctions.fluidValue(39px, 99px, 320px, 1440px);
+  }
+
   &__title {
     margin-bottom: globalFunctions.fluidValue(16px, 60px, 320px, 1440px);
   }

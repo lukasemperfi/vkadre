@@ -7,6 +7,7 @@
     <HomeWorks />
     <HomeServices />
     <HomeLocations />
+    <HomeTeam />
   </div>
 </template>
 
@@ -30,6 +31,10 @@
 
   :deep(.locations) {
     margin-top: globalFunctions.fluidValue(40px, 95px, 320px, 1440px);
+  }
+
+  :deep(.team) {
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }
 }
 </style>
