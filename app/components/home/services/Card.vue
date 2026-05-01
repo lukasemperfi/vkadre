@@ -6,8 +6,6 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-
-console.log(props.service);
 </script>
 
 <template>
@@ -67,9 +65,6 @@ console.log(props.service);
   width: 100%;
   height: 100%;
   background: #c4c4c4;
-}
-
-.service-card__body {
 }
 
 .service-card__description {

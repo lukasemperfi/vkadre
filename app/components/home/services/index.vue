@@ -56,6 +56,20 @@ const onTabClick = (item: MenuItem) => {
             <HomeServicesCard v-if="activeService" :service="activeService" />
           </div>
         </div>
+        <div class="services__accordion">
+          <UiAccordion :default-value="services?.[0]?.id ?? null">
+            <UiAccordionItem
+              v-for="service in services"
+              :key="service.id"
+              :value="service.id"
+            >
+              <UiAccordionTrigger>{{ service.title }}</UiAccordionTrigger>
+              <UiAccordionContent>
+                <HomeServicesCard :service="service" />
+              </UiAccordionContent>
+            </UiAccordionItem>
+          </UiAccordion>
+        </div>
       </div>
     </div>
   </section>
@@ -79,6 +93,10 @@ const onTabClick = (item: MenuItem) => {
 
     @media (max-width: 1250px) {
       flex-direction: column;
+    }
+
+    @media (max-width: 768px) {
+      display: none;
     }
 
     &__aside {
