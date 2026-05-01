@@ -6,6 +6,7 @@
     <HomeAbout />
     <HomeWorks />
     <HomeServices />
+    <HomeLocations />
   </div>
 </template>
 
@@ -24,6 +25,10 @@
   }
 
   :deep(.services) {
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+  }
+
+  :deep(.locations) {
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }
 }
