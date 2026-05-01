@@ -13,16 +13,14 @@ const servicesTabs = computed<MenuItem[]>(() =>
   })),
 );
 
-const activeServiceId = ref<string | null>(null);
+const activeServiceId = ref<string | null>(services.value?.[0]?.id ?? null);
 
-watchEffect(() => {
-  if (!activeServiceId.value && servicesTabs.value.length) {
-    activeServiceId.value = servicesTabs.value[0]?.id ?? null;
-  }
-});
+const effectiveActiveServiceId = computed<string | null>(
+  () => activeServiceId.value ?? servicesTabs.value[0]?.id ?? null,
+);
 
 const activeService = computed(() => {
-  const id = activeServiceId.value;
+  const id = effectiveActiveServiceId.value;
   if (!id) return null;
   return (services.value ?? []).find((s) => s.id === id) ?? null;
 });
@@ -44,7 +42,7 @@ const onTabClick = (item: MenuItem) => {
                 <UiMenuButton
                   :label="item.label"
                   @click="onTabClick(item)"
-                  :is-active="activeServiceId === item.id"
+                  :is-active="effectiveActiveServiceId === item.id"
                 />
               </template>
             </UiMenu>
@@ -57,7 +55,8 @@ const onTabClick = (item: MenuItem) => {
           </div>
         </div>
         <div class="services__accordion">
-          <UiAccordion :default-value="services?.[0]?.id ?? null">
+          <h2 class="services__accordion-title h-2">Услуги</h2>
+          <UiAccordion v-model="activeServiceId">
             <UiAccordionItem
               v-for="service in services"
               :key="service.id"
@@ -154,6 +153,15 @@ const onTabClick = (item: MenuItem) => {
         color: var(--black);
         margin-bottom: globalFunctions.fluidValue(16px, 33px, 320px, 1440px);
       }
+    }
+  }
+  &__accordion {
+    display: none;
+    &-title {
+      margin-bottom: 20px;
+    }
+    @media (max-width: 768px) {
+      display: block;
     }
   }
 }

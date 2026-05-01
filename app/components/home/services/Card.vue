@@ -52,6 +52,10 @@ const props = defineProps<Props>();
   background: #c4c4c4;
   overflow: hidden;
   margin-bottom: globalFunctions.fluidValue(24px, 41px, 320px, 1440px);
+
+  @media (max-width: 768px) {
+    aspect-ratio: 272 / 175;
+  }
 }
 
 .service-card__image {

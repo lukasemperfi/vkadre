@@ -118,6 +118,11 @@ const sortedPackages = computed(() =>
   background-size: 6px 2px;
   background-repeat: repeat-x;
   background-position: center;
+  display: block;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .service-prices__price {
