@@ -206,7 +206,7 @@ const closeMenu = () => {
     }
   }
 
-  &__menu-btn {
+  &__menu-btn.icon-button {
     display: none;
 
     @media (max-width: 900px) {

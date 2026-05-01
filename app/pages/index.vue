@@ -14,6 +14,11 @@
   :deep(.home-hero) {
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }
+
+  :deep(.about) {
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+  }
+
   :deep(.works) {
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }

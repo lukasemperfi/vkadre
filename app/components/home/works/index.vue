@@ -171,11 +171,15 @@ $_grid-column-gap: globalFunctions.fluidValue(8px, 36px, 320px, 1440px);
   }
 
   &__mobile-gallery {
-    display: flex;
+    display: none;
     column-gap: 8px;
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
+
+    @media (max-width: $tablet-breakpoint) {
+      display: flex;
+    }
   }
 
   &__slider-controls {
