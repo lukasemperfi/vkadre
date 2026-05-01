@@ -8,7 +8,6 @@
   line-height: functions.fluidValue(34px, 45px, 320px, 1440px);
   text-transform: uppercase;
   color: var(--black);
-  white-space: nowrap;
 }
 
 @include mixins.custom-scrollbar;

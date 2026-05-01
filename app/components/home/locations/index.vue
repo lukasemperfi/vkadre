@@ -1,78 +1,59 @@
 <script setup lang="ts">
-const photos = [
-  { id: 1, src: "https://picsum.photos/seed/w-a1/232/195", alt: "" },
-  { id: 2, src: "https://picsum.photos/seed/w-a2/232/195", alt: "" },
-  { id: 3, src: "https://picsum.photos/seed/w-a3/232/195", alt: "" },
-  { id: 4, src: "https://picsum.photos/seed/w-a4/232/195", alt: "" },
-  { id: 5, src: "https://picsum.photos/seed/w-a5/232/195", alt: "" },
-  { id: 6, src: "https://picsum.photos/seed/w-a6/232/195", alt: "" },
-  { id: 7, src: "https://picsum.photos/seed/w-a7/232/195", alt: "" },
-  { id: 8, src: "https://picsum.photos/seed/w-a8/232/195", alt: "" },
-  { id: 9, src: "https://picsum.photos/seed/w-a9/232/195", alt: "" },
-  { id: 10, src: "https://picsum.photos/seed/w-a10/232/195", alt: "" },
-  { id: 11, src: "https://picsum.photos/seed/w-a11/232/195", alt: "" },
-  { id: 12, src: "https://picsum.photos/seed/w-a12/232/195", alt: "" },
-  { id: 13, src: "https://picsum.photos/seed/w-a13/232/195", alt: "" },
-  { id: 14, src: "https://picsum.photos/seed/w-a14/232/195", alt: "" },
-  { id: 15, src: "https://picsum.photos/seed/w-a15/232/195", alt: "" },
-  { id: 16, src: "https://picsum.photos/seed/w-a16/232/195", alt: "" },
-  { id: 17, src: "https://picsum.photos/seed/w-a17/232/195", alt: "" },
-  { id: 18, src: "https://picsum.photos/seed/w-a18/232/195", alt: "" },
-  { id: 19, src: "https://picsum.photos/seed/w-a19/232/195", alt: "" },
-  { id: 20, src: "https://picsum.photos/seed/w-a20/232/195", alt: "" },
-  { id: 21, src: "https://picsum.photos/seed/w-a21/232/195", alt: "" },
-  { id: 22, src: "https://picsum.photos/seed/w-a22/232/195", alt: "" },
-  { id: 23, src: "https://picsum.photos/seed/w-a23/232/195", alt: "" },
-  { id: 24, src: "https://picsum.photos/seed/w-a24/232/195", alt: "" },
-  { id: 25, src: "https://picsum.photos/seed/w-a25/232/195", alt: "" },
-  { id: 26, src: "https://picsum.photos/seed/w-a26/232/195", alt: "" },
-  { id: 27, src: "https://picsum.photos/seed/w-a27/232/195", alt: "" },
-  { id: 28, src: "https://picsum.photos/seed/w-a28/232/195", alt: "" },
-  { id: 29, src: "https://picsum.photos/seed/w-a29/232/195", alt: "" },
-  { id: 30, src: "https://picsum.photos/seed/w-a30/232/195", alt: "" },
-];
+const { getLocations } = useLocationsApi();
+
+const { data: locations } = await useAsyncData("home-locations", () =>
+  getLocations(),
+);
+
+console.log("locations", locations.value);
 
 const galleryCarouselRef = ref(null);
 
 const locationsCarouselOptions = {
-  slidesPerView: 3,
-  spaceBetween: 20,
+  slidesPerView: 1.15,
+  spaceBetween: 16,
   autoplay: false,
+  breakpoints: {
+    769: {
+      slidesPerView: 2,
+      spaceBetween: 20,
+    },
+    1024: {
+      slidesPerView: 3,
+      spaceBetween: 32,
+    },
+  },
 };
 </script>
 
 <template>
-  <section class="locations">
+  <section v-if="locations && locations.length" class="locations">
     <div class="app-container">
       <div class="locations__wrapper">
-        <h2 class="locations__title h-2">Наши работы</h2>
+        <h2 class="locations__title h-2">Информация о локациях</h2>
         <div class="locations__slider">
           <UiCarousel
             ref="galleryCarouselRef"
             class="locations__swiper"
-            :items="photos"
+            :items="locations"
             :options="locationsCarouselOptions"
           >
             <template #item="{ item }">
-              <div :key="item.id" class="locations__image-wrapper">
-                <NuxtImg
-                  :src="item.src"
-                  :alt="item.alt"
-                  class="locations__image"
-                  format="webp"
-                />
-              </div>
+              <LocationCard :key="item.id" :location="item" />
             </template>
           </UiCarousel>
         </div>
-        <div class="locations__slider-controls">
+
+        <div class="locations__bottom">
+          <UiButton
+            variant="outline"
+            label="Смотреть все Локации"
+            class="locations__button"
+          />
           <UiCarouselNavButtons
             variant="arrow"
             :carousel="galleryCarouselRef"
           />
-        </div>
-        <div class="locations__bottom">
-          <UiButton variant="outline" label="Смотреть все Портфолио" />
         </div>
       </div>
     </div>
@@ -81,22 +62,35 @@ const locationsCarouselOptions = {
 
 <style scoped lang="scss">
 .locations {
-  $tablet-breakpoint: 959px;
   &__title {
     margin-bottom: globalFunctions.fluidValue(16px, 60px, 320px, 1440px);
   }
 
   &__slider {
-    margin-bottom: globalFunctions.fluidValue(40px, 50px, 320px, 1440px);
+    margin-bottom: globalFunctions.fluidValue(40px, 59px, 320px, 1440px);
+
+    @media (max-width: globalBreakpoints.$breakpoint-sm) {
+      margin-right: globalFunctions.fluidValue(-24px, -96px, 320px, 1440px);
+    }
   }
 
-  &__slider-controls {
+  &__bottom {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: -11px;
+    justify-content: space-between;
+    align-items: flex-end;
 
-    @media (max-width: $tablet-breakpoint) {
-      display: none;
+    :deep(.nav-buttons) {
+      transform: translateY(8px);
+
+      @media (max-width: globalBreakpoints.$breakpoint-sm) {
+        display: none;
+      }
+    }
+  }
+
+  &__button {
+    @media (max-width: globalBreakpoints.$breakpoint-sm) {
+      width: 100%;
     }
   }
 }
