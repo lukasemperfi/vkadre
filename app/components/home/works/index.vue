@@ -45,19 +45,13 @@ const slidePhotos = computed(() => {
   return slides;
 });
 
-const useCarouselSlider = ref(false);
-
-onMounted(() => {
-  const mq = window.matchMedia("(min-width: 960px)");
-  const sync = () => {
-    useCarouselSlider.value = mq.matches;
-  };
-  sync();
-  mq.addEventListener("change", sync);
-  onBeforeUnmount(() => mq.removeEventListener("change", sync));
-});
-
 const galleryCarouselRef = ref(null);
+const isSliderReady = ref(false);
+
+onMounted(async () => {
+  await nextTick();
+  isSliderReady.value = true;
+});
 
 const worksCarouselOptions = {
   slidesPerView: 1,
@@ -71,30 +65,20 @@ const worksCarouselOptions = {
     <div class="app-container">
       <div class="works__wrapper">
         <h2 class="works__title h-2">Наши работы</h2>
-        <div
-          class="works__slider"
-          :class="{ works__slider_mobile: !useCarouselSlider }"
-        >
-          <div v-if="!useCarouselSlider" class="works__mobile-gallery">
+        <div class="works__slider">
+          <div class="works__mobile-gallery">
             <template
               v-for="(slideChunk, slideIndex) in slidePhotos"
               :key="slideIndex"
             >
-              <div
-                class="works__photo-grid photo-grid"
-                :class="
-                  useCarouselSlider ? 'photo-grid_desktop' : 'photo-grid_mobile'
-                "
-              >
+              <div class="works__photo-grid photo-grid photo-grid_mobile">
                 <div
                   v-for="(photo, index) in slideChunk"
                   :key="photo.id"
                   :class="[
                     'photo-grid__item',
                     `photo-grid__item--${Number(index) + 1}`,
-                    useCarouselSlider
-                      ? `photo-grid__item--${Number(index) + 1}_desktop`
-                      : `photo-grid__item--${Number(index) + 1}_mobile`,
+                    `photo-grid__item--${Number(index) + 1}_mobile`,
                   ]"
                 >
                   <NuxtImg
@@ -102,43 +86,51 @@ const worksCarouselOptions = {
                     :alt="photo.alt"
                     class="photo-grid__image"
                     format="webp"
+                    :loading="slideIndex === 0 ? 'eager' : 'lazy'"
+                    :fetchpriority="slideIndex === 0 ? 'high' : 'auto'"
                   />
                 </div>
               </div>
             </template>
           </div>
-          <UiCarousel
-            v-else
-            ref="galleryCarouselRef"
-            class="works__swiper"
-            :items="slidePhotos"
-            :options="worksCarouselOptions"
-          >
-            <template #item="{ item }">
-              <div class="works__photo-grid photo-grid">
-                <div
-                  v-for="(photo, index) in item"
-                  :key="photo.id"
-                  :class="[
-                    'photo-grid__item',
-                    `photo-grid__item--${Number(index) + 1}`,
-                  ]"
-                >
-                  <NuxtImg
-                    :src="photo.src"
-                    :alt="photo.alt"
-                    class="photo-grid__image"
-                    format="webp"
-                  />
+          <div class="works__desktop-slider">
+            <HomeWorksSkeleton v-if="!isSliderReady" />
+            <UiCarousel
+              v-else
+              ref="galleryCarouselRef"
+              class="works__swiper"
+              :items="slidePhotos"
+              :options="worksCarouselOptions"
+            >
+              <template #item="{ item, index }">
+                <div class="works__photo-grid photo-grid">
+                  <div
+                    v-for="(photo, i) in item"
+                    :key="photo.id"
+                    :class="[
+                      'photo-grid__item',
+                      `photo-grid__item--${Number(i) + 1}`,
+                    ]"
+                  >
+                    <NuxtImg
+                      :src="photo.src"
+                      :alt="photo.alt"
+                      class="photo-grid__image"
+                      format="webp"
+                      :loading="index === 0 ? 'eager' : 'lazy'"
+                      :fetchpriority="index === 0 ? 'high' : 'auto'"
+                    />
+                  </div>
                 </div>
-              </div>
-            </template>
-          </UiCarousel>
+              </template>
+            </UiCarousel>
+          </div>
         </div>
-        <div v-if="useCarouselSlider" class="works__slider-controls">
+        <div class="works__slider-controls">
           <UiCarouselNavButtons
             variant="arrow"
             :carousel="galleryCarouselRef"
+            v-show="isSliderReady"
           />
         </div>
         <div class="works__bottom">
@@ -165,7 +157,8 @@ $_grid-column-gap: globalFunctions.fluidValue(8px, 36px, 320px, 1440px);
 
   &__slider {
     margin-bottom: globalFunctions.fluidValue(40px, 50px, 320px, 1440px);
-    &_mobile {
+
+    @media (max-width: $tablet-breakpoint) {
       margin-right: globalFunctions.fluidValue(-24px, -96px, 320px, 1440px);
     }
   }
@@ -179,6 +172,12 @@ $_grid-column-gap: globalFunctions.fluidValue(8px, 36px, 320px, 1440px);
 
     @media (max-width: $tablet-breakpoint) {
       display: flex;
+    }
+  }
+
+  &__desktop-slider {
+    @media (max-width: $tablet-breakpoint) {
+      display: none;
     }
   }
 
