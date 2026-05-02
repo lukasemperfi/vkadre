@@ -53,6 +53,12 @@ const galleryCarouselOptions = {
 };
 
 const galleryCarouselRef = ref(null);
+const isSliderReady = ref(false);
+
+onMounted(async () => {
+  await nextTick();
+  isSliderReady.value = true;
+});
 </script>
 
 <template>
@@ -106,10 +112,13 @@ const galleryCarouselRef = ref(null);
               <UiCarouselNavButtons
                 variant="arrow"
                 :carousel="galleryCarouselRef"
+                v-show="isSliderReady"
               />
             </div>
 
+            <HomeHeroSkeleton v-if="!isSliderReady" />
             <UiCarousel
+              v-else
               ref="galleryCarouselRef"
               class="home-hero__swiper"
               :items="carouselSlides"
