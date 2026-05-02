@@ -8,6 +8,8 @@
     <HomeServices />
     <HomeLocations />
     <HomeTeam />
+    <HomeReviews />
+    <HomeFaq />
   </div>
 </template>
 
