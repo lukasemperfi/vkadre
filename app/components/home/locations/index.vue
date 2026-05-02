@@ -8,6 +8,12 @@ const { data: locations } = await useAsyncData("home-locations", () =>
 console.log("locations", locations.value);
 
 const galleryCarouselRef = ref(null);
+const isSliderReady = ref(false);
+
+onMounted(async () => {
+  await nextTick();
+  isSliderReady.value = true;
+});
 
 const locationsCarouselOptions = {
   slidesPerView: 1.15,
@@ -32,7 +38,9 @@ const locationsCarouselOptions = {
       <div class="locations__wrapper">
         <h2 class="locations__title h-2">Информация о локациях</h2>
         <div class="locations__slider">
+          <HomeLocationsSkeleton v-if="!isSliderReady" />
           <UiCarousel
+            v-else
             ref="galleryCarouselRef"
             class="locations__swiper"
             :items="locations"
@@ -53,6 +61,7 @@ const locationsCarouselOptions = {
           <UiCarouselNavButtons
             variant="arrow"
             :carousel="galleryCarouselRef"
+            v-show="isSliderReady"
           />
         </div>
       </div>
