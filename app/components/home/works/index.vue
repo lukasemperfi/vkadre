@@ -279,7 +279,7 @@ $_grid-column-gap: globalFunctions.fluidValue(8px, 36px, 320px, 1440px);
         aspect-ratio: 232 / 168;
         &_mobile {
           // aspect-ratio: 148 / 108;
-          grid-row: 51/78;
+          grid-row: 51/77;
           aspect-ratio: auto;
         }
       }
