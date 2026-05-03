@@ -84,6 +84,9 @@ const closeMenu = () => {
   width: 100%;
   background: #fff;
   padding-top: $padding-top;
+  position: sticky;
+  top: 0;
+  z-index: 99999;
 
   &__shell {
     display: flex;
