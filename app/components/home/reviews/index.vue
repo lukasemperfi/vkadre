@@ -5,8 +5,6 @@ const { data: reviews } = await useAsyncData("home-reviews", () =>
   getLocationReviews(),
 );
 
-console.log("reviews", reviews.value);
-
 const galleryCarouselRef = ref(null);
 
 const reviewsCarouselOptions = {

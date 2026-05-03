@@ -5,8 +5,6 @@ const { data: locations } = await useAsyncData("home-locations", () =>
   getLocations(),
 );
 
-console.log("locations", locations.value);
-
 const galleryCarouselRef = ref(null);
 const isSliderReady = ref(false);
 
