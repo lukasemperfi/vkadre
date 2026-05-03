@@ -10,6 +10,7 @@
     <HomeTeam />
     <HomeReviews />
     <HomeFaq />
+    <HomeContacts />
   </div>
 </template>
 
@@ -44,6 +45,10 @@
   }
 
   :deep(.faq) {
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+  }
+
+  :deep(.contacts) {
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }
 }

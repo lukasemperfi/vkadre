@@ -192,7 +192,6 @@ defineExpose({
     width: 24px;
     height: 24px;
     color: var(--black);
-    opacity: 0.3;
   }
 
   &__affix_left {
@@ -201,6 +200,7 @@ defineExpose({
 
   &__affix_right {
     margin-left: 16px;
+    justify-content: flex-end;
   }
 
   &_has-left &__field {
