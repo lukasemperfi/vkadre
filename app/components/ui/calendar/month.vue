@@ -14,18 +14,10 @@ import {
 } from "./types";
 
 interface Props {
-  /** Any date inside the visible month. The grid is built from it. */
   month: CalendarDate;
-  /**
-   * Sessions grouped by day. Key is `CalendarDate.toString()`
-   * ("YYYY-MM-DD"). Pass only the days that have sessions.
-   */
   sessions?: UiCalendarSessionsMap;
-  /** Currently selected day. `v-model:selected`. */
   selected?: CalendarDate | null;
-  /** Whether the side panel with sessions is open. `v-model:panelOpen`. */
   panelOpen?: boolean;
-  /** BCP 47 locale — controls weekday order and labels. */
   locale?: string;
 }
 
@@ -43,7 +35,6 @@ const emit = defineEmits<{
   "day-click": [day: UiCalendarDay];
 }>();
 
-// 6 недель × 7 дней = всегда 42, независимо от месяца
 const visibleDays = computed<UiCalendarDay[]>(() => {
   const monthStart = startOfMonth(props.month);
   const gridStart = startOfWeek(monthStart, props.locale);
@@ -59,7 +50,6 @@ const visibleDays = computed<UiCalendarDay[]>(() => {
 
 console.log("visibleDays", visibleDays.value);
 
-/** Localized weekday labels in the order that matches `visibleDays`. */
 const weekdayLabels = computed<string[]>(() => {
   const formatter = new Intl.DateTimeFormat(props.locale, { weekday: "long" });
   const start = startOfWeek(startOfMonth(props.month), props.locale);
@@ -68,18 +58,15 @@ const weekdayLabels = computed<string[]>(() => {
   );
 });
 
-/** Number of sessions for a given day cell. */
 function sessionsCountForDay(day: UiCalendarDay): number {
   return props.sessions[day.date.toString()]?.length ?? 0;
 }
 
-/** Sessions of the currently selected day. */
 const selectedSessions = computed<UiCalendarSession[]>(() => {
   if (!props.selected) return [];
   return props.sessions[props.selected.toString()] ?? [];
 });
 
-/** Stable comparison for highlighting the selected cell. */
 function isSelectedDay(day: UiCalendarDay): boolean {
   return props.selected !== null && day.date.compare(props.selected) === 0;
 }
@@ -120,6 +107,7 @@ function closePanel(): void {
           'calendar-month__cell_has-sessions': sessionsCountForDay(day) > 0,
         }"
         @click="handleDayClick(day)"
+        :disabled="!day.isCurrentMonth"
       >
         <span class="calendar-month__day">
           {{ String(day.date.day).padStart(2, "0") }}
@@ -150,7 +138,7 @@ function closePanel(): void {
     grid-row: 1;
     display: grid;
     grid-template-columns: subgrid;
-    column-gap: 0;
+    gap: 0;
   }
   &__grid {
     grid-column: 1 / -1;
@@ -158,7 +146,8 @@ function closePanel(): void {
     display: grid;
     grid-template-columns: subgrid;
     grid-template-rows: subgrid;
-    border: 1px solid #f1f1f1;
+    border-inline: 1px solid #f1f1f1;
+    border-bottom: 1px solid #f1f1f1;
   }
 
   &__weekday,
@@ -183,9 +172,6 @@ function closePanel(): void {
     border: 0;
     appearance: none;
     color: var(--black);
-
-    // важная штука: position + z-index нужны для outline селекта,
-    // чтобы он перекрывал соседние gap-линии, а не уходил под них
     position: relative;
 
     &:hover {
@@ -193,15 +179,16 @@ function closePanel(): void {
     }
 
     &_other-month {
-      opacity: 0.2;
+      cursor: default;
+
       .calendar-month__day,
       .calendar-month__caption {
-        color: var(--gray-light); // 01, 02 серые
+        color: var(--gray-light);
+        opacity: 0.2;
       }
     }
 
     &_selected {
-      // outline не занимает места — соседи не двигаются
       outline: 1px solid var(--black);
       outline-offset: -1px;
       z-index: 2;
@@ -209,14 +196,19 @@ function closePanel(): void {
   }
 
   &__day {
+    font-family: var(--font-family);
     font-weight: 600;
     font-size: 16px;
+    text-transform: uppercase;
+    color: var(--black);
     line-height: 1;
   }
 
   &__caption {
-    color: var(--gray);
+    font-family: var(--font-family);
+    font-weight: 500;
     font-size: 14px;
+    color: var(--gray);
     line-height: 1;
   }
 }
