@@ -97,6 +97,10 @@ const faqItems: FaqItem[] = [
   &__wrapper {
     padding-bottom: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
     border-bottom: 1px solid var(--gray);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   &__title {
@@ -104,6 +108,7 @@ const faqItems: FaqItem[] = [
   }
 
   &__accordion {
+    max-width: 822px;
     :deep(.accordion) {
       gap: 0;
     }
@@ -120,7 +125,7 @@ const faqItems: FaqItem[] = [
 
     :deep(ul) {
       margin: 0 0 12px;
-      padding-left: 20px;
+      padding-left: 32px;
 
       &:last-child {
         margin-bottom: 0;
@@ -129,6 +134,7 @@ const faqItems: FaqItem[] = [
 
     :deep(li) {
       margin-bottom: 4px;
+      list-style: disc;
 
       &:last-child {
         margin-bottom: 0;

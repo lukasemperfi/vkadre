@@ -62,7 +62,7 @@ const reviewsCarouselOptions = {
 .reviews {
   &__wrapper {
     border-bottom: 1px solid var(--gray);
-    padding-bottom: globalFunctions.fluidValue(39px, 99px, 320px, 1440px);
+    padding-bottom: globalFunctions.fluidValue(20px, 51px, 320px, 1440px);
   }
 
   &__title {
@@ -87,6 +87,7 @@ const reviewsCarouselOptions = {
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
+    margin-top: globalFunctions.fluidValue(12px, 24px, 320px, 1440px);
 
     :deep(.nav-buttons) {
       transform: translateY(8px);
@@ -99,8 +100,12 @@ const reviewsCarouselOptions = {
       max-width: 637px;
       display: flex;
       justify-content: space-between;
-
       gap: 50px;
+
+      @media (max-width: globalBreakpoints.$breakpoint-sm) {
+        max-width: 100%;
+        flex: 1;
+      }
     }
   }
 

@@ -38,5 +38,13 @@
   :deep(.team) {
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }
+
+  :deep(.reviews) {
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+  }
+
+  :deep(.faq) {
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+  }
 }
 </style>
