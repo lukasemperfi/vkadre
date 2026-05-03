@@ -43,25 +43,18 @@ const emit = defineEmits<{
   "day-click": [day: UiCalendarDay];
 }>();
 
-/** 35 or 42 cells aligned to the locale's first weekday. */
+// 6 недель × 7 дней = всегда 42, независимо от месяца
 const visibleDays = computed<UiCalendarDay[]>(() => {
   const monthStart = startOfMonth(props.month);
-  const monthEnd = endOfMonth(props.month);
   const gridStart = startOfWeek(monthStart, props.locale);
-  const gridEnd = endOfWeek(monthEnd, props.locale);
 
-  const result: UiCalendarDay[] = [];
-  for (
-    let cursor = gridStart;
-    cursor.compare(gridEnd) <= 0;
-    cursor = cursor.add({ days: 1 })
-  ) {
-    result.push({
-      date: cursor,
-      isCurrentMonth: cursor.month === props.month.month,
-    });
-  }
-  return result;
+  return Array.from({ length: 42 }, (_, i) => {
+    const date = gridStart.add({ days: i });
+    return {
+      date,
+      isCurrentMonth: date.month === props.month.month,
+    };
+  });
 });
 
 console.log("visibleDays", visibleDays.value);
@@ -103,10 +96,128 @@ function closePanel(): void {
 </script>
 
 <template>
-  <div class="calendar-month"></div>
+  <div class="calendar-month" role="grid">
+    <div class="calendar-month__weekdays">
+      <div
+        v-for="weekday in weekdayLabels"
+        :key="weekday"
+        class="calendar-month__weekday"
+        role="columnheader"
+      >
+        {{ weekday }}
+      </div>
+    </div>
+    <div class="calendar-month__grid" role="grid">
+      <button
+        v-for="day in visibleDays"
+        :key="day.date.toString()"
+        type="button"
+        role="gridcell"
+        class="calendar-month__cell"
+        :class="{
+          'calendar-month__cell_other-month': !day.isCurrentMonth,
+          'calendar-month__cell_selected': isSelectedDay(day),
+          'calendar-month__cell_has-sessions': sessionsCountForDay(day) > 0,
+        }"
+        @click="handleDayClick(day)"
+      >
+        <span class="calendar-month__day">
+          {{ String(day.date.day).padStart(2, "0") }}
+        </span>
+        <span
+          v-if="sessionsCountForDay(day) > 0"
+          class="calendar-month__caption"
+        >
+          {{ sessionsCountForDay(day) }} фотосессии
+        </span>
+      </button>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
 .calendar-month {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(160px, 1fr));
+  grid-template-rows: max-content repeat(6, 100px);
+  overflow-x: auto;
+
+  gap: 1px;
+  background-color: #f1f1f1;
+
+  &__weekdays {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: subgrid;
+    column-gap: 0;
+  }
+  &__grid {
+    grid-column: 1 / -1;
+    grid-row: 2 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+    border: 1px solid #f1f1f1;
+  }
+
+  &__weekday,
+  &__cell {
+    background-color: #ffffff;
+  }
+
+  &__weekday {
+    padding: 16px 24px;
+    color: var(--gray);
+    font-weight: 400;
+    font-size: 14px;
+  }
+
+  &__cell {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 24px;
+    text-align: left;
+    cursor: pointer;
+    border: 0;
+    appearance: none;
+    color: var(--black);
+
+    // важная штука: position + z-index нужны для outline селекта,
+    // чтобы он перекрывал соседние gap-линии, а не уходил под них
+    position: relative;
+
+    &:hover {
+      z-index: 1;
+    }
+
+    &_other-month {
+      opacity: 0.2;
+      .calendar-month__day,
+      .calendar-month__caption {
+        color: var(--gray-light); // 01, 02 серые
+      }
+    }
+
+    &_selected {
+      // outline не занимает места — соседи не двигаются
+      outline: 1px solid var(--black);
+      outline-offset: -1px;
+      z-index: 2;
+    }
+  }
+
+  &__day {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  &__caption {
+    color: var(--gray);
+    font-size: 14px;
+    line-height: 1;
+  }
 }
 </style>
