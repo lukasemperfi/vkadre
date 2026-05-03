@@ -57,7 +57,7 @@ const weekdayLabels = computed<string[]>(() => {
     formatter.format(start.add({ days: index }).toDate("UTC")),
   );
 });
-
+console.log("weekdayLabels", weekdayLabels.value);
 function sessionsCountForDay(day: UiCalendarDay): number {
   return props.sessions[day.date.toString()]?.length ?? 0;
 }
@@ -156,17 +156,19 @@ function closePanel(): void {
   }
 
   &__weekday {
-    padding: 16px 24px;
+    padding-block: 16px;
     color: var(--gray);
     font-weight: 400;
     font-size: 14px;
+    text-align: center;
+    text-transform: capitalize;
   }
 
   &__cell {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 16px 24px;
+    padding: 20px;
     text-align: left;
     cursor: pointer;
     border: 0;

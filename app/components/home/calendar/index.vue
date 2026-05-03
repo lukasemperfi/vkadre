@@ -2,10 +2,10 @@
 import { CalendarDate, parseZonedDateTime } from "@internationalized/date";
 import type { UiCalendarSessionsMap } from "~/components/ui/calendar/types";
 
-const month = shallowRef(new CalendarDate(2026, 5, 1));
-const selected = shallowRef<CalendarDate | null>(new CalendarDate(2026, 5, 4));
+const month = shallowRef(new CalendarDate(2026, 6, 1));
+const selected = shallowRef<CalendarDate | null>(new CalendarDate(2026, 6, 3));
 const panelOpen = ref(true);
-
+console.log("month", month.value);
 const sessions = ref<UiCalendarSessionsMap>({
   "2026-05-04": [
     {
