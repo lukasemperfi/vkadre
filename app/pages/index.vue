@@ -1,16 +1,4 @@
-<script setup lang="ts">
-import type { UiPhotoGridItem } from "~/components/ui/photo-grid/types";
-
-const makeDemoPhotos = (prefix: string, count: number): UiPhotoGridItem[] =>
-  Array.from({ length: count }, (_, i) => ({
-    id: `${prefix}-${i + 1}`,
-    src: `https://picsum.photos/seed/${prefix}-${i + 1}/232/195`,
-    alt: "",
-  }));
-
-const demoPhotos2Rows = makeDemoPhotos("pg-demo-2", 10);
-const demoPhotos4Rows = makeDemoPhotos("pg-demo-4", 20);
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="home-page">
@@ -23,27 +11,11 @@ const demoPhotos4Rows = makeDemoPhotos("pg-demo-4", 20);
     <HomeReviews />
     <HomeFaq />
     <HomeContacts />
-    <div class="app-container">
-      <UiPhotoGrid :items="demoPhotos2Rows" />
-      <div style="height: 50px; background-color: teal"></div>
-      <UiPhotoGrid :items="demoPhotos4Rows" />
-    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .home-page {
-  :deep(.ui-photo-grid-block) {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    grid-auto-rows: auto;
-    width: 100%;
-    max-width: 100%;
-  }
-  :deep(.ui-photo-grid-block__item) {
-    grid-row: auto;
-    grid-column: auto;
-  }
-
   :deep(.home-hero) {
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }

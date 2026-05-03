@@ -3,10 +3,6 @@ import { UI_PHOTO_GRID_BLOCK_SIZE, type UiPhotoGridItem } from "./types";
 
 interface Props {
   items: UiPhotoGridItem[];
-  /**
-   * When true, the first block uses eager loading and high fetchpriority.
-   * Use for the first visible grid (e.g. above the fold or first slider page).
-   */
   eager?: boolean;
 }
 
@@ -53,4 +49,20 @@ if (import.meta.dev && props.items.length % UI_PHOTO_GRID_BLOCK_SIZE !== 0) {
     row-gap: 8px;
   }
 }
+
+//for row adaptivity
+// :deep(.ui-photo-grid-block) {
+//   display: flex;
+//   flex-direction: row;
+//   flex-wrap: nowrap;
+//   width: 100%;
+//   max-width: 100%;
+//   overflow-x: auto;
+// }
+// :deep(.ui-photo-grid-block__item) {
+//   grid-row: auto;
+//   grid-column: auto;
+//   flex: 0 0 auto;
+//   width: globalFunctions.fluidValue(256px, 347px, 320px, 1440px);
+// }
 </style>
