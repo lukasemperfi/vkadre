@@ -30,19 +30,21 @@ function close(): void {
   emit("close");
 }
 
+const bodyElement = ref<HTMLElement | null>(null);
+const isBodyScrollLocked = useScrollLock(bodyElement);
+
+onMounted(() => {
+  bodyElement.value = document.body;
+});
+
 const { width } = useWindowSize();
 const shouldLockBodyScroll = computed(
   () => props.isOpen && width.value < MOBILE_DRAWER_MAX_WIDTH,
 );
-const isBodyScrollLocked = useScrollLock(document.body);
 
-watch(
-  shouldLockBodyScroll,
-  (lock) => {
-    isBodyScrollLocked.value = lock;
-  },
-  { immediate: true },
-);
+watch(shouldLockBodyScroll, (lock) => {
+  isBodyScrollLocked.value = lock;
+});
 
 useEventListener(window, "resize", () => {
   if (props.isOpen) {
