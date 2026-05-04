@@ -115,29 +115,28 @@ function handleDayClick(day: UiCalendarDay): void {
 
 <style scoped lang="scss">
 .calendar-month {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(160px, 1fr));
-  grid-template-rows: max-content repeat(6, 100px);
-  overflow-x: auto;
+  width: 100%;
+  aspect-ratio: 1 / 1;
 
-  gap: 1px;
-  background-color: #f1f1f1;
+  display: flex;
+  flex-direction: column;
 
   &__weekdays {
-    grid-column: 1 / -1;
-    grid-row: 1;
     display: grid;
-    grid-template-columns: subgrid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 0;
+    flex: 0 0 auto;
   }
   &__grid {
-    grid-column: 1 / -1;
-    grid-row: 2 / -1;
+    flex: 0 0 auto;
     display: grid;
-    grid-template-columns: subgrid;
-    grid-template-rows: subgrid;
-    border-inline: 1px solid #f1f1f1;
-    border-bottom: 1px solid #f1f1f1;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    gap: 1px;
+    background-color: #f1f1f1;
+    width: 100%;
+    aspect-ratio: 7 / 6;
+    border: 1px solid #f1f1f1;
   }
 
   &__weekday,
