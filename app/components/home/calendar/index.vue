@@ -39,6 +39,52 @@ const sessions = ref<UiCalendarSessionsMap>({
       location: "г. Одесса",
     },
   ],
+  "2026-05-05": [
+    {
+      id: 4,
+      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
+      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
+      title: "парк «Тараса Шевченка». Цветение магнолий.",
+      location: "г. Одесса",
+    },
+    {
+      id: 5,
+      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
+      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
+      title: "парк «Тараса Шевченка». Цветение магнолий.",
+      location: "г. Одесса",
+    },
+    {
+      id: 6,
+      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
+      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
+      title: "парк «Тараса Шевченка». Цветение магнолий.",
+      location: "г. Одесса",
+    },
+    {
+      id: 7,
+      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
+      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
+      title: "парк «Тараса Шевченка». Цветение магнолий.",
+      location: "г. Одесса",
+    },
+    {
+      id: 8,
+      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
+      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
+      title: "парк «Тараса Шевченка». Цветение магнолий.",
+      location: "г. Одесса",
+    },
+  ],
+  "2026-05-06": [
+    {
+      id: 5,
+      start: parseZonedDateTime("2026-05-06T16:00[Europe/Kyiv]"),
+      end: parseZonedDateTime("2026-05-06T20:00[Europe/Kyiv]"),
+      title: "парк «Тараса Шевченка». Цветение магнолий.",
+      location: "г. Одесса",
+    },
+  ],
 });
 
 const selectedSessions = computed<UiCalendarSession[]>(() => {

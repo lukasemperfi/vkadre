@@ -121,6 +121,13 @@ function handleDayClick(day: UiCalendarDay): void {
           >
             {{ sessionsCountForDay(day) }} фотосессии
           </span>
+          <span class="calendar-month__caption_mobile">
+            <span
+              v-for="i in Math.min(sessionsCountForDay(day), 4)"
+              :key="i"
+              class="calendar-month__caption_mobile-item"
+            ></span>
+          </span>
         </button>
       </div>
     </div>
@@ -154,11 +161,9 @@ function handleDayClick(day: UiCalendarDay): void {
     gap: 1px;
     background-color: #f1f1f1;
     width: 100%;
-
     border: 1px solid #f1f1f1;
 
     @container (width < 1248px) {
-      background-color: red;
       grid-template-rows: repeat(6, minmax(0, 1fr));
       aspect-ratio: 7 / 6;
     }
@@ -176,6 +181,10 @@ function handleDayClick(day: UiCalendarDay): void {
     font-size: 14px;
     text-align: center;
     text-transform: capitalize;
+
+    @container (width < 700px) {
+      font-size: 2.5cqi;
+    }
   }
 
   &__weekday-label {
@@ -205,6 +214,12 @@ function handleDayClick(day: UiCalendarDay): void {
     color: var(--black);
     position: relative;
 
+    @container (width < 1248px) {
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+
     &:hover {
       z-index: 1;
     }
@@ -224,6 +239,19 @@ function handleDayClick(day: UiCalendarDay): void {
       outline-offset: -1px;
       z-index: 2;
 
+      @container (width < 700px) {
+        outline: none;
+        background-color: var(--black);
+
+        .calendar-month__day,
+        .calendar-month__caption {
+          color: #ffffff;
+        }
+        .calendar-month__caption_mobile-item {
+          background-color: #ffffff;
+        }
+      }
+
       .calendar-month__caption {
         color: var(--black);
       }
@@ -237,6 +265,11 @@ function handleDayClick(day: UiCalendarDay): void {
     text-transform: uppercase;
     color: var(--black);
     line-height: 1;
+
+    @container (width < 700px) {
+      font-size: 2.5cqi;
+      color: var(--black);
+    }
   }
 
   &__caption {
@@ -245,6 +278,60 @@ function handleDayClick(day: UiCalendarDay): void {
     font-size: 14px;
     color: var(--gray);
     line-height: 1;
+    white-space: nowrap;
+
+    @container (width < 1248px) {
+      position: absolute;
+      bottom: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    @container (width < 1000px) {
+      display: none;
+    }
+
+    &_mobile {
+      display: flex;
+      gap: 4px;
+      display: none;
+
+      @container (width < 1000px) {
+        display: flex;
+        position: absolute;
+        bottom: 8%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 10px;
+        text-align: center;
+        color: var(--black);
+      }
+
+      @container (width < 450px) {
+        gap: 2px;
+      }
+    }
+    &_mobile-item {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--gray);
+
+      @container (width < 700px) {
+        width: 1cqi;
+        height: 1cqi;
+      }
+
+      @container (width < 450px) {
+        width: 4px;
+        height: 4px;
+      }
+    }
   }
 }
 </style>
