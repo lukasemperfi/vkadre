@@ -1,12 +1,30 @@
 <script setup lang="ts">
-import { CalendarDate, parseZonedDateTime } from "@internationalized/date";
+import {
+  CalendarDate,
+  parseZonedDateTime,
+  startOfMonth,
+  today,
+  getLocalTimeZone,
+} from "@internationalized/date";
 import type {
   UiCalendarSession,
   UiCalendarSessionsMap,
 } from "~/components/ui/calendar/types";
 
-const month = shallowRef(new CalendarDate(2026, 5, 1));
+const todayDate = startOfMonth(today(getLocalTimeZone()));
+const month = shallowRef(todayDate);
 const selectedDay = shallowRef<CalendarDate | null>(null);
+
+const isPrevDisabled = computed(() => {
+  const currentView = startOfMonth(month.value);
+  const currentRealMonth = startOfMonth(today(getLocalTimeZone()));
+
+  // Сравниваем объекты напрямую.
+  // Если текущий вид меньше или равен реальному месяцу — блокируем.
+  return currentView.compare(currentRealMonth) <= 0;
+});
+
+console.log("isPrevDisabled", isPrevDisabled.value);
 
 const isDrawerOpen = computed({
   get: () => selectedDay.value !== null,
@@ -95,13 +113,51 @@ const selectedSessions = computed<UiCalendarSession[]>(() => {
 const onClosePanel = () => {
   selectedDay.value = null;
 };
+
+const handlePrev = () => {
+  console.log("Кликнули назад");
+  changeMonth("prev");
+};
+
+const handleNext = () => {
+  console.log("Кликнули вперед");
+  changeMonth("next");
+};
+
+function changeMonth(direction: "prev" | "next") {
+  if (direction === "next") {
+    month.value = month.value.add({ months: 1 });
+  } else {
+    if (isPrevDisabled.value) return;
+    month.value = month.value.subtract({ months: 1 });
+  }
+}
 </script>
 
 <template>
   <section class="calendar">
     <div class="app-container">
       <div class="calendar__wrapper">
-        <h2 class="calendar__title h-2">Календарь</h2>
+        <div class="calendar__header">
+          <h2 class="calendar__title h-2">
+            Календарь на
+            <span class="calendar__month-date">
+              {{
+                month?.toDate("UTC").toLocaleDateString("ru-RU", {
+                  month: "long",
+                })
+              }}
+            </span>
+          </h2>
+
+          <div class="calendar__month-nav">
+            <UiCalendarNavButtons
+              @prev="handlePrev"
+              @next="handleNext"
+              :prev-disabled="isPrevDisabled"
+            />
+          </div>
+        </div>
 
         <UiCalendarMonth
           v-model:selected="selectedDay"
@@ -125,6 +181,19 @@ const onClosePanel = () => {
     border-bottom: 1px solid var(--gray);
     position: relative;
     overflow: clip;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+  }
+
+  &__month-date {
+    color: var(--gray);
+  }
+
+  &__month-nav {
+    margin-left: auto;
   }
 }
 </style>

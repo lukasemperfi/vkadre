@@ -5,6 +5,8 @@ import {
   startOfMonth,
   startOfWeek,
   type CalendarDate,
+  today,
+  getLocalTimeZone,
 } from "@internationalized/date";
 import {
   UI_CALENDAR_DEFAULT_LOCALE,
@@ -31,6 +33,8 @@ const emit = defineEmits<{
   "update:selected": [date: CalendarDate];
   "day-click": [day: UiCalendarDay];
 }>();
+
+const now = today(getLocalTimeZone());
 
 const visibleDays = computed<UiCalendarDay[]>(() => {
   const monthStart = startOfMonth(props.month);
@@ -108,6 +112,7 @@ function handleDayClick(day: UiCalendarDay): void {
             'calendar-month__cell_other-month': !day.isCurrentMonth,
             'calendar-month__cell_selected': isSelectedDay(day),
             'calendar-month__cell_has-sessions': sessionsCountForDay(day) > 0,
+            'calendar-month__cell_current-day': day.date.compare(now) === 0,
           }"
           @click="handleDayClick(day)"
           :disabled="!day.isCurrentMonth"
@@ -255,6 +260,10 @@ function handleDayClick(day: UiCalendarDay): void {
       .calendar-month__caption {
         color: var(--black);
       }
+    }
+
+    &_current-day {
+      background-color: rgb(255 217 247 / 43%);
     }
   }
 
