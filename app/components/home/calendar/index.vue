@@ -112,6 +112,7 @@ const onClosePanel = () => {
         <UiCalendarDrawer
           v-model:is-open="isDrawerOpen"
           :sessions="selectedSessions"
+          :current-date="selectedDay"
         />
       </div>
     </div>

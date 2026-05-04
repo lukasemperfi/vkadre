@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import type { UiCalendarSession } from "./types";
+import type { CalendarDate } from "@internationalized/date";
 
 const MOBILE_DRAWER_MAX_WIDTH = 769;
 
@@ -9,12 +10,14 @@ interface Props {
   isOpen?: boolean;
   locale?: string;
   showDate?: boolean;
+  currentDate?: CalendarDate | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isOpen: false,
   locale: "ru-RU",
   showDate: false,
+  currentDate: null,
 });
 
 const emit = defineEmits<{
@@ -57,14 +60,22 @@ useEventListener(window, "resize", () => {
       aria-label="Сессии выбранного дня"
     >
       <div class="ui-calendar-drawer__header">
-        <button
-          type="button"
+        <div class="ui-calendar-drawer__header-date">
+          {{
+            currentDate?.toDate("UTC").toLocaleDateString("ru-RU", {
+              day: "numeric",
+              month: "long",
+            })
+          }}
+        </div>
+        <UiIconButton
           class="ui-calendar-drawer__close"
           aria-label="Закрыть"
           @click="close"
+          variant="solid"
         >
-          <UiIcon name="cross" class="ui-calendar-drawer__close-icon" />
-        </button>
+          <UiIcon name="cross" />
+        </UiIconButton>
       </div>
       <div class="ui-calendar-drawer__body">
         <div class="ui-calendar-drawer__list">
@@ -123,19 +134,18 @@ useEventListener(window, "resize", () => {
     top: 0;
     background-color: #ffffff;
     padding-inline: 24px;
-    padding-top: 14px;
+    padding-block: 24px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  &__close {
-    align-self: flex-start;
-
-    padding: 8px;
-    margin-left: -8px;
-    background: transparent;
-    border: 0;
-    line-height: 0;
+  &__header-date {
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: uppercase;
     color: var(--black);
-    cursor: pointer;
   }
 
   &__close-icon {
@@ -151,7 +161,8 @@ useEventListener(window, "resize", () => {
 
   &__body {
     padding-inline: 24px;
-    padding-block: 56px;
+    padding-top: 24px;
+    padding-bottom: 48px;
   }
 }
 
