@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import { CalendarDate, parseZonedDateTime } from "@internationalized/date";
-import type { UiCalendarSessionsMap } from "~/components/ui/calendar/types";
+import type {
+  UiCalendarSession,
+  UiCalendarSessionsMap,
+} from "~/components/ui/calendar/types";
 
-const month = shallowRef(new CalendarDate(2026, 6, 1));
-const selected = shallowRef<CalendarDate | null>(new CalendarDate(2026, 6, 3));
-const panelOpen = ref(true);
-console.log("month", month.value);
+const month = shallowRef(new CalendarDate(2026, 5, 1));
+const selectedDay = shallowRef<CalendarDate | null>(null);
+
+const isDrawerOpen = computed({
+  get: () => selectedDay.value !== null,
+  set: (value) => {
+    if (!value) selectedDay.value = null;
+  },
+});
+
 const sessions = ref<UiCalendarSessionsMap>({
   "2026-05-04": [
     {
@@ -31,6 +40,15 @@ const sessions = ref<UiCalendarSessionsMap>({
     },
   ],
 });
+
+const selectedSessions = computed<UiCalendarSession[]>(() => {
+  if (!selectedDay.value) return [];
+  return sessions.value[selectedDay.value.toString()] ?? [];
+});
+
+const onClosePanel = () => {
+  selectedDay.value = null;
+};
 </script>
 
 <template>
@@ -38,12 +56,16 @@ const sessions = ref<UiCalendarSessionsMap>({
     <div class="app-container">
       <div class="calendar__wrapper">
         <h2 class="calendar__title h-2">Календарь</h2>
+
         <UiCalendarMonth
-          v-model:selected="selected"
-          v-model:panel-open="panelOpen"
+          v-model:selected="selectedDay"
           :month="month"
           :sessions="sessions"
           @update:month="month = $event"
+        />
+        <UiCalendarDrawer
+          v-model:is-open="isDrawerOpen"
+          :sessions="selectedSessions"
         />
       </div>
     </div>
@@ -54,6 +76,8 @@ const sessions = ref<UiCalendarSessionsMap>({
   &__wrapper {
     padding-bottom: globalFunctions.fluidValue(40px, 104px, 320px, 1440px);
     border-bottom: 1px solid var(--gray);
+    position: relative;
+    overflow: clip;
   }
 }
 </style>

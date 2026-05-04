@@ -17,21 +17,18 @@ interface Props {
   month: CalendarDate;
   sessions?: UiCalendarSessionsMap;
   selected?: CalendarDate | null;
-  panelOpen?: boolean;
   locale?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   sessions: () => ({}),
   selected: null,
-  panelOpen: false,
   locale: UI_CALENDAR_DEFAULT_LOCALE,
 });
 
 const emit = defineEmits<{
   "update:month": [month: CalendarDate];
   "update:selected": [date: CalendarDate];
-  "update:panelOpen": [value: boolean];
   "day-click": [day: UiCalendarDay];
 }>();
 
@@ -48,8 +45,6 @@ const visibleDays = computed<UiCalendarDay[]>(() => {
   });
 });
 
-console.log("visibleDays", visibleDays.value);
-
 const weekdayLabels = computed<string[]>(() => {
   const formatter = new Intl.DateTimeFormat(props.locale, { weekday: "long" });
   const start = startOfWeek(startOfMonth(props.month), props.locale);
@@ -57,7 +52,7 @@ const weekdayLabels = computed<string[]>(() => {
     formatter.format(start.add({ days: index }).toDate("UTC")),
   );
 });
-console.log("weekdayLabels", weekdayLabels.value);
+
 function sessionsCountForDay(day: UiCalendarDay): number {
   return props.sessions[day.date.toString()]?.length ?? 0;
 }
@@ -74,11 +69,6 @@ function isSelectedDay(day: UiCalendarDay): boolean {
 function handleDayClick(day: UiCalendarDay): void {
   emit("day-click", day);
   emit("update:selected", day.date);
-  if (!props.panelOpen) emit("update:panelOpen", true);
-}
-
-function closePanel(): void {
-  emit("update:panelOpen", false);
 }
 </script>
 
@@ -194,6 +184,10 @@ function closePanel(): void {
       outline: 1px solid var(--black);
       outline-offset: -1px;
       z-index: 2;
+
+      .calendar-month__caption {
+        color: var(--black);
+      }
     }
   }
 
