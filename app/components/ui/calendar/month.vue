@@ -45,12 +45,19 @@ const visibleDays = computed<UiCalendarDay[]>(() => {
   });
 });
 
-const weekdayLabels = computed<string[]>(() => {
-  const formatter = new Intl.DateTimeFormat(props.locale, { weekday: "long" });
+const weekdayLabels = computed<[short: string, long: string][]>(() => {
   const start = startOfWeek(startOfMonth(props.month), props.locale);
-  return Array.from({ length: 7 }, (_, index) =>
-    formatter.format(start.add({ days: index }).toDate("UTC")),
-  );
+  const longFormatter = new Intl.DateTimeFormat(props.locale, {
+    weekday: "long",
+  });
+  const shortFormatter = new Intl.DateTimeFormat(props.locale, {
+    weekday: "short",
+  });
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const d = start.add({ days: index }).toDate("UTC");
+    return [shortFormatter.format(d), longFormatter.format(d)];
+  });
 });
 
 function sessionsCountForDay(day: UiCalendarDay): number {
@@ -73,57 +80,69 @@ function handleDayClick(day: UiCalendarDay): void {
 </script>
 
 <template>
-  <div class="calendar-month" role="grid">
-    <div class="calendar-month__weekdays">
-      <div
-        v-for="weekday in weekdayLabels"
-        :key="weekday"
-        class="calendar-month__weekday"
-        role="columnheader"
-      >
-        {{ weekday }}
-      </div>
-    </div>
-    <div class="calendar-month__grid" role="grid">
-      <button
-        v-for="day in visibleDays"
-        :key="day.date.toString()"
-        type="button"
-        role="gridcell"
-        class="calendar-month__cell"
-        :class="{
-          'calendar-month__cell_other-month': !day.isCurrentMonth,
-          'calendar-month__cell_selected': isSelectedDay(day),
-          'calendar-month__cell_has-sessions': sessionsCountForDay(day) > 0,
-        }"
-        @click="handleDayClick(day)"
-        :disabled="!day.isCurrentMonth"
-      >
-        <span class="calendar-month__day">
-          {{ String(day.date.day).padStart(2, "0") }}
-        </span>
-        <span
-          v-if="sessionsCountForDay(day) > 0"
-          class="calendar-month__caption"
+  <div class="calendar-month-container">
+    <div class="calendar-month" role="grid">
+      <div class="calendar-month__weekdays">
+        <div
+          v-for="weekday in weekdayLabels"
+          :key="weekday[1]"
+          class="calendar-month__weekday"
+          role="columnheader"
         >
-          {{ sessionsCountForDay(day) }} фотосессии
-        </span>
-      </button>
+          <span class="calendar-month__weekday-label_desktop">
+            {{ weekday[1] }}
+          </span>
+          <span class="calendar-month__weekday-label_mobile">
+            {{ weekday[0] }}
+          </span>
+        </div>
+      </div>
+      <div class="calendar-month__grid" role="grid">
+        <button
+          v-for="day in visibleDays"
+          :key="day.date.toString()"
+          type="button"
+          role="gridcell"
+          class="calendar-month__cell"
+          :class="{
+            'calendar-month__cell_other-month': !day.isCurrentMonth,
+            'calendar-month__cell_selected': isSelectedDay(day),
+            'calendar-month__cell_has-sessions': sessionsCountForDay(day) > 0,
+          }"
+          @click="handleDayClick(day)"
+          :disabled="!day.isCurrentMonth"
+        >
+          <span class="calendar-month__day">
+            {{ String(day.date.day).padStart(2, "0") }}
+          </span>
+          <span
+            v-if="sessionsCountForDay(day) > 0"
+            class="calendar-month__caption"
+          >
+            {{ sessionsCountForDay(day) }} фотосессии
+          </span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.calendar-month-container {
+  container-type: inline-size;
+}
 .calendar-month {
   width: 100%;
-  aspect-ratio: 1 / 1;
-
   display: flex;
   flex-direction: column;
 
+  @media (max-width: 1439px) {
+    aspect-ratio: 1 / 1;
+  }
+
   &__weekdays {
     display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-columns: repeat(7, 1fr);
     gap: 0;
     flex: 0 0 auto;
   }
@@ -131,12 +150,18 @@ function handleDayClick(day: UiCalendarDay): void {
     flex: 0 0 auto;
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    grid-template-rows: repeat(6, minmax(0, 1fr));
+    grid-template-rows: repeat(6, 100px);
     gap: 1px;
     background-color: #f1f1f1;
     width: 100%;
-    aspect-ratio: 7 / 6;
+
     border: 1px solid #f1f1f1;
+
+    @container (width < 1248px) {
+      background-color: red;
+      grid-template-rows: repeat(6, minmax(0, 1fr));
+      aspect-ratio: 7 / 6;
+    }
   }
 
   &__weekday,
@@ -151,6 +176,21 @@ function handleDayClick(day: UiCalendarDay): void {
     font-size: 14px;
     text-align: center;
     text-transform: capitalize;
+  }
+
+  &__weekday-label {
+    &_desktop {
+      display: block;
+      @container (width < 1248px) {
+        display: none;
+      }
+    }
+    &_mobile {
+      display: none;
+      @container (width < 1248px) {
+        display: block;
+      }
+    }
   }
 
   &__cell {
