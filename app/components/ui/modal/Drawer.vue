@@ -4,9 +4,11 @@ import { UI_MODAL_INJECTION_KEY, type UiModalContext } from "./context";
 const props = withDefaults(
   defineProps<{
     disableTransition?: boolean;
+    position?: "absolute" | "fixed";
   }>(),
   {
     disableTransition: false,
+    position: "fixed",
   },
 );
 
@@ -39,11 +41,12 @@ provide(UI_MODAL_INJECTION_KEY, context);
 <template>
   <Teleport to="body">
     <Transition name="ui-modal-drawer" :css="!props.disableTransition">
-      <div v-if="isOpen" class="ui-modal-drawer-group">
-        <div
-          class="ui-modal-drawer-group__positioner"
-          @click.self="close"
-        >
+      <div
+        v-if="isOpen"
+        class="ui-modal-drawer-group"
+        :style="{ position: props.position }"
+      >
+        <div class="ui-modal-drawer-group__positioner" @click.self="close">
           <slot />
         </div>
       </div>
@@ -58,7 +61,7 @@ provide(UI_MODAL_INJECTION_KEY, context);
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 9999;
+  z-index: 99999;
 }
 
 .ui-modal-drawer-group__positioner {

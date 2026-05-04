@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { computed, watch } from "vue";
 import type { UiCalendarSession } from "./types";
+
+const MOBILE_DRAWER_MAX_WIDTH = 769;
 
 interface Props {
   sessions: UiCalendarSession[];
@@ -23,6 +26,26 @@ function close(): void {
   emit("update:isOpen", false);
   emit("close");
 }
+
+const { width } = useWindowSize();
+const shouldLockBodyScroll = computed(
+  () => props.isOpen && width.value < MOBILE_DRAWER_MAX_WIDTH,
+);
+const isBodyScrollLocked = useScrollLock(document.body);
+
+watch(
+  shouldLockBodyScroll,
+  (lock) => {
+    isBodyScrollLocked.value = lock;
+  },
+  { immediate: true },
+);
+
+useEventListener(window, "resize", () => {
+  if (props.isOpen) {
+    close();
+  }
+});
 </script>
 
 <template>
@@ -74,8 +97,25 @@ function close(): void {
   font-family: var(--font-family);
   box-shadow: 0 14px 20px 0 rgba(0, 0, 0, 0.15);
 
+  @media (max-width: 1439px) {
+    width: 30vw;
+  }
+
+  @media (max-width: 1249px) {
+    width: 50vw;
+  }
+
   @media (max-width: globalBreakpoints.$breakpoint-sm) {
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border: none;
+    z-index: 99999;
   }
 
   &__header {
