@@ -5,21 +5,24 @@ import {
   startOfMonth,
   today,
   getLocalTimeZone,
+  startOfWeek,
+  endOfWeek,
 } from "@internationalized/date";
 import type {
   UiCalendarSession,
   UiCalendarSessionsMap,
 } from "~/components/ui/calendar/types";
 
-type DesktopViewType = "month" | "week" | "day";
-type MobileViewType = "calendar" | "list";
+type ViewType = "calendar" | "list" | "week" | "3_days";
 
 const todayDate = startOfMonth(today(getLocalTimeZone()));
 const month = shallowRef(todayDate);
 const selectedDay = shallowRef<CalendarDate | null>(null);
 const cityActiveTab = ref("odessa");
-const desktopViewActiveTab = ref<DesktopViewType>("month");
-const mobileViewActiveTab = ref<MobileViewType>("calendar");
+const viewActiveTab = ref<ViewType>("calendar");
+const isShowMonthNav = computed(() => {
+  return viewActiveTab.value === "calendar" || viewActiveTab.value === "week";
+});
 
 const isPrevDisabled = computed(() => {
   const currentView = startOfMonth(month.value);
@@ -153,10 +156,36 @@ const handleViewTabChange = ({
   console.log("Стала активна (нажали):", active);
 };
 
-const handleMobileViewChange = (view: MobileViewType) => {
-  mobileViewActiveTab.value = view;
+const handleMobileViewChange = (view: ViewType) => {
+  viewActiveTab.value = view;
   console.log("Активна:", view);
 };
+
+const formattedDateTitle = computed(() => {
+  if (!month.value) return "";
+
+  const date = month.value.toDate("UTC");
+  const locale = "ru-RU";
+
+  if (viewActiveTab.value === "week" || viewActiveTab.value === "3_days") {
+    const start = startOfWeek(month.value, locale);
+    const end = endOfWeek(month.value, locale);
+
+    const startDay = start.day;
+    const endDay = end.day;
+    const monthName = end
+      .toDate("UTC")
+      .toLocaleDateString(locale, {
+        day: "numeric",
+        month: "long",
+      })
+      .split(" ")[1];
+
+    return `${startDay}-${endDay} ${monthName?.replace(/\s*г\.$/, "")}`;
+  }
+
+  return date.toLocaleDateString(locale, { month: "long" });
+});
 </script>
 
 <template>
@@ -167,12 +196,8 @@ const handleMobileViewChange = (view: MobileViewType) => {
           <div class="calendar__header">
             <h2 class="calendar__title h-2">
               Календарь<span class="calendar__title_part"> на </span>
-              <span class="calendar__month-date">
-                {{
-                  month?.toDate("UTC").toLocaleDateString("ru-RU", {
-                    month: "long",
-                  })
-                }}
+              <span class="calendar__month-date" v-show="isShowMonthNav">
+                {{ formattedDateTitle }}
               </span>
             </h2>
             <div class="calendar__month-nav">
@@ -180,16 +205,16 @@ const handleMobileViewChange = (view: MobileViewType) => {
                 @prev="handlePrev"
                 @next="handleNext"
                 :prev-disabled="isPrevDisabled"
+                v-show="isShowMonthNav"
               />
             </div>
             <div class="calendar__actions">
               <button
                 class="calendar__actions-btn"
                 :class="{
-                  'calendar__actions-btn_active':
-                    mobileViewActiveTab === 'list',
+                  'calendar__actions-btn_active': viewActiveTab === 'list',
                 }"
-                :disabled="mobileViewActiveTab === 'list'"
+                :disabled="viewActiveTab === 'list'"
                 @click="handleMobileViewChange('list')"
               >
                 <UiIcon name="list" />
@@ -198,10 +223,9 @@ const handleMobileViewChange = (view: MobileViewType) => {
               <button
                 class="calendar__actions-btn"
                 :class="{
-                  'calendar__actions-btn_active':
-                    mobileViewActiveTab === 'calendar',
+                  'calendar__actions-btn_active': viewActiveTab === 'calendar',
                 }"
-                :disabled="mobileViewActiveTab === 'calendar'"
+                :disabled="viewActiveTab === 'calendar'"
                 @click="handleMobileViewChange('calendar')"
               >
                 <UiIcon name="calendar" />
@@ -217,35 +241,39 @@ const handleMobileViewChange = (view: MobileViewType) => {
               </UiTabs>
             </div>
             <div class="calendar__view-tabs">
-              <UiTabs
-                v-model="desktopViewActiveTab"
-                @change="handleViewTabChange"
-              >
+              <UiTabs v-model="viewActiveTab" @change="handleViewTabChange">
                 <UiTabsList class="calendar__view-tabs-list">
-                  <UiTabsTrigger id="day">3 дня</UiTabsTrigger>
+                  <UiTabsTrigger id="3_days">3 дня</UiTabsTrigger>
                   <UiTabsTrigger id="week">7 дней</UiTabsTrigger>
-                  <UiTabsTrigger id="month">1 Месяц</UiTabsTrigger>
+                  <UiTabsTrigger id="calendar">1 Месяц</UiTabsTrigger>
                 </UiTabsList>
               </UiTabs>
             </div>
           </div>
-          <hr class="calendar__divider" />
 
-          <UiCalendarMonthNav class="calendar__month-nav-block">
-            <UiCalendarDateTitle :month="month" />
-            <UiCalendarNavButtons
-              @prev="handlePrev"
-              @next="handleNext"
-              :prev-disabled="isPrevDisabled"
+          <div class="ui-calendar" v-show="viewActiveTab === 'calendar'">
+            <UiCalendarMonthNav class="calendar__month-nav-block">
+              <UiCalendarDateTitle :month="month" />
+              <UiCalendarNavButtons
+                @prev="handlePrev"
+                @next="handleNext"
+                :prev-disabled="isPrevDisabled"
+              />
+            </UiCalendarMonthNav>
+
+            <UiCalendarMonth
+              v-model:selected="selectedDay"
+              :month="month"
+              :sessions="sessions"
+              @update:month="month = $event"
             />
-          </UiCalendarMonthNav>
-
-          <UiCalendarMonth
-            v-model:selected="selectedDay"
-            :month="month"
-            :sessions="sessions"
-            @update:month="month = $event"
-          />
+          </div>
+          <div class="week-calendar" v-show="viewActiveTab === 'week'">
+            week
+          </div>
+          <div class="days-calendar" v-show="viewActiveTab === '3_days'">
+            days
+          </div>
           <UiCalendarDrawer
             v-model:is-open="isDrawerOpen"
             :sessions="selectedSessions"
@@ -272,14 +300,15 @@ const handleMobileViewChange = (view: MobileViewType) => {
 
   &__header {
     display: grid;
-    grid-template-columns: repeat(4, max-content);
+    grid-template-columns: max-content 1fr max-content max-content;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
+
     margin-bottom: globalFunctions.fluidValue(24px, 60px, 320px, 1440px);
 
-    @container (width < 950px) {
+    @container (width < 1150px) {
       grid-template-columns: repeat(2, max-content);
+      gap: 30px;
     }
   }
 
@@ -318,9 +347,11 @@ const handleMobileViewChange = (view: MobileViewType) => {
   }
 
   &__city-tabs {
-    // @media (max-width: $tablet-breakpoint) {
-    //   display: none;
-    // }
+    padding-left: 5vw;
+
+    @container (width < 1150px) {
+      padding-left: 0;
+    }
 
     @container (width < 650px) {
       display: none;
@@ -328,9 +359,11 @@ const handleMobileViewChange = (view: MobileViewType) => {
   }
 
   &__view-tabs {
-    // @media (max-width: $tablet-breakpoint) {
-    //   display: none;
-    // }
+    padding-left: 5vw;
+
+    @container (width < 1150px) {
+      padding-left: 0;
+    }
 
     @container (width < 650px) {
       display: none;
