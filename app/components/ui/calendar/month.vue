@@ -158,10 +158,6 @@ function handleDayClick(day: UiCalendarDay): void {
     grid-template-columns: repeat(7, 1fr);
     gap: 0;
     flex: 0 0 auto;
-
-    @media (max-width: 450px) {
-      display: none;
-    }
   }
   &__grid {
     flex: 0 0 auto;
