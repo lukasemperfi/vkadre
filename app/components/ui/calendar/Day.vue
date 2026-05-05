@@ -7,6 +7,7 @@ interface Props {
   events: UiCalendarEvent[];
   locale?: string;
   showDateInCard?: boolean;
+  currentDay?: boolean;
 }
 
 console.log("sdfsdf");
@@ -14,6 +15,7 @@ console.log("sdfsdf");
 const props = withDefaults(defineProps<Props>(), {
   locale: "ru-RU",
   showDateInCard: false,
+  currentDay: false,
 });
 
 // "16 марта"
@@ -36,7 +38,7 @@ const dayOfWeek = computed(() => {
 </script>
 
 <template>
-  <div class="day">
+  <div class="day" :class="{ 'day_current-day': currentDay }">
     <div class="day__header">
       <div class="day__date">
         <div class="day__date-num">{{ formattedDate }}</div>
@@ -54,9 +56,8 @@ const dayOfWeek = computed(() => {
           :locale="locale"
           class="day__event-card"
         >
-          <UiCalendarEventCardTime />
           <UiCalendarEventCardTitle />
-          <UiCalendarEventCardLocation />
+          <UiCalendarEventCardTime />
         </UiCalendarEventCard>
       </template>
       <div v-else class="day__empty">Нет событий на этот день</div>
@@ -66,41 +67,36 @@ const dayOfWeek = computed(() => {
 
 <style scoped lang="scss">
 .day {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+  padding-top: 28px;
 
-  &__header {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    padding-bottom: 10px;
-  }
-
-  &__date {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  &__date-num {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--black, #000);
-    text-transform: lowercase;
-    white-space: nowrap;
-
-    &:first-letter {
-      text-transform: uppercase;
+  &_current-day {
+    border-top: 2px solid var(--black);
+    .day__date-num {
+      font-weight: 600;
     }
   }
 
-  &__weekday {
-    font-size: 16px;
+  &__header {
+    margin-bottom: 22px;
+  }
+
+  &__date-num {
+    font-family: var(--font-family);
     font-weight: 400;
-    color: var(--gray, #888);
-    text-transform: lowercase;
+    font-size: 24px;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 6px;
+  }
+
+  &__weekday {
+    font-family: var(--font-family);
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--black);
+    opacity: 0.4;
   }
 
   &__events {
@@ -108,21 +104,10 @@ const dayOfWeek = computed(() => {
     flex-direction: column;
     gap: 16px;
   }
-
-  &__event-card {
-    // Можно добавить стили для разделения карточек,
-    // если они не предусмотрены в самом компоненте
-    &:not(:last-child) {
-      padding-bottom: 16px;
-      border-bottom: 1px dashed #d8d8d8;
-    }
-  }
-
   &__empty {
     font-size: 14px;
     color: var(--gray);
     font-style: italic;
-    padding: 10px 0;
   }
 }
 </style>

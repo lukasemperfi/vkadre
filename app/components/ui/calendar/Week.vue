@@ -94,6 +94,10 @@ function getEventsForDay(day: CalendarDate): UiCalendarEvent[] {
         :date="day.date"
         :events="getEventsForDay(day.date)"
         :show-date-in-card="false"
+        :class="{
+          'week__day_current-day': day.date.compare(now) === 0,
+        }"
+        :current-day="day.date.compare(now) === 0"
       />
     </div>
   </div>
@@ -102,7 +106,9 @@ function getEventsForDay(day: CalendarDate): UiCalendarEvent[] {
 <style scoped lang="scss">
 .week {
   &__days {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+    gap: 32px;
   }
 }
 </style>
