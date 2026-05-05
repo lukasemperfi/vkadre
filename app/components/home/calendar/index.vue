@@ -14,17 +14,15 @@ import type {
 const todayDate = startOfMonth(today(getLocalTimeZone()));
 const month = shallowRef(todayDate);
 const selectedDay = shallowRef<CalendarDate | null>(null);
+const cityActiveTab = ref("odessa");
+const viewActiveTab = ref("month");
 
 const isPrevDisabled = computed(() => {
   const currentView = startOfMonth(month.value);
   const currentRealMonth = startOfMonth(today(getLocalTimeZone()));
 
-  // Сравниваем объекты напрямую.
-  // Если текущий вид меньше или равен реальному месяцу — блокируем.
   return currentView.compare(currentRealMonth) <= 0;
 });
-
-console.log("isPrevDisabled", isPrevDisabled.value);
 
 const isDrawerOpen = computed({
   get: () => selectedDay.value !== null,
@@ -132,6 +130,28 @@ function changeMonth(direction: "prev" | "next") {
     month.value = month.value.subtract({ months: 1 });
   }
 }
+
+const handleCityTabChange = ({
+  active,
+  prev,
+}: {
+  active: string | number;
+  prev: string | number;
+}) => {
+  console.log("Была активна:", prev);
+  console.log("Стала активна (нажали):", active);
+};
+
+const handleViewTabChange = ({
+  active,
+  prev,
+}: {
+  active: string | number;
+  prev: string | number;
+}) => {
+  console.log("Была активна:", prev);
+  console.log("Стала активна (нажали):", active);
+};
 </script>
 
 <template>
@@ -149,7 +169,6 @@ function changeMonth(direction: "prev" | "next") {
               }}
             </span>
           </h2>
-
           <div class="calendar__month-nav">
             <UiCalendarNavButtons
               @prev="handlePrev"
@@ -157,8 +176,26 @@ function changeMonth(direction: "prev" | "next") {
               :prev-disabled="isPrevDisabled"
             />
           </div>
-        </div>
 
+          <div class="calendar__city-tabs">
+            <UiTabs v-model="cityActiveTab" @change="handleCityTabChange">
+              <UiTabsList class="calendar__city-tabs-list">
+                <UiTabsTrigger id="odessa">Одесса</UiTabsTrigger>
+                <UiTabsTrigger id="south">Южный</UiTabsTrigger>
+              </UiTabsList>
+            </UiTabs>
+          </div>
+          <div class="calendar__view-tabs">
+            <UiTabs v-model="viewActiveTab" @change="handleViewTabChange">
+              <UiTabsList class="calendar__view-tabs-list">
+                <UiTabsTrigger id="day">3 дня</UiTabsTrigger>
+                <UiTabsTrigger id="week">7 дней</UiTabsTrigger>
+                <UiTabsTrigger id="month">1 Месяц</UiTabsTrigger>
+              </UiTabsList>
+            </UiTabs>
+          </div>
+        </div>
+        <hr class="calendar__divider" />
         <UiCalendarMonth
           v-model:selected="selectedDay"
           :month="month"
@@ -176,6 +213,8 @@ function changeMonth(direction: "prev" | "next") {
 </template>
 <style scoped lang="scss">
 .calendar {
+  $mobile-breakpoint: 749px;
+
   &__wrapper {
     padding-bottom: globalFunctions.fluidValue(40px, 104px, 320px, 1440px);
     border-bottom: 1px solid var(--gray);
@@ -184,8 +223,20 @@ function changeMonth(direction: "prev" | "next") {
   }
 
   &__header {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
     align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: globalFunctions.fluidValue(24px, 60px, 320px, 1440px);
+
+    @media (max-width: 1099px) {
+      grid-template-columns: repeat(2, max-content);
+    }
+  }
+
+  &__title {
+    font-size: globalFunctions.fluidValue(24px, 32px, 320px, 1440px);
   }
 
   &__month-date {
@@ -194,6 +245,32 @@ function changeMonth(direction: "prev" | "next") {
 
   &__month-nav {
     margin-left: auto;
+  }
+
+  &__city-tabs,
+  &__view-tabs {
+    :deep(.tabs-list) {
+      padding: 0;
+      border: none;
+    }
+  }
+
+  &__city-tabs {
+    @media (max-width: $mobile-breakpoint) {
+      display: none;
+    }
+  }
+
+  &__view-tabs {
+    @media (max-width: $mobile-breakpoint) {
+      display: none;
+    }
+  }
+
+  &__divider {
+    width: 100%;
+    height: 1px;
+    background-color: #f1f1f1;
   }
 }
 </style>

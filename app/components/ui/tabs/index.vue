@@ -3,6 +3,13 @@ interface Props {
   defaultTab?: string | number;
 }
 
+const emit = defineEmits<{
+  (
+    e: "change",
+    payload: { active: string | number; prev: string | number },
+  ): void;
+}>();
+
 const props = defineProps<Props>();
 const activeTab = defineModel<string | number>({ default: "" });
 
@@ -11,7 +18,12 @@ if (props.defaultTab && !activeTab.value) {
 }
 
 const setActiveTab = (id: string | number) => {
-  activeTab.value = id;
+  const previousTab = activeTab.value;
+
+  if (previousTab !== id) {
+    emit("change", { active: id, prev: previousTab });
+    activeTab.value = id;
+  }
 };
 
 provide("tabsContext", {

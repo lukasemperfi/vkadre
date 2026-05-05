@@ -17,8 +17,8 @@ const emit = defineEmits<{
     >
       <UiIcon name="chevron-left" />
     </button>
-    <button class="ui-calendar-nav-buttons__button">
-      <UiIcon name="chevron-right" @click="emit('next')" />
+    <button class="ui-calendar-nav-buttons__button" @click="emit('next')">
+      <UiIcon name="chevron-right" />
     </button>
   </div>
 </template>

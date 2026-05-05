@@ -11,6 +11,7 @@ const props = withDefaults(
     variant: "line",
   },
 );
+
 const context = inject<any>("tabsContext");
 
 const isActive = computed(() => context.activeTab.value === props.id);

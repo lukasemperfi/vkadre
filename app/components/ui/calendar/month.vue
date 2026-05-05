@@ -113,9 +113,10 @@ function handleDayClick(day: UiCalendarDay): void {
             'calendar-month__cell_selected': isSelectedDay(day),
             'calendar-month__cell_has-sessions': sessionsCountForDay(day) > 0,
             'calendar-month__cell_current-day': day.date.compare(now) === 0,
+            'calendar-month__cell_past-date': day.date.compare(now) < 0,
           }"
           @click="handleDayClick(day)"
-          :disabled="!day.isCurrentMonth"
+          :disabled="!day.isCurrentMonth || day.date.compare(now) < 0"
         >
           <span class="calendar-month__day">
             {{ String(day.date.day).padStart(2, "0") }}
@@ -181,7 +182,7 @@ function handleDayClick(day: UiCalendarDay): void {
 
   &__weekday {
     padding-block: 16px;
-    color: var(--gray);
+    color: var(--black);
     font-weight: 400;
     font-size: 14px;
     text-align: center;
@@ -264,6 +265,14 @@ function handleDayClick(day: UiCalendarDay): void {
 
     &_current-day {
       background-color: rgb(255 217 247 / 43%);
+    }
+
+    &_past-date {
+      pointer-events: none;
+    }
+
+    &:disabled {
+      cursor: default;
     }
   }
 

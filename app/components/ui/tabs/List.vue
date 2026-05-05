@@ -114,11 +114,11 @@ onUnmounted(() => {
         aria-hidden="true"
       ></div> -->
     </div>
-    <div
+    <!-- <div
       v-if="variant === 'line'"
       class="tabs-line-base"
       aria-hidden="true"
-    ></div>
+    ></div> -->
   </div>
 </template>
 
