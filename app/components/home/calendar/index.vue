@@ -196,6 +196,16 @@ const handleViewTabChange = ({
           </div>
         </div>
         <hr class="calendar__divider" />
+
+        <UiCalendarMonthNav class="calendar__month-nav-block">
+          <UiCalendarDateTitle :month="month" />
+          <UiCalendarNavButtons
+            @prev="handlePrev"
+            @next="handleNext"
+            :prev-disabled="isPrevDisabled"
+          />
+        </UiCalendarMonthNav>
+
         <UiCalendarMonth
           v-model:selected="selectedDay"
           :month="month"
@@ -271,6 +281,13 @@ const handleViewTabChange = ({
     width: 100%;
     height: 1px;
     background-color: #f1f1f1;
+  }
+
+  :deep(.month-nav) {
+    display: none;
+    @media (max-width: 450px) {
+      display: flex;
+    }
   }
 }
 </style>
