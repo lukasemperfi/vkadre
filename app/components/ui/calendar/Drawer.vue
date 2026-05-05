@@ -81,13 +81,16 @@ useEventListener(window, "resize", () => {
       </div>
       <div class="ui-calendar-drawer__body">
         <div class="ui-calendar-drawer__list">
-          <UiCalendarSessionCard
+          <UiCalendarEventCard
             v-for="session in sessions"
-            :key="session.id"
-            :session="session"
-            :locale="locale"
+            :event="session"
             :show-date="showDate"
-          />
+            :locale="locale"
+          >
+            <UiCalendarEventCardTime />
+            <UiCalendarEventCardTitle />
+            <UiCalendarEventCardLocation />
+          </UiCalendarEventCard>
         </div>
       </div>
     </aside>
