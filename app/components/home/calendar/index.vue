@@ -11,13 +11,14 @@ import type {
   UiCalendarSessionsMap,
 } from "~/components/ui/calendar/types";
 
+type DesktopViewType = "month" | "week" | "day";
 type MobileViewType = "calendar" | "list";
 
 const todayDate = startOfMonth(today(getLocalTimeZone()));
 const month = shallowRef(todayDate);
 const selectedDay = shallowRef<CalendarDate | null>(null);
 const cityActiveTab = ref("odessa");
-const viewActiveTab = ref("month");
+const desktopViewActiveTab = ref<DesktopViewType>("month");
 const mobileViewActiveTab = ref<MobileViewType>("calendar");
 
 const isPrevDisabled = computed(() => {
@@ -110,10 +111,6 @@ const selectedSessions = computed<UiCalendarSession[]>(() => {
   if (!selectedDay.value) return [];
   return sessions.value[selectedDay.value.toString()] ?? [];
 });
-
-const onClosePanel = () => {
-  selectedDay.value = null;
-};
 
 const handlePrev = () => {
   console.log("Кликнули назад");
@@ -220,7 +217,10 @@ const handleMobileViewChange = (view: MobileViewType) => {
               </UiTabs>
             </div>
             <div class="calendar__view-tabs">
-              <UiTabs v-model="viewActiveTab" @change="handleViewTabChange">
+              <UiTabs
+                v-model="desktopViewActiveTab"
+                @change="handleViewTabChange"
+              >
                 <UiTabsList class="calendar__view-tabs-list">
                   <UiTabsTrigger id="day">3 дня</UiTabsTrigger>
                   <UiTabsTrigger id="week">7 дней</UiTabsTrigger>
@@ -348,7 +348,7 @@ const handleMobileViewChange = (view: MobileViewType) => {
   }
 
   &__month-nav-block {
-    display: none;
+    display: none !important;
 
     @container (width < 650px) {
       display: flex;
