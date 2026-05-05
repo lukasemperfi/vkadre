@@ -1,6 +1,6 @@
 import type { CalendarDate, ZonedDateTime } from "@internationalized/date";
 
-export interface UiCalendarSession {
+export interface UiCalendarEvent {
   id: string | number;
   start: ZonedDateTime;
   end: ZonedDateTime;
@@ -13,6 +13,6 @@ export interface UiCalendarDay {
   isCurrentMonth: boolean;
 }
 
-export type UiCalendarSessionsMap = Record<string, UiCalendarSession[]>;
+export type UiCalendarEventsMap = Record<string, UiCalendarEvent[]>;
 
 export const UI_CALENDAR_DEFAULT_LOCALE = "ru-RU" as const;

@@ -9,8 +9,8 @@ import {
   endOfWeek,
 } from "@internationalized/date";
 import type {
-  UiCalendarSession,
-  UiCalendarSessionsMap,
+  UiCalendarEvent,
+  UiCalendarEventsMap,
 } from "~/components/ui/calendar/types";
 
 type ViewType = "calendar" | "list" | "week" | "3_days";
@@ -38,7 +38,7 @@ const isDrawerOpen = computed({
   },
 });
 
-const sessions = ref<UiCalendarSessionsMap>({
+const events = ref<UiCalendarEventsMap>({
   "2026-05-04": [
     {
       id: 1,
@@ -110,9 +110,9 @@ const sessions = ref<UiCalendarSessionsMap>({
   ],
 });
 
-const selectedSessions = computed<UiCalendarSession[]>(() => {
+const selectedEvents = computed<UiCalendarEvent[]>(() => {
   if (!selectedDay.value) return [];
-  return sessions.value[selectedDay.value.toString()] ?? [];
+  return events.value[selectedDay.value.toString()] ?? [];
 });
 
 const handlePrev = () => {
@@ -264,7 +264,7 @@ const formattedDateTitle = computed(() => {
             <UiCalendarMonth
               v-model:selected="selectedDay"
               :month="month"
-              :sessions="sessions"
+              :events="events"
               @update:month="month = $event"
             />
           </div>
@@ -276,7 +276,7 @@ const formattedDateTitle = computed(() => {
           </div>
           <UiCalendarDrawer
             v-model:is-open="isDrawerOpen"
-            :sessions="selectedSessions"
+            :events="selectedEvents"
             :current-date="selectedDay"
           />
         </div>

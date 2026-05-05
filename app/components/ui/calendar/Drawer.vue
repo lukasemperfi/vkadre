@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
-import type { UiCalendarSession } from "./types";
+import type { UiCalendarEvent } from "./types";
 import type { CalendarDate } from "@internationalized/date";
 
 const MOBILE_DRAWER_MAX_WIDTH = 769;
 
 interface Props {
-  sessions: UiCalendarSession[];
+  events: UiCalendarEvent[];
   isOpen?: boolean;
   locale?: string;
   showDate?: boolean;
@@ -82,8 +82,8 @@ useEventListener(window, "resize", () => {
       <div class="ui-calendar-drawer__body">
         <div class="ui-calendar-drawer__list">
           <UiCalendarEventCard
-            v-for="session in sessions"
-            :event="session"
+            v-for="event in events"
+            :event="event"
             :show-date="showDate"
             :locale="locale"
           >

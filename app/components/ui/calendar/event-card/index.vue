@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { UiCalendarSession } from "../types";
+import type { UiCalendarEvent } from "../types";
 
 interface Props {
-  event: UiCalendarSession;
+  event: UiCalendarEvent;
   showDate?: boolean;
   locale?: string;
 }

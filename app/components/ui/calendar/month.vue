@@ -11,19 +11,19 @@ import {
 import {
   UI_CALENDAR_DEFAULT_LOCALE,
   type UiCalendarDay,
-  type UiCalendarSession,
-  type UiCalendarSessionsMap,
+  type UiCalendarEvent,
+  type UiCalendarEventsMap,
 } from "./types";
 
 interface Props {
   month: CalendarDate;
-  sessions?: UiCalendarSessionsMap;
+  events?: UiCalendarEventsMap;
   selected?: CalendarDate | null;
   locale?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  sessions: () => ({}),
+  events: () => ({}),
   selected: null,
   locale: UI_CALENDAR_DEFAULT_LOCALE,
 });
@@ -64,13 +64,13 @@ const weekdayLabels = computed<[short: string, long: string][]>(() => {
   });
 });
 
-function sessionsCountForDay(day: UiCalendarDay): number {
-  return props.sessions[day.date.toString()]?.length ?? 0;
+function eventsCountForDay(day: UiCalendarDay): number {
+  return props.events[day.date.toString()]?.length ?? 0;
 }
 
-const selectedSessions = computed<UiCalendarSession[]>(() => {
+const selectedEvents = computed<UiCalendarEvent[]>(() => {
   if (!props.selected) return [];
-  return props.sessions[props.selected.toString()] ?? [];
+  return props.events[props.selected.toString()] ?? [];
 });
 
 function isSelectedDay(day: UiCalendarDay): boolean {
@@ -111,7 +111,7 @@ function handleDayClick(day: UiCalendarDay): void {
           :class="{
             'calendar-month__cell_other-month': !day.isCurrentMonth,
             'calendar-month__cell_selected': isSelectedDay(day),
-            'calendar-month__cell_has-sessions': sessionsCountForDay(day) > 0,
+            'calendar-month__cell_has-events': eventsCountForDay(day) > 0,
             'calendar-month__cell_current-day': day.date.compare(now) === 0,
             'calendar-month__cell_past-date': day.date.compare(now) < 0,
           }"
@@ -122,14 +122,14 @@ function handleDayClick(day: UiCalendarDay): void {
             {{ String(day.date.day).padStart(2, "0") }}
           </span>
           <span
-            v-if="sessionsCountForDay(day) > 0"
+            v-if="eventsCountForDay(day) > 0"
             class="calendar-month__caption"
           >
-            {{ sessionsCountForDay(day) }} фотосессии
+            {{ eventsCountForDay(day) }} фотосессии
           </span>
           <span class="calendar-month__caption_mobile">
             <span
-              v-for="i in Math.min(sessionsCountForDay(day), 4)"
+              v-for="i in Math.min(eventsCountForDay(day), 4)"
               :key="i"
               class="calendar-month__caption_mobile-item"
             ></span>
