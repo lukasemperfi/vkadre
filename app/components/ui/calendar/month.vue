@@ -12,18 +12,17 @@ import {
   UI_CALENDAR_DEFAULT_LOCALE,
   type UiCalendarDay,
   type UiCalendarEvent,
-  type UiCalendarEventsMap,
 } from "./types";
 
 interface Props {
   month: CalendarDate;
-  events?: UiCalendarEventsMap;
+  events?: UiCalendarEvent[];
   selected?: CalendarDate | null;
   locale?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  events: () => ({}),
+  events: () => [],
   selected: null,
   locale: UI_CALENDAR_DEFAULT_LOCALE,
 });
@@ -64,14 +63,19 @@ const weekdayLabels = computed<[short: string, long: string][]>(() => {
   });
 });
 
-function eventsCountForDay(day: UiCalendarDay): number {
-  return props.events[day.date.toString()]?.length ?? 0;
+function getEventsForDay(day: CalendarDate): UiCalendarEvent[] {
+  return props.events.filter((event) => {
+    return (
+      event.start.day === day.day &&
+      event.start.month === day.month &&
+      event.start.year === day.year
+    );
+  });
 }
 
-const selectedEvents = computed<UiCalendarEvent[]>(() => {
-  if (!props.selected) return [];
-  return props.events[props.selected.toString()] ?? [];
-});
+function eventsCountForDay(day: UiCalendarDay): number {
+  return getEventsForDay(day.date).length;
+}
 
 function isSelectedDay(day: UiCalendarDay): boolean {
   return props.selected !== null && day.date.compare(props.selected) === 0;

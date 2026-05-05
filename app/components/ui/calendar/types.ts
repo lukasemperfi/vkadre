@@ -13,6 +13,4 @@ export interface UiCalendarDay {
   isCurrentMonth: boolean;
 }
 
-export type UiCalendarEventsMap = Record<string, UiCalendarEvent[]>;
-
 export const UI_CALENDAR_DEFAULT_LOCALE = "ru-RU" as const;

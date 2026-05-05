@@ -7,15 +7,14 @@ import {
   getLocalTimeZone,
   startOfWeek,
   endOfWeek,
+  endOfMonth,
+  parseDate,
 } from "@internationalized/date";
-import type {
-  UiCalendarEvent,
-  UiCalendarEventsMap,
-} from "~/components/ui/calendar/types";
+import type { UiCalendarEvent } from "~/components/ui/calendar/types";
 
 type ViewType = "calendar" | "list" | "week" | "3_days";
 
-const todayDate = startOfMonth(today(getLocalTimeZone()));
+const todayDate = today(getLocalTimeZone());
 const month = shallowRef(todayDate);
 const selectedDay = shallowRef<CalendarDate | null>(null);
 const cityActiveTab = ref("odessa");
@@ -23,6 +22,7 @@ const viewActiveTab = ref<ViewType>("calendar");
 const isShowMonthNav = computed(() => {
   return viewActiveTab.value === "calendar" || viewActiveTab.value === "week";
 });
+const locale = "ru-RU";
 
 const isPrevDisabled = computed(() => {
   const currentView = startOfMonth(month.value);
@@ -38,81 +38,155 @@ const isDrawerOpen = computed({
   },
 });
 
-const events = ref<UiCalendarEventsMap>({
-  "2026-05-04": [
-    {
-      id: 1,
-      start: parseZonedDateTime("2026-05-04T16:00[Europe/Kyiv]"),
-      end: parseZonedDateTime("2026-05-04T20:00[Europe/Kyiv]"),
-      title: "парк «Тараса Шевченка». Цветение магнолий.",
-      location: "г. Одесса",
-    },
-    {
-      id: 2,
-      start: parseZonedDateTime("2026-05-04T16:00[Europe/Kyiv]"),
-      end: parseZonedDateTime("2026-05-04T20:00[Europe/Kyiv]"),
-      title: "парк «Тараса Шевченка». Цветение магнолий.",
-      location: "г. Одесса",
-    },
-    {
-      id: 3,
-      start: parseZonedDateTime("2026-05-04T16:00[Europe/Kyiv]"),
-      end: parseZonedDateTime("2026-05-04T20:00[Europe/Kyiv]"),
-      title: "парк «Тараса Шевченка». Цветение магнолий.",
-      location: "г. Одесса",
-    },
-  ],
-  "2026-05-05": [
-    {
-      id: 4,
-      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
-      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
-      title: "парк «Тараса Шевченка». Цветение магнолий.",
-      location: "г. Одесса",
-    },
-    {
-      id: 5,
-      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
-      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
-      title: "парк «Тараса Шевченка». Цветение магнолий.",
-      location: "г. Одесса",
-    },
-    {
-      id: 6,
-      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
-      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
-      title: "парк «Тараса Шевченка». Цветение магнолий.",
-      location: "г. Одесса",
-    },
-    {
-      id: 7,
-      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
-      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
-      title: "парк «Тараса Шевченка». Цветение магнолий.",
-      location: "г. Одесса",
-    },
-    {
-      id: 8,
-      start: parseZonedDateTime("2026-05-05T16:00[Europe/Kyiv]"),
-      end: parseZonedDateTime("2026-05-05T20:00[Europe/Kyiv]"),
-      title: "парк «Тараса Шевченка». Цветение магнолий.",
-      location: "г. Одесса",
-    },
-  ],
-  "2026-05-06": [
-    {
-      id: 5,
-      start: parseZonedDateTime("2026-05-06T16:00[Europe/Kyiv]"),
-      end: parseZonedDateTime("2026-05-06T20:00[Europe/Kyiv]"),
-      title: "парк «Тараса Шевченка». Цветение магнолий.",
-      location: "г. Одесса",
-    },
-  ],
+// Имитация данных из БД (чистый JSON со строками)
+const events = ref([
+  {
+    id: 1,
+    start: "2026-05-04T10:00[Europe/Kyiv]",
+    end: "2026-05-04T12:00[Europe/Kyiv]",
+    title: "Встреча с командой",
+    location: "Офис, Одесса",
+  },
+  {
+    id: 2,
+    start: "2026-05-04T16:00[Europe/Kyiv]",
+    end: "2026-05-04T20:00[Europe/Kyiv]",
+    title: "Парк Шевченко: Магнолии",
+    location: "г. Одесса",
+  },
+  {
+    id: 3,
+    start: "2026-05-05T09:00[Europe/Kyiv]",
+    end: "2026-05-05T11:00[Europe/Kyiv]",
+    title: "Frontend Workshop",
+    location: "Online",
+  },
+  {
+    id: 4,
+    start: "2026-05-06T14:30[Europe/Kyiv]",
+    end: "2026-05-06T16:00[Europe/Kyiv]",
+    title: "Code Review",
+    location: "г. Одесса",
+  },
+  {
+    id: 5,
+    start: "2026-05-08T11:00[Europe/Kyiv]",
+    end: "2026-05-08T13:00[Europe/Kyiv]",
+    title: "Refactoring Session",
+    location: "Online",
+  },
+  {
+    id: 6,
+    start: "2026-05-11T18:00[Europe/Kyiv]",
+    end: "2026-05-11T20:00[Europe/Kyiv]",
+    title: "Футбол: Тренировка",
+    location: "Спортивная площадка",
+  },
+  {
+    id: 7,
+    start: "2026-05-13T10:00[Europe/Kyiv]",
+    end: "2026-05-13T11:30[Europe/Kyiv]",
+    title: "Planning Sprint",
+    location: "г. Одесса",
+  },
+  {
+    id: 8,
+    start: "2026-05-15T19:00[Europe/Kyiv]",
+    end: "2026-05-15T22:00[Europe/Kyiv]",
+    title: "Просмотр фильма",
+    location: "Дома",
+  },
+  {
+    id: 9,
+    start: "2026-05-19T14:00[Europe/Kyiv]",
+    end: "2026-05-19T15:30[Europe/Kyiv]",
+    title: "English Speaking Club",
+    location: "Online",
+  },
+  {
+    id: 10,
+    start: "2026-05-22T10:00[Europe/Kyiv]",
+    end: "2026-05-22T18:00[Europe/Kyiv]",
+    title: "UI Tech Conference",
+    location: "Online",
+  },
+  {
+    id: 11,
+    start: "2026-05-25T17:30[Europe/Kyiv]",
+    end: "2026-05-25T19:00[Europe/Kyiv]",
+    title: "Разбор логов и багфикс",
+    location: "г. Одесса",
+  },
+  {
+    id: 12,
+    start: "2026-05-28T12:00[Europe/Kyiv]",
+    end: "2026-05-28T13:00[Europe/Kyiv]",
+    title: "Sync with PM",
+    location: "Online",
+  },
+  {
+    id: 13,
+    start: "2026-05-31T15:00[Europe/Kyiv]",
+    end: "2026-05-31T18:00[Europe/Kyiv]",
+    title: "Прогулка у моря",
+    location: "Набережная",
+  },
+]);
+
+const isWithinRange = (dateStr: string) => {
+  const eventZoned = parseZonedDateTime(dateStr);
+  const targetDate = new CalendarDate(
+    eventZoned.year,
+    eventZoned.month,
+    eventZoned.day,
+  );
+
+  if (viewActiveTab.value === "3_days") {
+    const endRange = month.value.add({ days: 2 });
+    return (
+      targetDate.compare(month.value) >= 0 && targetDate.compare(endRange) <= 0
+    );
+  }
+
+  if (viewActiveTab.value === "week") {
+    const start = startOfWeek(month.value, locale);
+    const end = endOfWeek(month.value, locale);
+    return targetDate.compare(start) >= 0 && targetDate.compare(end) <= 0;
+  }
+
+  if (viewActiveTab.value === "calendar" || viewActiveTab.value === "list") {
+    const start = startOfMonth(month.value);
+    const end = endOfMonth(month.value);
+    return targetDate.compare(start) >= 0 && targetDate.compare(end) <= 0;
+  }
+
+  return true;
+};
+
+/**
+ * Просто отфильтрованный плоский массив событий
+ */
+const filteredEvents = computed(() => {
+  return events.value
+    .filter((event) => isWithinRange(event.start))
+    .map((event) => ({
+      ...event,
+      // Превращаем строки из "БД" в объекты для удобной работы в компонентах
+      start: parseZonedDateTime(event.start),
+      end: parseZonedDateTime(event.end),
+    }))
+    .sort((a, b) => a.start.compare(b.start)); // Сортировка по времени
 });
 
 const selectedEvents = computed<UiCalendarEvent[]>(() => {
   if (!selectedDay.value) return [];
-  return events.value[selectedDay.value.toString()] ?? [];
+  return filteredEvents.value.filter((event) => {
+    return (
+      event.start.day === selectedDay.value?.day &&
+      event.start.month === selectedDay.value?.month &&
+      event.start.year === selectedDay.value?.year
+    );
+  });
 });
 
 const handlePrev = () => {
@@ -126,11 +200,20 @@ const handleNext = () => {
 };
 
 function changeMonth(direction: "prev" | "next") {
-  if (direction === "next") {
-    month.value = month.value.add({ months: 1 });
+  const amount = direction === "next" ? 1 : -1;
+
+  if (viewActiveTab.value === "week" || viewActiveTab.value === "3_days") {
+    // Переключаем по 7 дней
+    const newDate = month.value.add({ weeks: amount });
+
+    // Проверка на блокировку "назад" (если нужно ограничение по текущему моменту)
+    if (direction === "prev" && isPrevDisabled.value) return;
+
+    month.value = newDate;
   } else {
-    if (isPrevDisabled.value) return;
-    month.value = month.value.subtract({ months: 1 });
+    // Обычное переключение месяца
+    if (direction === "prev" && isPrevDisabled.value) return;
+    month.value = month.value.add({ months: amount });
   }
 }
 
@@ -164,27 +247,26 @@ const handleMobileViewChange = (view: ViewType) => {
 const formattedDateTitle = computed(() => {
   if (!month.value) return "";
 
-  const date = month.value.toDate("UTC");
-  const locale = "ru-RU";
-
   if (viewActiveTab.value === "week" || viewActiveTab.value === "3_days") {
     const start = startOfWeek(month.value, locale);
     const end = endOfWeek(month.value, locale);
 
-    const startDay = start.day;
-    const endDay = end.day;
-    const monthName = end
-      .toDate("UTC")
-      .toLocaleDateString(locale, {
-        day: "numeric",
-        month: "long",
-      })
-      .split(" ")[1];
+    const startFormat = start.toDate("UTC").toLocaleDateString(locale, {
+      day: "numeric",
+      month: start.month !== end.month ? "short" : undefined,
+    });
 
-    return `${startDay}-${endDay} ${monthName?.replace(/\s*г\.$/, "")}`;
+    const endFormat = end.toDate("UTC").toLocaleDateString(locale, {
+      day: "numeric",
+      month: "long",
+    });
+
+    return `${startFormat} — ${endFormat}`.replace(/\s*г\.$/, "");
   }
 
-  return date.toLocaleDateString(locale, { month: "long" });
+  return month.value
+    .toDate("UTC")
+    .toLocaleDateString(locale, { month: "long" });
 });
 </script>
 
@@ -264,12 +346,12 @@ const formattedDateTitle = computed(() => {
             <UiCalendarMonth
               v-model:selected="selectedDay"
               :month="month"
-              :events="events"
+              :events="filteredEvents"
               @update:month="month = $event"
             />
           </div>
           <div class="week-calendar" v-show="viewActiveTab === 'week'">
-            week
+            <UiCalendarWeek :date="month" :events="filteredEvents" />
           </div>
           <div class="days-calendar" v-show="viewActiveTab === '3_days'">
             days
