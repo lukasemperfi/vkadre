@@ -82,9 +82,11 @@ const className = computed(() => [
     color: var(--black);
     border: 1px solid var(--black);
 
-    &:hover:not(:disabled) {
-      background: var(--black);
-      color: #ffffff;
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background: var(--black);
+        color: #ffffff;
+      }
     }
   }
 
@@ -93,10 +95,12 @@ const className = computed(() => [
     color: #ffffff;
     border: 1px solid transparent;
 
-    &:hover:not(:disabled) {
-      background: transparent;
-      color: var(--black);
-      border-color: var(--black);
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background: transparent;
+        color: var(--black);
+        border-color: var(--black);
+      }
     }
   }
 }
