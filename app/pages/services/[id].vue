@@ -40,9 +40,7 @@ const { data: service } = await useAsyncData("service", () =>
   servicesApi.getService(serviceId as string),
 );
 
-const { width } = useWindowSize();
-
-const isMobile = computed(() => width.value <= 505);
+const isOtherServicesVisible = ref(false);
 
 const otherServiceCategories = [
   { id: "1", title: "Экспресс-фотосессии", icon: "timer-small" },
@@ -67,12 +65,19 @@ const otherServiceCategories = [
   { id: "20", title: "Ночная фотосессия", icon: "moon" },
 ];
 
-const cutOtherServiceCategories = computed(() => {
-  if (isMobile.value) {
-    return otherServiceCategories.slice(0, 6);
-  }
-  return otherServiceCategories;
+const cutedOtherServiceCategories = computed(() => {
+  return [
+    otherServiceCategories.slice(0, 6),
+    otherServiceCategories.slice(6, otherServiceCategories.length),
+  ];
 });
+
+console.log(
+  "cutedOtherServiceCategories",
+  cutedOtherServiceCategories.value,
+  "otherServiceCategories",
+  otherServiceCategories,
+);
 </script>
 <template>
   <div class="service-page">
@@ -101,7 +106,12 @@ const cutOtherServiceCategories = computed(() => {
         <div class="other-services__list">
           <div
             class="other-service-card"
-            v-for="category in cutOtherServiceCategories"
+            v-for="(category, index) in otherServiceCategories"
+            :key="category.id"
+            :class="{
+              'other-service-card_cutted': index > 5,
+              'other-service-card_cutted_show': isOtherServicesVisible,
+            }"
           >
             <div class="other-service-card__icon">
               <UiIconButton>
@@ -112,7 +122,12 @@ const cutOtherServiceCategories = computed(() => {
           </div>
         </div>
         <div class="other-services__bottom">
-          <UiButton label="Показать все" variant="outline" />
+          <UiButton
+            label="Показать все"
+            variant="outline"
+            @click="isOtherServicesVisible = true"
+            v-show="!isOtherServicesVisible"
+          />
         </div>
       </section>
       <section>
@@ -210,6 +225,8 @@ const cutOtherServiceCategories = computed(() => {
   }
 
   .other-services {
+    $mobile-breakpoint: 505px;
+
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
     &__title {
       margin-bottom: globalFunctions.fluidValue(24px, 60px, 320px, 1440px);
@@ -226,6 +243,18 @@ const cutOtherServiceCategories = computed(() => {
       align-items: center;
       gap: 16px;
 
+      &_cutted {
+        @media (max-width: $mobile-breakpoint) {
+          display: none;
+        }
+
+        &_show {
+          @media (max-width: $mobile-breakpoint) {
+            display: flex;
+          }
+        }
+      }
+
       &__title {
         font-family: var(--font-family);
         font-weight: 500;
@@ -239,7 +268,7 @@ const cutOtherServiceCategories = computed(() => {
 
     &__bottom {
       display: none;
-      @media (max-width: 505px) {
+      @media (max-width: $mobile-breakpoint) {
         margin-top: 40px;
         display: flex;
 
