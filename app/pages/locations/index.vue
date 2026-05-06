@@ -1,64 +1,65 @@
 <script setup lang="ts">
-const { getServices } = useServicesApi();
+const { getLocations } = useLocationsApi();
 const PER_PAGE = 9;
 
 const {
-  items: services,
+  items: locations,
   isLoading,
   isFinished,
   load,
-} = useLoadMore(getServices, {
+} = useLoadMore(getLocations, {
   perPage: PER_PAGE,
-  key: "services-list",
+  key: "locations-list",
 });
 
-await useAsyncData("services-init", async () => {
+await useAsyncData("locations-init", async () => {
   await load(true);
   return true;
 });
+
 const getFirstParagraph = (description: string) => {
   return description.split("</p>")[0] + "</p>";
 };
 </script>
 
 <template>
-  <div class="services-page">
+  <div class="locations-page">
     <div class="app-container">
-      <div class="services-page__header">
-        <h1 class="services-page__title">Услуги</h1>
-        <div class="services-page__subtitle">
+      <div class="locations-page__header">
+        <h1 class="locations-page__title">Локации</h1>
+        <div class="locations-page__subtitle">
           За 3 года работы мы организовали более 10 000 фотосессий в Одессе
         </div>
       </div>
 
-      <div class="services-page__content">
-        <div class="services-page__list">
+      <div class="locations-page__content">
+        <div class="locations-page__list">
           <div
-            class="service-card"
-            v-for="service in services"
-            :key="service.id"
+            class="location-card"
+            v-for="location in locations"
+            :key="location.id"
           >
-            <div class="service-card__image">
+            <div class="location-card__image">
               <NuxtImg
-                :src="service.main_image"
-                :alt="service.title"
+                :src="location.image_url"
+                :alt="location.title"
                 format="webp"
-                class="service-card__image-img"
+                class="location-card__image-img"
               />
             </div>
-            <div class="service-card__body">
-              <h3 class="service-card__title">{{ service.title }}</h3>
+            <div class="location-card__body">
+              <h3 class="location-card__title">{{ location.title }}</h3>
               <div
-                class="service-card__description"
-                v-html="getFirstParagraph(service.description || '')"
+                class="location-card__description"
+                v-html="getFirstParagraph(location.description || '')"
               />
             </div>
           </div>
         </div>
 
-        <div v-if="!isFinished" class="services-page__pagination">
+        <div v-if="!isFinished" class="locations-page__pagination">
           <UiButton
-            class="services-page__pagination-btn"
+            class="locations-page__pagination-btn"
             label="Загрузить еще"
             variant="outline"
             :loading="isLoading"
@@ -73,7 +74,7 @@ const getFirstParagraph = (description: string) => {
 </template>
 
 <style scoped lang="scss">
-.services-page {
+.locations-page {
   padding-top: globalFunctions.fluidValue(40px, 72px, 320px, 1440px);
   &__header {
     margin-bottom: globalFunctions.fluidValue(40px, 60px, 320px, 1440px);
@@ -101,7 +102,7 @@ const getFirstParagraph = (description: string) => {
     color: var(--black);
   }
 
-  .service-card {
+  .location-card {
     &__image {
       overflow: hidden;
       aspect-ratio: 395/376;
@@ -146,7 +147,7 @@ const getFirstParagraph = (description: string) => {
       grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
     }
 
-    .service-card {
+    .location-card {
       &__image {
         @media (max-width: 680px) {
           aspect-ratio: 272/180;

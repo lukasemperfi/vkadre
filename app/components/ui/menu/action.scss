@@ -33,11 +33,13 @@
   outline-offset: 3px;
 }
 
-.menu__item:hover .menu__link:not(.menu__link--static) .menu__link-text {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-  text-decoration-color: currentColor;
+@media (hover: hover) {
+  .menu__item:hover .menu__link:not(.menu__link--static) .menu__link-text {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: currentColor;
+  }
 }
 
 .menu__link-text {
