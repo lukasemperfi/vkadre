@@ -33,78 +33,87 @@ const photos = [
 ].slice(0, 10);
 
 const route = useRoute();
-
 const serviceId = route.params.id || "";
-
 const servicesApi = useServicesApi();
 
 const { data: service } = await useAsyncData("service", () =>
   servicesApi.getService(serviceId as string),
 );
 
-// const packages = [
-//   {
-//     id: "5cf3706e-ea3a-4180-9404-f9c89989b67a",
-//     price: 990,
-//     currency: "UAH",
-//     service_id: "dc3a1e83-165e-4072-811a-5c172fff9fcc",
-//     location_id: null,
-//     photo_count: 10,
-//     duration_minutes: 10,
-//   },
-//   {
-//     id: "361e4485-f572-4072-8d31-cfa243087c58",
-//     price: 1990,
-//     currency: "UAH",
-//     service_id: "dc3a1e83-165e-4072-811a-5c172fff9fcc",
-//     location_id: null,
-//     photo_count: 20,
-//     duration_minutes: 20,
-//   },
-//   {
-//     id: "f753f33d-d26d-4810-a134-bd5e62e67dd3",
-//     price: 2990,
-//     currency: "UAH",
-//     service_id: "dc3a1e83-165e-4072-811a-5c172fff9fcc",
-//     location_id: null,
-//     photo_count: 30,
-//     duration_minutes: 30,
-//   },
-//   {
-//     id: "98a0c484-7874-4372-b0e2-c0db237e13ae",
-//     price: 199,
-//     currency: "UAH",
-//     service_id: "dc3a1e83-165e-4072-811a-5c172fff9fcc",
-//     location_id: null,
-//     photo_count: 0,
-//     duration_minutes: 0,
-//   },
-// ];
+const { width } = useWindowSize();
+
+const isMobile = computed(() => width.value <= 505);
+
+const otherServiceCategories = [
+  { id: "1", title: "Экспресс-фотосессии", icon: "timer-small" },
+  { id: "2", title: "Индивидуальная фотосессия", icon: "person" },
+  { id: "3", title: "Экспресс-видеосъемка", icon: "camera" },
+  { id: "4", title: "Семейная фотосессия", icon: "people" },
+  { id: "5", title: "Фотосессии в Красной поляне", icon: "cloud" },
+  { id: "6", title: "Фотоконтент", icon: "picture" },
+  { id: "7", title: "Фотосессия Дня Рождения", icon: "buklet" },
+  { id: "8", title: "Фотосессия беременности", icon: "pregnancy" },
+  { id: "9", title: "Фотосессия в парке", icon: "bible" },
+  { id: "10", title: "Love Story", icon: "heart" },
+  { id: "11", title: "Студийная фотосессия", icon: "flag" },
+  { id: "12", title: "Предметная фотосессия", icon: "diamond" },
+  { id: "13", title: "Фотосессия в кафе", icon: "cup" },
+  { id: "14", title: "Фотосессия в номере отеля", icon: "hook" },
+  { id: "15", title: "Домашняя фотосессия", icon: "house" },
+  { id: "16", title: "Свадебная фотосессия", icon: "rings" },
+  { id: "17", title: "Интерьерная фотосессия", icon: "interior" },
+  { id: "18", title: "Фотосессия под ключ", icon: "key" },
+  { id: "19", title: "Фотопикник", icon: "cart" },
+  { id: "20", title: "Ночная фотосессия", icon: "moon" },
+];
+
+const cutOtherServiceCategories = computed(() => {
+  if (isMobile.value) {
+    return otherServiceCategories.slice(0, 6);
+  }
+  return otherServiceCategories;
+});
 </script>
 <template>
   <div class="service-page">
     <div class="app-container">
       <div class="service-page__header">
-        <button><UiIcon name="fill-arrow-left" />Назад</button>
-        <h1 class="service-page__title">{{ service?.title }}</h1>
+        <button class="service-page__back-button">
+          <UiIcon name="fill-arrow-left" />Назад
+        </button>
+        <h1 class="service-page__title h-2">{{ service?.title }}</h1>
       </div>
       <section class="works">
         <UiPhotoGrid :items="photos" />
         <div class="works__info">
-          <div class="works__info-description">
-            Самый доступный вид фотосессии, в результате которой Вы получите
-            качественные снимки уже на следующий день. Они проходят только по
-            нашему расписанию. Фотографии с экспресс-фотосессий идеальны для
-            публикаций в социальных сетях, для резюме, инстаграма, сайта
-            знакомств и даже семейного альбома!
-          </div>
+          <div class="works__info-description" v-html="service?.description" />
+
           <div class="works__info-packages">
-            <PackagesBlock :packages="service?.service_packages" />
+            <PackagesBlock :packages="service?.service_packages ?? []" />
           </div>
         </div>
       </section>
       <section>
         <Calendar />
+      </section>
+      <section class="other-services">
+        <div class="other-services__title h-2">Другие услуги</div>
+        <div class="other-services__list">
+          <div
+            class="other-service-card"
+            v-for="category in cutOtherServiceCategories"
+          >
+            <div class="other-service-card__icon">
+              <UiIconButton>
+                <UiIcon :name="category.icon" />
+              </UiIconButton>
+            </div>
+            <div class="other-service-card__title">{{ category.title }}</div>
+          </div>
+        </div>
+        <div class="other-services__bottom">
+          <UiButton label="Показать все" variant="outline" />
+        </div>
       </section>
       <section>
         <UiCallBlock />
@@ -112,4 +121,133 @@ const { data: service } = await useAsyncData("service", () =>
     </div>
   </div>
 </template>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.service-page {
+  &__header {
+    display: flex;
+    align-items: baseline;
+    gap: 28px;
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+    margin-bottom: globalFunctions.fluidValue(40px, 60px, 320px, 1440px);
+  }
+
+  &__back-button {
+    font-family: var(--font-family);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 19px;
+  }
+
+  .works {
+    $tablet-breakpoint: 1100px;
+
+    padding-bottom: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+    margin-bottom: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+    border-bottom: 1px solid var(--gray);
+
+    &__info {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      margin-top: globalFunctions.fluidValue(40px, 60px, 320px, 1440px);
+
+      @media (max-width: $tablet-breakpoint) {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    &__info-description {
+      max-width: 608px;
+      font-family: var(--font-family);
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 26px;
+      color: var(--black);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      @media (max-width: $tablet-breakpoint) {
+        max-width: 100%;
+      }
+    }
+
+    &__info-packages {
+      max-width: 500px;
+      min-width: 500px;
+
+      @media (max-width: $tablet-breakpoint) {
+        min-width: 100%;
+        max-width: 100%;
+      }
+
+      :deep(.service-prices) {
+        @media (max-width: $tablet-breakpoint) {
+          border: none;
+          padding: 0;
+        }
+
+        .service-prices__list {
+          @media (max-width: $tablet-breakpoint) {
+            border: 1px solid rgba(23, 26, 30, 0.1);
+            padding: 16px;
+          }
+        }
+      }
+
+      :deep(.ui-button) {
+        @media (max-width: $tablet-breakpoint) {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .other-services {
+    margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+    &__title {
+      margin-bottom: globalFunctions.fluidValue(24px, 60px, 320px, 1440px);
+    }
+
+    &__list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 34px;
+    }
+
+    .other-service-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      &__title {
+        font-family: var(--font-family);
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        text-transform: uppercase;
+        color: var(--black);
+        max-width: 145px;
+      }
+    }
+
+    &__bottom {
+      display: none;
+      @media (max-width: 505px) {
+        margin-top: 40px;
+        display: flex;
+
+        .ui-button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+</style>

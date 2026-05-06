@@ -56,6 +56,9 @@ const sortedPackages = computed(() =>
         <span class="service-prices__price">{{ formatPrice(p) }}</span>
       </li>
     </ul>
+    <div class="service-prices__bottom">
+      <UiButton label="Заказать фотосессию" variant="outline" />
+    </div>
   </div>
 </template>
 
@@ -63,12 +66,9 @@ const sortedPackages = computed(() =>
 .service-prices {
   width: 100%;
   border: 1px solid rgba(23, 26, 30, 0.1);
-  padding-top: 20px;
-  padding-left: 27px;
-  padding-right: 27px;
-  padding-bottom: 20px;
+  padding: 40px;
 
-  @media (max-width: 1440px) {
+  @media (max-width: 768px) {
     padding: 16px;
   }
 }
@@ -80,6 +80,10 @@ const sortedPackages = computed(() =>
   display: grid;
   grid-template-columns: 1fr max-content;
   gap: 8px;
+
+  @media (max-width: globalBreakpoints.$breakpoint-xs) {
+    border: 1px solid rgba(23, 26, 30, 0.1);
+  }
 }
 
 .service-prices__row {
@@ -131,5 +135,11 @@ const sortedPackages = computed(() =>
   line-height: 160%;
   color: var(--black);
   white-space: nowrap;
+}
+
+.service-prices__bottom {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: globalFunctions.fluidValue(24px, 40px, 320px, 1440px);
 }
 </style>
