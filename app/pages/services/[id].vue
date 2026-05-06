@@ -83,9 +83,9 @@ console.log(
   <div class="service-page">
     <div class="app-container">
       <div class="service-page__header">
-        <button class="service-page__back-button">
+        <NuxtLink class="service-page__back-button" to="/services">
           <UiIcon name="fill-arrow-left" />Назад
-        </button>
+        </NuxtLink>
         <h1 class="service-page__title h-2">{{ service?.title }}</h1>
       </div>
       <section class="works">
