@@ -5,13 +5,15 @@ export function useLoadMore<T>(
   const items = useState<T[]>(options.key, () => []);
   const page = useState<number>(`${options.key}-page`, () => 1);
   const isFinished = useState<boolean>(`${options.key}-finished`, () => false);
-
   const isLoading = ref(false);
 
   async function load(isInitial = false) {
+    if (isInitial && items.value.length > 0) return;
+
     if (isLoading.value || (isFinished.value && !isInitial)) return;
 
     isLoading.value = true;
+
     if (!isInitial) page.value++;
 
     try {
@@ -34,5 +36,11 @@ export function useLoadMore<T>(
     }
   }
 
-  return { items, isLoading, isFinished, load };
+  function reset() {
+    items.value = [];
+    page.value = 1;
+    isFinished.value = false;
+  }
+
+  return { items, isLoading, isFinished, load, reset };
 }
