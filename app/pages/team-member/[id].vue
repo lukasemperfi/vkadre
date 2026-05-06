@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { UiPhotoGridItem } from "~/components/ui/photo-grid/types";
 
+const route = useRoute();
+
+const teamMemberId = route.params.id || "";
+
 const carouselSlides = [
   {
     id: 1,
@@ -60,10 +64,8 @@ const isSliderReady = ref(false);
 const { getPhotographer } = usePhotographersApi();
 
 const { data: photographer } = await useAsyncData("photographer", () =>
-  getPhotographer("7517ebc9-2df1-49d4-8e4f-bd80fb16667e"),
+  getPhotographer(teamMemberId as string),
 );
-
-console.log(photographer.value);
 
 const portfolioList = computed<UiPhotoGridItem[]>(() => {
   return (

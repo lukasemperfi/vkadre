@@ -58,16 +58,23 @@ const teamCarouselOptions = {
           >
             <template #item="{ item }">
               <div class="team-card">
-                <div class="team-card__image-wrapper">
+                <NuxtLink
+                  class="team-card__image-wrapper"
+                  :to="`/team-member/${item.id}`"
+                >
                   <NuxtImg
                     :src="item.avatar_url"
                     :alt="item.full_name"
                     format="webp"
                     class="team-card__image"
                   />
-                </div>
+                </NuxtLink>
                 <div class="team-card__body">
-                  <h3 class="team-card__title">{{ item.full_name }}</h3>
+                  <NuxtLink
+                    class="team-card__title"
+                    :to="`/team-member/${item.id}`"
+                    >{{ item.full_name }}</NuxtLink
+                  >
                   <p class="team-card__role">{{ item.role }}</p>
                 </div>
               </div>
