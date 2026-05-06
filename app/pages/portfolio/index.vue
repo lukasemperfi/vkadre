@@ -73,6 +73,7 @@ const portfolioList = computed<UiPhotoGridItem[]>(() => {
           </UiTabsPanel>
         </UiTabs>
       </div>
+      <UiCallBlock />
     </div>
   </div>
 </template>
@@ -82,6 +83,11 @@ const portfolioList = computed<UiPhotoGridItem[]>(() => {
   padding-top: globalFunctions.fluidValue(40px, 72px, 320px, 1440px);
   &__header {
     margin-bottom: globalFunctions.fluidValue(40px, 60px, 320px, 1440px);
+  }
+
+  &__content {
+    padding-bottom: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+    border-bottom: 1px solid var(--gray);
   }
 
   &__title {
