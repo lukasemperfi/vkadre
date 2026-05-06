@@ -135,8 +135,9 @@ onUnmounted(() => {
   column-gap: 30px;
   row-gap: 15px;
   position: relative;
-  padding-bottom: 16px;
+  padding-bottom: 18px;
   z-index: 2;
+  border-bottom: 1px solid var(--gray);
 
   @media (max-width: 768px) {
     overflow-x: auto;

@@ -91,18 +91,18 @@ const closeMenu = () => {
   &__shell {
     display: flex;
     flex-direction: column;
-    gap: globalFunctions.fluidValue(0px, 16px, 320px, 1440px);
+    gap: globalFunctions.fluidValue(0px, 16px, 320px, 1439px);
   }
 
   &__row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: globalFunctions.fluidValue(12px, 47px, 320px, 1440px);
+    gap: globalFunctions.fluidValue(12px, 47px, 320px, 1439px);
     border-bottom: 1px solid var(--gray);
-    padding-bottom: globalFunctions.fluidValue(20px, 24px, 320px, 1440px);
+    padding-bottom: globalFunctions.fluidValue(20px, 24px, 320px, 1439px);
 
-    @media (max-width: 1440px) {
+    @media (max-width: 1439px) {
       display: grid;
       grid-template-columns: repeat(4, max-content);
       justify-content: space-between;
@@ -116,22 +116,22 @@ const closeMenu = () => {
   &__logo-wrapper {
     display: flex;
     align-items: center;
-    gap: globalFunctions.fluidValue(12px, 50px, 320px, 1440px);
+    gap: globalFunctions.fluidValue(12px, 50px, 320px, 1439px);
   }
 
   &__logo-icon {
-    width: globalFunctions.fluidValue(40px, 69px, 320px, 1440px);
-    height: globalFunctions.fluidValue(40px, 72px, 320px, 1440px);
+    width: globalFunctions.fluidValue(40px, 69px, 320px, 1439px);
+    height: globalFunctions.fluidValue(40px, 72px, 320px, 1439px);
   }
 
   &__logo-text {
     display: flex;
     flex-direction: column;
-    gap: globalFunctions.fluidValue(0px, 9px, 320px, 1440px);
+    gap: globalFunctions.fluidValue(0px, 9px, 320px, 1439px);
     text-transform: uppercase;
     font-family: var(--font-family);
     font-weight: 400;
-    font-size: globalFunctions.fluidValue(12px, 16px, 320px, 1440px);
+    font-size: globalFunctions.fluidValue(12px, 16px, 320px, 1439px);
     color: var(--black);
   }
 
@@ -141,7 +141,7 @@ const closeMenu = () => {
     grid-template-rows: repeat(3, 1fr);
     row-gap: 10px;
 
-    @media (max-width: 1440px) {
+    @media (max-width: 1439px) {
       grid-template-columns: subgrid;
       grid-column: 2/-1;
     }
@@ -162,7 +162,7 @@ const closeMenu = () => {
     .menu__link {
       font-family: var(--font-family);
       font-weight: 500;
-      font-size: globalFunctions.fluidValue(12px, 14px, 320px, 1440px);
+      font-size: globalFunctions.fluidValue(12px, 14px, 320px, 1439px);
       text-transform: uppercase;
       align-self: center;
       color: var(--black);
@@ -175,7 +175,7 @@ const closeMenu = () => {
     grid-row: 1/-1;
     margin-left: 73px;
 
-    @media (max-width: 1440px) {
+    @media (max-width: 1439px) {
       margin-left: 0;
     }
 
@@ -194,7 +194,7 @@ const closeMenu = () => {
     grid-row: 1/-1;
     margin-left: 112px;
 
-    @media (max-width: 1440px) {
+    @media (max-width: 1439px) {
       margin-left: 0;
     }
 
@@ -220,7 +220,7 @@ const closeMenu = () => {
   &__text {
     font-family: var(--font-family);
     font-weight: 500;
-    font-size: globalFunctions.fluidValue(12px, 14px, 320px, 1440px);
+    font-size: globalFunctions.fluidValue(12px, 14px, 320px, 1439px);
     text-transform: uppercase;
     align-self: center;
     color: var(--black);

@@ -4,10 +4,12 @@ import { UI_PHOTO_GRID_BLOCK_SIZE, type UiPhotoGridItem } from "./types";
 interface Props {
   items: UiPhotoGridItem[];
   eager?: boolean;
+  mobileVariant?: "default" | "mobile-flat";
 }
 
 const props = withDefaults(defineProps<Props>(), {
   eager: false,
+  mobileVariant: "default",
 });
 
 const blocks = computed<UiPhotoGridItem[][]>(() => {
@@ -27,7 +29,10 @@ if (import.meta.dev && props.items.length % UI_PHOTO_GRID_BLOCK_SIZE !== 0) {
 </script>
 
 <template>
-  <div class="ui-photo-grid">
+  <div
+    class="ui-photo-grid"
+    :class="{ 'ui-photo-grid_mobile-flat': mobileVariant === 'mobile-flat' }"
+  >
     <UiPhotoGridBlock
       v-for="(block, blockIndex) in blocks"
       :key="blockIndex"
@@ -48,21 +53,34 @@ if (import.meta.dev && props.items.length % UI_PHOTO_GRID_BLOCK_SIZE !== 0) {
     margin-right: globalFunctions.fluidValue(-24px, -96px, 320px, 1440px);
     row-gap: 8px;
   }
-}
 
-//for row adaptivity
-// :deep(.ui-photo-grid-block) {
-//   display: flex;
-//   flex-direction: row;
-//   flex-wrap: nowrap;
-//   width: 100%;
-//   max-width: 100%;
-//   overflow-x: auto;
-// }
-// :deep(.ui-photo-grid-block__item) {
-//   grid-row: auto;
-//   grid-column: auto;
-//   flex: 0 0 auto;
-//   width: globalFunctions.fluidValue(256px, 347px, 320px, 1440px);
-// }
+  &_mobile-flat {
+    @media (max-width: globalBreakpoints.$breakpoint-xs-max) {
+      flex-direction: row;
+      column-gap: 8px;
+      overflow-x: auto;
+
+      :deep(.ui-photo-grid-block) {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 256px;
+        grid-template-columns: none;
+        grid-template-rows: 1fr;
+        column-gap: 8px;
+        width: auto;
+        max-height: none;
+        aspect-ratio: auto;
+      }
+
+      :deep(.ui-photo-grid-block__item) {
+        grid-column: auto;
+        grid-row: auto;
+
+        width: 100%;
+        aspect-ratio: 256/347;
+        display: block;
+      }
+    }
+  }
+}
 </style>
