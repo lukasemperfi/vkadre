@@ -38,16 +38,24 @@ const getFirstParagraph = (description: string) => {
             v-for="service in services"
             :key="service.id"
           >
-            <div class="service-card__image">
+            <NuxtLink
+              class="service-card__image"
+              :to="`/services/${service.id}`"
+            >
               <NuxtImg
                 :src="service.main_image"
                 :alt="service.title"
                 format="webp"
                 class="service-card__image-img"
               />
-            </div>
+            </NuxtLink>
             <div class="service-card__body">
-              <h3 class="service-card__title">{{ service.title }}</h3>
+              <NuxtLink
+                class="service-card__title"
+                :to="`/services/${service.id}`"
+              >
+                {{ service.title }}
+              </NuxtLink>
               <div
                 class="service-card__description"
                 v-html="getFirstParagraph(service.description || '')"
