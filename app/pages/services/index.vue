@@ -1,46 +1,21 @@
 <script setup lang="ts">
 const { getServices } = useServicesApi();
+const PER_PAGE = 6;
 
-const PER_PAGE = 9;
-const currentPage = ref(1);
-const isFinished = ref(false);
-const isLoading = ref(false);
+const {
+  items: services,
+  isLoading,
+  isFinished,
+  load,
+} = useLoadMore(getServices, {
+  perPage: PER_PAGE,
+  key: "services-list",
+});
 
-const allServices = ref<any[]>([]);
-
-const { data: initialData } = await useAsyncData("services", () =>
-  getServices(1, PER_PAGE),
-);
-
-if (initialData.value) {
-  allServices.value = [...initialData.value];
-  if (initialData.value.length < PER_PAGE) isFinished.value = true;
-}
-
-const loadMore = async () => {
-  if (isLoading.value || isFinished.value) return;
-
-  isLoading.value = true;
-  currentPage.value++;
-
-  try {
-    const newData = await getServices(currentPage.value, PER_PAGE);
-
-    if (newData.length < PER_PAGE) {
-      isFinished.value = true;
-    }
-
-    if (newData.length > 0) {
-      allServices.value.push(...newData);
-    }
-  } catch (error) {
-    console.error("Failed to load services:", error);
-    currentPage.value--;
-  } finally {
-    isLoading.value = false;
-  }
-};
-
+await useAsyncData("services-init", async () => {
+  await load(true);
+  return true;
+});
 const getFirstParagraph = (description: string) => {
   return description.split("</p>")[0] + "</p>";
 };
@@ -60,7 +35,7 @@ const getFirstParagraph = (description: string) => {
         <div class="services-page__list">
           <div
             class="service-card"
-            v-for="service in allServices"
+            v-for="service in services"
             :key="service.id"
           >
             <div class="service-card__image">
@@ -88,7 +63,7 @@ const getFirstParagraph = (description: string) => {
             variant="outline"
             :loading="isLoading"
             :disabled="isLoading"
-            @click="loadMore"
+            @click="load(false)"
           />
         </div>
       </div>
@@ -184,9 +159,6 @@ const getFirstParagraph = (description: string) => {
     display: flex;
     justify-content: center;
     margin-top: 40px;
-  }
-
-  &__pagination-btn {
   }
 }
 </style>
