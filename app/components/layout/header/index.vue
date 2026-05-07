@@ -1,4 +1,9 @@
 <script setup lang="ts">
+const user = useSupabaseUser();
+
+const isLoggedIn = computed(() => !!user.value);
+const isAuthModalOpen = ref(false);
+
 const menuItems = [
   { id: "portfolio", label: "Портфолио", to: "/portfolio" },
   { id: "services", label: "Услуги", to: "/services" },
@@ -6,7 +11,6 @@ const menuItems = [
 ];
 
 const isMenuOpen = ref(false);
-const isAuth = ref(true);
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -14,6 +18,13 @@ const toggleMenu = () => {
 
 const closeMenu = () => {
   isMenuOpen.value = false;
+};
+
+const handleAuth = () => {
+  if (isLoggedIn.value) {
+  } else {
+    isAuthModalOpen.value = true;
+  }
 };
 </script>
 
@@ -46,13 +57,17 @@ const closeMenu = () => {
             </HeaderAccountMenu> -->
 
               <div class="header__profile profile">
-                <UiIconButton class="profile__icon-btn">
-                  <UiIcon v-if="isAuth" name="user-m" class="profile__icon" />
+                <UiIconButton class="profile__icon-btn" @click="handleAuth">
+                  <UiIcon
+                    v-if="isLoggedIn"
+                    name="user-m"
+                    class="profile__icon"
+                  />
                   <UiIcon v-else name="key" />
                 </UiIconButton>
 
                 <div class="profile__text header__text">
-                  {{ isAuth ? "Личный кабинет" : "Войти" }}
+                  {{ isLoggedIn ? "Личный кабинет" : "Войти" }}
                 </div>
               </div>
             </div>
@@ -71,11 +86,12 @@ const closeMenu = () => {
         <LayoutHeaderMobileMenu
           v-model="isMenuOpen"
           :items="menuItems"
-          :is-auth="isAuth"
+          :is-auth="isLoggedIn"
         />
       </div>
     </div>
   </header>
+  <AuthModal v-model:is-open="isAuthModalOpen" />
 </template>
 
 <style lang="scss" scoped>
@@ -86,7 +102,7 @@ const closeMenu = () => {
   padding-top: $padding-top;
   position: sticky;
   top: 0;
-  z-index: 99999;
+  z-index: 99998;
 
   &__shell {
     display: flex;

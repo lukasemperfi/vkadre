@@ -25,11 +25,11 @@ const { close } = inject<UiModalContext>(UI_MODAL_INJECTION_KEY)!;
   position: absolute;
   top: 24px;
   right: calc($right-padding - $icon-right-padding);
-  border-color: white;
+  border-color: transparent;
 
   @media (hover: hover) {
     &:not(._is-disabled):hover {
-      border-color: white;
+      border-color: transparent;
     }
   }
 

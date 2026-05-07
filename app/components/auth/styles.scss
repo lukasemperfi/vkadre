@@ -1,0 +1,61 @@
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  padding: 20px;
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__password-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  &__submit {
+    width: 100%;
+  }
+
+  &__link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    color: #171a1e;
+
+    &--forgot {
+      font-size: 12px;
+    }
+
+    &--center {
+      align-self: center;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      opacity: 0.8;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__text {
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+    color: #171a1e;
+  }
+
+  &__success {
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+  }
+}

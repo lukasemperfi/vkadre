@@ -118,7 +118,7 @@ function onItemClick(payload: { item: MenuItem; event: MouseEvent }) {
 .mobile-menu {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 999999;
   background: #fff;
   color: var(--black);
   display: none;
