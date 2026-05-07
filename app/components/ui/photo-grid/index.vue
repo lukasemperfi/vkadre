@@ -56,29 +56,28 @@ if (import.meta.dev && props.items.length % UI_PHOTO_GRID_BLOCK_SIZE !== 0) {
 
   &_mobile-flat {
     @media (max-width: globalBreakpoints.$breakpoint-xs-max) {
-      flex-direction: row;
-      column-gap: 8px;
-      overflow-x: auto;
+      flex-direction: row !important;
+      column-gap: 8px !important;
+      overflow-x: auto !important;
 
       :deep(.ui-photo-grid-block) {
-        display: grid;
-        grid-auto-flow: column;
-        grid-auto-columns: 256px;
-        grid-template-columns: none;
-        grid-template-rows: 1fr;
-        column-gap: 8px;
-        width: auto;
-        max-height: none;
-        aspect-ratio: auto;
+        display: grid !important;
+        grid-auto-flow: column !important;
+        grid-auto-columns: 256px !important;
+        grid-template-columns: none !important;
+        grid-template-rows: 1fr !important;
+        column-gap: 8px !important;
+        width: auto !important;
+        max-height: none !important;
+        aspect-ratio: auto !important;
       }
 
       :deep(.ui-photo-grid-block__item) {
-        grid-column: auto;
-        grid-row: auto;
-
-        width: 100%;
-        aspect-ratio: 256/347;
-        display: block;
+        grid-column: auto !important;
+        grid-row: auto !important;
+        width: 100% !important;
+        aspect-ratio: 256/347 !important;
+        // display: block;
       }
     }
   }

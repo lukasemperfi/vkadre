@@ -39,16 +39,23 @@ const getFirstParagraph = (description: string) => {
             v-for="location in locations"
             :key="location.id"
           >
-            <div class="location-card__image">
+            <NuxtLink
+              class="location-card__image"
+              :to="`/locations/${location.id}`"
+            >
               <NuxtImg
                 :src="location.image_url"
                 :alt="location.title"
                 format="webp"
                 class="location-card__image-img"
               />
-            </div>
+            </NuxtLink>
             <div class="location-card__body">
-              <h3 class="location-card__title">{{ location.title }}</h3>
+              <NuxtLink
+                class="location-card__title"
+                :to="`/locations/${location.id}`"
+                >{{ location.title }}</NuxtLink
+              >
               <div
                 class="location-card__description"
                 v-html="getFirstParagraph(location.description || '')"

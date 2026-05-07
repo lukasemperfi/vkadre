@@ -3,9 +3,12 @@ import type { ServicePackageRow } from "~/composables/api/supabase/types";
 
 type Props = {
   packages: ServicePackageRow[];
+  showHeader?: boolean;
 };
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showHeader: false,
+});
 
 function formatPackageLabel(p: ServicePackageRow) {
   const duration = p.duration_minutes ? `${p.duration_minutes} минут` : "";
@@ -47,15 +50,29 @@ const sortedPackages = computed(() =>
 
 <template>
   <div class="service-prices">
-    <ul class="service-prices__list" role="list">
-      <li v-for="p in sortedPackages" :key="p.id" class="service-prices__row">
-        <div class="service-prices__label-wrapper">
-          <span class="service-prices__label">{{ formatPackageLabel(p) }}</span>
-          <span class="service-prices__dots" aria-hidden="true"></span>
+    <div class="service-prices__wrapper">
+      <div class="service-prices__header" v-if="showHeader">
+        <div class="service-prices__header-label">
+          Доступные на данный момент даты:
         </div>
-        <span class="service-prices__price">{{ formatPrice(p) }}</span>
-      </li>
-    </ul>
+        <div class="service-prices__header-date">
+          <UiIcon name="calendar-m" />
+          <span>15.03 20.03 3.04</span>
+        </div>
+      </div>
+      <ul class="service-prices__list" role="list">
+        <li v-for="p in sortedPackages" :key="p.id" class="service-prices__row">
+          <div class="service-prices__label-wrapper">
+            <span class="service-prices__label">{{
+              formatPackageLabel(p)
+            }}</span>
+            <span class="service-prices__dots" aria-hidden="true"></span>
+          </div>
+          <span class="service-prices__price">{{ formatPrice(p) }}</span>
+        </li>
+      </ul>
+    </div>
+
     <div class="service-prices__bottom">
       <UiButton label="Заказать фотосессию" variant="outline" />
     </div>
@@ -71,6 +88,44 @@ const sortedPackages = computed(() =>
   @media (max-width: 768px) {
     padding: 16px;
   }
+
+  @media (max-width: globalBreakpoints.$breakpoint-xs) {
+    padding: 0;
+    border: none;
+  }
+}
+
+.service-prices__wrapper {
+  @media (max-width: globalBreakpoints.$breakpoint-xs) {
+    border: 1px solid rgba(23, 26, 30, 0.1);
+    padding: 16px;
+  }
+}
+
+.service-prices__header {
+  margin-bottom: globalFunctions.fluidValue(24px, 40px, 320px, 1440px);
+}
+
+.service-prices__header-label {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 26px;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+
+.service-prices__header-date {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--black);
+  display: flex;
+  gap: 11px;
+
+  :deep(.icon) {
+    opacity: 0.4;
+  }
 }
 
 .service-prices__list {
@@ -80,10 +135,6 @@ const sortedPackages = computed(() =>
   display: grid;
   grid-template-columns: 1fr max-content;
   gap: 8px;
-
-  @media (max-width: globalBreakpoints.$breakpoint-xs) {
-    border: 1px solid rgba(23, 26, 30, 0.1);
-  }
 }
 
 .service-prices__row {

@@ -19,6 +19,8 @@ await useAsyncData("services-init", async () => {
 const getFirstParagraph = (description: string) => {
   return description.split("</p>")[0] + "</p>";
 };
+
+console.log("services", services.value);
 </script>
 
 <template>

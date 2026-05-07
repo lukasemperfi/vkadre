@@ -10,7 +10,7 @@ const props = defineProps<Props>();
 
 <template>
   <article class="location-card">
-    <figure class="location-card__figure">
+    <NuxtLink class="location-card__figure" :to="`/locations/${location.id}`">
       <NuxtImg
         v-if="location.image_url"
         :src="location.image_url"
@@ -19,10 +19,14 @@ const props = defineProps<Props>();
         class="location-card__image"
       />
       <div v-else class="location-card__placeholder" aria-hidden="true"></div>
-    </figure>
+    </NuxtLink>
 
     <div class="location-card__body">
-      <h3 class="location-card__title">{{ location.title }}</h3>
+      <NuxtLink
+        class="location-card__title"
+        :to="`/locations/${location.id}`"
+        >{{ location.title }}</NuxtLink
+      >
 
       <div v-if="location.city" class="location-card__location">
         <UiIcon name="location" class="location-card__icon" />
