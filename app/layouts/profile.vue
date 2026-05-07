@@ -1,4 +1,3 @@
-<!-- layouts/profile.vue -->
 <script setup lang="ts">
 const route = useRoute();
 
@@ -22,73 +21,70 @@ const handleTabChange = (val: any) => {
 </script>
 
 <template>
-  <section class="services">
-    <div class="app-container">
-      <h2 class="services__title h-2">Личный кабинет</h2>
-      <div class="services__wrapper">
-        <div class="services-tabs">
-          <!-- Десктопное меню -->
-          <aside class="services-tabs__aside">
-            <div class="services-tabs__aside-wrapper">
-              <UiMenu :items="menuItems">
-                <template #item="{ item }">
-                  <!-- Используем NuxtLink внутри кнопки или атрибут 'to' -->
+  <NuxtLayout name="default">
+    <section class="profile">
+      <div class="app-container">
+        <h2 class="profile__title h-2">Личный кабинет</h2>
+        <div class="profile__wrapper">
+          <div class="profile-tabs">
+            <aside class="profile-tabs__aside">
+              <div class="profile-tabs__aside-wrapper">
+                <UiMenu :items="menuItems">
+                  <template #item="{ item }">
+                    <UiMenuButton
+                      :label="item.label"
+                      :is-active="route.path === item.to"
+                      @click="navigateTo(item.to)"
+                    />
+                  </template>
                   <UiMenuButton
-                    :label="item.label"
-                    :is-active="route.path === item.to"
-                    @click="navigateTo(item.to)"
+                    label="Выйти"
+                    class="logout-button"
+                    @click="onLogout"
                   />
-                </template>
-                <UiMenuButton
-                  label="Выйти"
-                  class="logout-button"
-                  @click="onLogout"
-                />
-              </UiMenu>
-            </div>
-          </aside>
+                </UiMenu>
+              </div>
+            </aside>
 
-          <!-- Контентная часть -->
-          <main class="services-tabs__content">
-            <div class="services-tabs__content-title">
-              {{ activeMenuItem?.label }}
-            </div>
-            <slot />
-          </main>
-        </div>
+            <main class="profile-tabs__content">
+              <div class="profile-tabs__content-title">
+                {{ activeMenuItem?.label }}
+              </div>
+              <slot />
+            </main>
+          </div>
 
-        <!-- Мобильный аккордеон (логика переключения через router) -->
-        <div class="services__accordion">
-          <UiAccordion
-            :model-value="route.path"
-            @update:model-value="handleTabChange"
-          >
-            <UiAccordionItem
-              v-for="item in menuItems"
-              :key="item.id"
-              :value="item.to"
+          <div class="profile__accordion">
+            <UiAccordion
+              :model-value="route.path"
+              @update:model-value="handleTabChange"
             >
-              <UiAccordionTrigger>{{ item.label }}</UiAccordionTrigger>
-              <UiAccordionContent>
-                <!-- В мобилке контент часто дублируется или рендерится здесь -->
-                <slot v-if="route.path === item.to" />
-              </UiAccordionContent>
-            </UiAccordionItem>
-          </UiAccordion>
-          <UiButton
-            label="Выйти"
-            class="logout-button"
-            @click="onLogout"
-            variant="outline"
-          />
+              <UiAccordionItem
+                v-for="item in menuItems"
+                :key="item.id"
+                :value="item.to"
+              >
+                <UiAccordionTrigger>{{ item.label }}</UiAccordionTrigger>
+                <UiAccordionContent>
+                  <slot v-if="route.path === item.to" />
+                </UiAccordionContent>
+              </UiAccordionItem>
+            </UiAccordion>
+            <UiButton
+              label="Выйти"
+              class="logout-button"
+              @click="onLogout"
+              variant="outline"
+            />
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>
-.services {
+.profile {
   padding-top: 40px;
 
   &__wrapper {
@@ -100,12 +96,12 @@ const handleTabChange = (val: any) => {
     margin-bottom: globalFunctions.fluidValue(24px, 60px, 320px, 1440px);
   }
 
-  .services-tabs {
+  .profile-tabs {
     display: flex;
     justify-content: space-between;
     gap: globalFunctions.fluidValue(24px, 138px, 768px, 1440px);
 
-    @media (max-width: 1250px) {
+    @media (max-width: 1200px) {
       flex-direction: column;
     }
 
@@ -115,6 +111,10 @@ const handleTabChange = (val: any) => {
 
     &__aside {
       flex: 1 1 396px;
+
+      @media (max-width: 1200px) {
+        flex: 0;
+      }
       &-wrapper {
         border: 1px solid var(--gray);
         padding-top: 32px;
@@ -136,14 +136,14 @@ const handleTabChange = (val: any) => {
           gap: 35px;
           margin-right: 34px;
 
-          @media (max-width: 1250px) {
-            display: grid;
-            grid-template-columns: repeat(
-              auto-fill,
-              minmax(260px, max-content)
-            );
-            justify-content: space-between;
-          }
+          // @media (max-width: 1250px) {
+          //   display: grid;
+          //   grid-template-columns: repeat(
+          //     auto-fill,
+          //     minmax(260px, max-content)
+          //   );
+          //   justify-content: space-between;
+          // }
         }
 
         .menu__link {
@@ -187,6 +187,7 @@ const handleTabChange = (val: any) => {
 
     .logout-button {
       margin-top: 40px;
+      width: 100%;
     }
   }
 }

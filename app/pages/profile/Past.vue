@@ -20,7 +20,7 @@ const mockBookings: BookingItem[] = [
     date: "3.04.2022",
     time: "14:00 - 14:10",
     isCancelled: false,
-    showActions: "booking",
+    showActions: "completed",
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ const mockBookings: BookingItem[] = [
     date: "3.04.2022",
     time: "14:00 - 14:10",
     isCancelled: true,
-    showActions: "booking",
+    showActions: "completed",
   },
   {
     id: 3,
@@ -38,7 +38,7 @@ const mockBookings: BookingItem[] = [
     date: "3.04.2022",
     time: "14:00 - 14:10",
     isCancelled: false,
-    showActions: "booking",
+    showActions: "completed",
   },
 ];
 
@@ -57,8 +57,8 @@ const handleReview = (id: number) => {
 
 <template>
   <div>
-    <div class="upcoming">
-      <div class="upcoming__list">
+    <div class="past">
+      <div class="past__list">
         <ProfileBookingCard
           v-for="item in mockBookings"
           :key="item.id"
@@ -73,7 +73,7 @@ const handleReview = (id: number) => {
 </template>
 
 <style lang="scss" scoped>
-.upcoming {
+.past {
   &__list {
     display: grid;
     grid-template-columns: 1fr max-content;

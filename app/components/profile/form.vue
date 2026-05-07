@@ -41,6 +41,10 @@ const email = ref<string | undefined>(undefined);
   &__button {
     margin-top: globalFunctions.fluidValue(32px, 40px, 320px, 1440px);
     width: 285px;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
   }
 
   :deep(.ui-input__affix_left) {
