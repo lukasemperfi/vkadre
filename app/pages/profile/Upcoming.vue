@@ -7,7 +7,7 @@ definePageMeta({
 <template>
   <div>
     <div class="services-tabs__content-body">
-      <ProfileForm />
+      <div>Upcoming</div>
     </div>
   </div>
 </template>
