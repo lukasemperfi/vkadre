@@ -36,7 +36,11 @@ function onItemClick(
     <ul class="menu__items" role="list">
       <li v-for="item in items" :key="item.id" class="menu__item">
         <template v-if="$slots.item">
-          <slot name="item" :item="item" :onItemClick="(e: MouseEvent) => emitItemClick(e, item)" />
+          <slot
+            name="item"
+            :item="item"
+            :onItemClick="(e: MouseEvent) => emitItemClick(e, item)"
+          />
         </template>
         <template v-else>
           <UiMenuLink
@@ -49,6 +53,9 @@ function onItemClick(
             <span class="menu__link-text">{{ item.label }}</span>
           </span>
         </template>
+      </li>
+      <li class="menu__item">
+        <slot />
       </li>
     </ul>
   </nav>

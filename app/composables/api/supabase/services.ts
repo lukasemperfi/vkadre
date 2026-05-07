@@ -1,15 +1,22 @@
 export const useServicesApi = () => {
   const supabase = useSupabaseClient();
   return {
-    async getServices(page = 1, perPage = 6): Promise<ServiceWithRelations[]> {
-      const from = (page - 1) * perPage;
-      const to = from + perPage - 1;
-
-      const { data, error } = await supabase
+    async getServices(
+      page?: number,
+      perPage?: number,
+    ): Promise<ServiceWithRelations[]> {
+      let query = supabase
         .from("services")
-        .select("*,portfolio(*),service_packages(*)")
-        .order("sort_order", { ascending: true })
-        .range(from, to);
+        .select("*, portfolio(*), service_packages(*)")
+        .order("sort_order", { ascending: true });
+
+      if (page !== undefined && perPage !== undefined) {
+        const from = (page - 1) * perPage;
+        const to = from + perPage - 1;
+        query = query.range(from, to);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return data ?? [];

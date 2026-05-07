@@ -2,16 +2,20 @@ export const useLocationsApi = () => {
   const supabase = useSupabaseClient();
   return {
     async getLocations(
-      page = 1,
-      perPage = 6,
+      page?: number,
+      perPage?: number,
     ): Promise<LocationWithRelations[]> {
-      const from = (page - 1) * perPage;
-      const to = from + perPage - 1;
-
-      const { data, error } = await supabase
+      let query = supabase
         .from("locations")
-        .select("*,service_packages(*),slots(*),portfolio(*)")
-        .range(from, to);
+        .select("*, service_packages(*), slots(*), portfolio(*)");
+
+      if (page !== undefined && perPage !== undefined) {
+        const from = (page - 1) * perPage;
+        const to = from + perPage - 1;
+        query = query.range(from, to);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
