@@ -4,6 +4,7 @@ const authApi = useAuthApi();
 
 const isLoggedIn = computed(() => !!user.value);
 const isAuthModalOpen = ref(false);
+const router = useRouter();
 
 const menuItems = [
   { id: "portfolio", label: "Портфолио", to: "/portfolio" },
@@ -23,6 +24,7 @@ const closeMenu = () => {
 
 const handleAuth = () => {
   if (isLoggedIn.value) {
+    router.push("/profile");
   } else {
     isAuthModalOpen.value = true;
   }

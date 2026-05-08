@@ -66,7 +66,7 @@ const handleTabChange = (val: any) => {
               >
                 <UiAccordionTrigger>{{ item.label }}</UiAccordionTrigger>
                 <UiAccordionContent>
-                  <slot v-if="route.path === item.to" />
+                  <slot />
                 </UiAccordionContent>
               </UiAccordionItem>
             </UiAccordion>
