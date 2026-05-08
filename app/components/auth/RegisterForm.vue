@@ -13,8 +13,8 @@ const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
-const onSubmit = handleSubmit((values) => {
-  emit("submit", values);
+const onSubmit = handleSubmit(async (values, actions) => {
+  emit("submit", { values, actions });
 });
 </script>
 

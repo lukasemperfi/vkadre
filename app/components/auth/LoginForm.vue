@@ -3,12 +3,10 @@ import { useForm, useField } from "vee-validate";
 
 const emit = defineEmits(["go-to-forgot", "go-to-register", "submit"]);
 
-// Инициализация формы с валидацией
 const { handleSubmit, errors } = useForm({
   validationSchema: loginSchema,
 });
 
-// Привязываем поля
 const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
 
@@ -22,8 +20,8 @@ const togglePassword = () => {
   isPasswordVisible.value = !isPasswordVisible.value;
 };
 
-const onSubmit = handleSubmit((values) => {
-  emit("submit", values);
+const onSubmit = handleSubmit((values, actions) => {
+  emit("submit", { values, actions });
 });
 </script>
 
