@@ -1,18 +1,28 @@
 <script setup lang="ts">
 import { useForm, useField } from "vee-validate";
 
+const props = defineProps<{
+  initialData?: {
+    email: string | null;
+    name: string | null;
+    phone: string | null;
+  };
+}>();
+
 const emit = defineEmits(["submit"]);
 
 const { handleSubmit, errors } = useForm({
   validationSchema: profileSchema,
+  initialValues: props.initialData,
+  // enableReinitialize: true,
 });
 
 const { value: name } = useField<string | undefined>("name");
 const { value: phone } = useField<string | undefined>("phone");
 const { value: email } = useField<string | undefined>("email");
 
-const onProfileSubmit = handleSubmit((values) => {
-  emit("submit", values);
+const onProfileSubmit = handleSubmit((values, actions) => {
+  emit("submit", { values, actions });
 });
 </script>
 
