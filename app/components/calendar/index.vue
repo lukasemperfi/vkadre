@@ -25,6 +25,28 @@ const isShowMonthNav = computed(() => {
 });
 const locale = "ru-RU";
 
+const calendarEl = ref<HTMLElement | null>(null);
+const { width } = useElementSize(calendarEl);
+const isMobileByContainer = computed(
+  () => width.value > 0 && width.value < 650,
+);
+
+watch(
+  isMobileByContainer,
+  (mobile) => {
+    if (mobile) {
+      if (viewActiveTab.value === "week" || viewActiveTab.value === "3_days") {
+        viewActiveTab.value = "list";
+      }
+    } else {
+      if (viewActiveTab.value === "list") {
+        viewActiveTab.value = "week";
+      }
+    }
+  },
+  { immediate: true },
+);
+
 const isPrevDisabled = computed(() => {
   const now = today(getLocalTimeZone());
 
@@ -307,7 +329,7 @@ const formattedDateTitle = computed(() => {
 </script>
 
 <template>
-  <div class="calendar">
+  <div class="calendar" ref="calendarEl">
     <div class="calendar__wrapper">
       <div class="calendar__header">
         <h2 class="calendar__title h-2">
