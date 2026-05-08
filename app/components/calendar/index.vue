@@ -13,6 +13,7 @@ import {
 import type { UiCalendarEvent } from "~/components/ui/calendar/types";
 
 type ViewType = "calendar" | "list" | "week" | "3_days";
+type CityType = "odessa" | "south";
 
 const todayDate = today(getLocalTimeZone());
 const month = shallowRef(todayDate);
@@ -146,6 +147,27 @@ const events = ref([
     location: "Набережная",
   },
 ]);
+
+const parsedEvents = computed<UiCalendarEvent[]>(() => {
+  return events.value.map((event) => ({
+    ...event,
+    start: parseZonedDateTime(event.start),
+    end: parseZonedDateTime(event.end),
+  }));
+});
+
+const cities = [
+  {
+    id: 1,
+    label: "Одесса",
+    value: "odessa",
+  },
+  {
+    id: 2,
+    label: "Южный",
+    value: "south",
+  },
+];
 
 const isWithinRange = (dateStr: string) => {
   const eventZoned = parseZonedDateTime(dateStr);
@@ -334,6 +356,12 @@ const formattedDateTitle = computed(() => {
             </UiTabsList>
           </UiTabs>
         </div>
+        <UiSelect
+          v-model="cityActiveTab"
+          :options="cities"
+          placeholder="Выберите город"
+          class="calendar__city-select"
+        />
         <div class="calendar__view-tabs">
           <UiTabs v-model="viewActiveTab" @change="handleViewTabChange">
             <UiTabsList class="calendar__view-tabs-list">
@@ -378,6 +406,14 @@ const formattedDateTitle = computed(() => {
             :city="`Южный`"
           />
         </div>
+      </div>
+      <div class="list-calendar" v-show="viewActiveTab === 'list'">
+        <UiCalendarEventList
+          :events="parsedEvents"
+          :city-filter="cityActiveTab"
+          :items-per-page="3"
+          locale="ru-RU"
+        />
       </div>
       <UiCalendarDrawer
         v-model:is-open="isDrawerOpen"
@@ -513,6 +549,17 @@ const formattedDateTitle = computed(() => {
     }
   }
 
+  .week-calendar {
+    @container (width < 650px) {
+      display: none;
+    }
+  }
+  .days-calendar {
+    @container (width < 650px) {
+      display: none;
+    }
+  }
+
   .three-days-cards {
     display: flex;
     gap: 32px;
@@ -520,6 +567,16 @@ const formattedDateTitle = computed(() => {
     @media (max-width: 1439px) {
       flex-direction: column;
       gap: 24px;
+    }
+  }
+
+  &__city-select {
+    display: none;
+
+    @container (width < 650px) {
+      display: block;
+      width: 100%;
+      grid-column: 1/-1;
     }
   }
 }
