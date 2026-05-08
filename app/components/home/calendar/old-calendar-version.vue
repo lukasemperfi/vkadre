@@ -271,100 +271,100 @@ const formattedDateTitle = computed(() => {
 </script>
 
 <template>
-  <div class="calendar">
-    <div class="calendar__wrapper">
-      <div class="calendar__header">
-        <h2 class="calendar__title h-2">
-          Календарь<span class="calendar__title_part"> на </span>
-          <span class="calendar__month-date" v-show="isShowMonthNav">
-            {{ formattedDateTitle }}
-          </span>
-        </h2>
-        <div class="calendar__month-nav">
-          <UiCalendarNavButtons
-            @prev="handlePrev"
-            @next="handleNext"
-            :prev-disabled="isPrevDisabled"
-            v-show="isShowMonthNav"
+  <section class="calendar-section">
+    <div class="app-container">
+      <div class="calendar">
+        <div class="calendar__wrapper">
+          <div class="calendar__header">
+            <h2 class="calendar__title h-2">
+              Календарь<span class="calendar__title_part"> на </span>
+              <span class="calendar__month-date" v-show="isShowMonthNav">
+                {{ formattedDateTitle }}
+              </span>
+            </h2>
+            <div class="calendar__month-nav">
+              <UiCalendarNavButtons
+                @prev="handlePrev"
+                @next="handleNext"
+                :prev-disabled="isPrevDisabled"
+                v-show="isShowMonthNav"
+              />
+            </div>
+            <div class="calendar__actions">
+              <button
+                class="calendar__actions-btn"
+                :class="{
+                  'calendar__actions-btn_active': viewActiveTab === 'list',
+                }"
+                :disabled="viewActiveTab === 'list'"
+                @click="handleMobileViewChange('list')"
+              >
+                <UiIcon name="list" />
+              </button>
+
+              <button
+                class="calendar__actions-btn"
+                :class="{
+                  'calendar__actions-btn_active': viewActiveTab === 'calendar',
+                }"
+                :disabled="viewActiveTab === 'calendar'"
+                @click="handleMobileViewChange('calendar')"
+              >
+                <UiIcon name="calendar" />
+              </button>
+            </div>
+
+            <div class="calendar__city-tabs">
+              <UiTabs v-model="cityActiveTab" @change="handleCityTabChange">
+                <UiTabsList class="calendar__city-tabs-list">
+                  <UiTabsTrigger id="odessa">Одесса</UiTabsTrigger>
+                  <UiTabsTrigger id="south">Южный</UiTabsTrigger>
+                </UiTabsList>
+              </UiTabs>
+            </div>
+            <div class="calendar__view-tabs">
+              <UiTabs v-model="viewActiveTab" @change="handleViewTabChange">
+                <UiTabsList class="calendar__view-tabs-list">
+                  <UiTabsTrigger id="3_days">3 дня</UiTabsTrigger>
+                  <UiTabsTrigger id="week">7 дней</UiTabsTrigger>
+                  <UiTabsTrigger id="calendar">1 Месяц</UiTabsTrigger>
+                </UiTabsList>
+              </UiTabs>
+            </div>
+          </div>
+
+          <div class="ui-calendar" v-show="viewActiveTab === 'calendar'">
+            <UiCalendarMonthNav class="calendar__month-nav-block">
+              <UiCalendarDateTitle :month="month" />
+              <UiCalendarNavButtons
+                @prev="handlePrev"
+                @next="handleNext"
+                :prev-disabled="isPrevDisabled"
+              />
+            </UiCalendarMonthNav>
+
+            <UiCalendarMonth
+              v-model:selected="selectedDay"
+              :month="month"
+              :events="filteredEvents"
+              @update:month="month = $event"
+            />
+          </div>
+          <div class="week-calendar" v-show="viewActiveTab === 'week'">
+            <UiCalendarWeek :date="month" :events="filteredEvents" />
+          </div>
+          <div class="days-calendar" v-show="viewActiveTab === '3_days'">
+            days
+          </div>
+          <UiCalendarDrawer
+            v-model:is-open="isDrawerOpen"
+            :events="selectedEvents"
+            :current-date="selectedDay"
           />
         </div>
-        <div class="calendar__actions">
-          <button
-            class="calendar__actions-btn"
-            :class="{
-              'calendar__actions-btn_active': viewActiveTab === 'list',
-            }"
-            :disabled="viewActiveTab === 'list'"
-            @click="handleMobileViewChange('list')"
-          >
-            <UiIcon name="list" />
-          </button>
-
-          <button
-            class="calendar__actions-btn"
-            :class="{
-              'calendar__actions-btn_active': viewActiveTab === 'calendar',
-            }"
-            :disabled="viewActiveTab === 'calendar'"
-            @click="handleMobileViewChange('calendar')"
-          >
-            <UiIcon name="calendar" />
-          </button>
-        </div>
-
-        <div class="calendar__city-tabs">
-          <UiTabs v-model="cityActiveTab" @change="handleCityTabChange">
-            <UiTabsList class="calendar__city-tabs-list">
-              <UiTabsTrigger id="odessa">Одесса</UiTabsTrigger>
-              <UiTabsTrigger id="south">Южный</UiTabsTrigger>
-            </UiTabsList>
-          </UiTabs>
-        </div>
-        <div class="calendar__view-tabs">
-          <UiTabs v-model="viewActiveTab" @change="handleViewTabChange">
-            <UiTabsList class="calendar__view-tabs-list">
-              <UiTabsTrigger id="3_days">3 дня</UiTabsTrigger>
-              <UiTabsTrigger id="week">7 дней</UiTabsTrigger>
-              <UiTabsTrigger id="calendar">1 Месяц</UiTabsTrigger>
-            </UiTabsList>
-          </UiTabs>
-        </div>
       </div>
-
-      <div class="ui-calendar" v-show="viewActiveTab === 'calendar'">
-        <UiCalendarMonthNav class="calendar__month-nav-block">
-          <UiCalendarDateTitle :month="month" />
-          <UiCalendarNavButtons
-            @prev="handlePrev"
-            @next="handleNext"
-            :prev-disabled="isPrevDisabled"
-          />
-        </UiCalendarMonthNav>
-
-        <UiCalendarMonth
-          v-model:selected="selectedDay"
-          :month="month"
-          :events="filteredEvents"
-          @update:month="month = $event"
-        />
-      </div>
-      <div class="week-calendar" v-show="viewActiveTab === 'week'">
-        <UiCalendarWeek :date="month" :events="filteredEvents" />
-      </div>
-      <div class="days-calendar" v-show="viewActiveTab === '3_days'">
-        <UiCalendarThreeDays
-          :date="month"
-          :events="filteredEvents"
-          :city="`Одесса`"
-        />
-      </div>
-      <UiCalendarDrawer
-        v-model:is-open="isDrawerOpen"
-        :events="selectedEvents"
-        :current-date="selectedDay"
-      />
     </div>
-  </div>
+  </section>
 </template>
 <style scoped lang="scss">
 .calendar {
