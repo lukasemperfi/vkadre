@@ -29,10 +29,6 @@ const handleAuth = () => {
     isAuthModalOpen.value = true;
   }
 };
-
-const handleLogout = async () => {
-  await authApi.signOut();
-};
 </script>
 
 <template>
@@ -50,8 +46,6 @@ const handleLogout = async () => {
               <div>в кратчайшие сроки</div>
             </div>
           </div>
-
-          <button class="header__logout" @click="handleLogout">Cancel</button>
 
           <div class="header__menu-contacts-wrapper">
             <UiMenu :items="menuItems" class="header__menu" />

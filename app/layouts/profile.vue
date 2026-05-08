@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const route = useRoute();
+const authApi = useAuthApi();
 
 const menuItems = [
   { id: "my-data", label: "Мои данные", to: "/profile" },
@@ -11,7 +12,7 @@ const activeMenuItem = computed(() => {
   return menuItems.find((item) => item.to === route.path) || menuItems[0];
 });
 
-const onLogout = () => console.log("Выход...");
+const onLogout = async () => await authApi.signOut();
 
 const handleTabChange = (val: any) => {
   if (val && typeof val === "string") {
