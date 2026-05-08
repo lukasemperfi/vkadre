@@ -58,3 +58,21 @@ export const contactsSchema = yup.object({
     .required("Phone is required"),
   selectedService: yup.string().required("Выберите услугу"),
 });
+
+export const profileSchema = yup.object({
+  name: yup.string().required("Введите имя"),
+  phone: yup
+    .string()
+    .trim()
+    .matches(phoneAllowedCharsRegex, "Phone contains invalid characters")
+    .test("min-digits", "Phone must contain at least 10 digits", (value) => {
+      const digits = String(value ?? "").replace(/\D/g, "");
+      return digits.length >= 10;
+    })
+    .max(25, "Phone must be at most 25 characters")
+    .required("Phone is required"),
+  email: yup
+    .string()
+    .required("Введите имейл")
+    .email("Некорректный формат имейла"),
+});

@@ -1,33 +1,55 @@
 <script setup lang="ts">
-const name = ref<string | undefined>(undefined);
-const phone = ref<string | undefined>(undefined);
-const email = ref<string | undefined>(undefined);
+import { useForm, useField } from "vee-validate";
+
+const emit = defineEmits(["submit"]);
+
+const { handleSubmit, errors } = useForm({
+  validationSchema: profileSchema,
+});
+
+const { value: name } = useField<string | undefined>("name");
+const { value: phone } = useField<string | undefined>("phone");
+const { value: email } = useField<string | undefined>("email");
+
+const onProfileSubmit = handleSubmit((values) => {
+  emit("submit", values);
+});
 </script>
+
 <template>
   <form class="profile-form">
     <div class="profile-form__fields">
-      <UiInput placeholder="Имя" v-model="name">
+      <UiInput placeholder="Имя" v-model="name" :error="errors.name">
         <template #left>
           <UiIcon name="person-i" />
         </template>
       </UiInput>
-      <UiInput placeholder="Телефон" v-model="phone">
+
+      <UiInput
+        placeholder="Телефон"
+        v-model="phone"
+        type="tel"
+        :error="errors.phone"
+      >
         <template #left>
           <UiIcon name="phone-m" />
         </template>
       </UiInput>
-      <UiInput placeholder="Имейл" v-model="email">
+
+      <UiInput placeholder="Имейл" v-model="email" :error="errors.email">
         <template #left>
           <UiIcon name="email-m" />
         </template>
       </UiInput>
     </div>
+
     <UiButton
-      type="submit"
+      type="button"
       variant="outline"
       class="profile-form__button"
       label="Сохранить"
-    ></UiButton>
+      @click="onProfileSubmit"
+    />
   </form>
 </template>
 <style scoped lang="scss">
