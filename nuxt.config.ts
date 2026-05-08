@@ -24,7 +24,14 @@ export default defineNuxtConfig({
 
   supabase: {
     types: "~~/types/supabase.ts",
-    redirect: false,
+    redirect: true,
+    redirectOptions: {
+      login: "/",
+      callback: "/",
+      include: ["/profile(/*)?"],
+      exclude: [],
+      saveRedirectToCookie: true,
+    },
   },
 
   vite: {

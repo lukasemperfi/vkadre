@@ -22,16 +22,26 @@ const services = [
   },
 ];
 
-const { handleSubmit, errors } = useForm({
+const { handleSubmit, errors, resetForm } = useForm({
   validationSchema: contactsSchema,
 });
 
 const { value: name } = useField<string>("name");
 const { value: phone } = useField<string>("phone");
 const { value: selectedService } = useField<string>("selectedService");
+const isLoading = ref(false);
 
-const onContactSubmit = handleSubmit((values) => {
-  console.log("Contact form submitted:", values);
+const onContactSubmit = handleSubmit(async (values) => {
+  isLoading.value = true;
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    isLoading.value = false;
+
+    resetForm();
+    console.log("Contact form submitted:", values);
+  } catch (e) {
+    console.error(e);
+  }
 });
 </script>
 
@@ -49,6 +59,7 @@ const onContactSubmit = handleSubmit((values) => {
           <li>VKADRE@GMAIL.COM</li>
         </ul>
         <form class="contacts__form contacts-form">
+          <UiLoadingOverlay v-if="isLoading" />
           <div class="contacts-form__title">Напишите нам</div>
           <div class="contacts-form__fields">
             <UiInput placeholder="Имя" v-model="name" :error="errors.name">
@@ -147,6 +158,7 @@ const onContactSubmit = handleSubmit((values) => {
   }
 
   .contacts-form {
+    position: relative;
     border: 1px solid var(--gray);
     padding-block: globalFunctions.fluidValue(24px, 40px, 320px, 1440px);
     padding-inline: globalFunctions.fluidValue(24px, 44px, 320px, 1440px);
