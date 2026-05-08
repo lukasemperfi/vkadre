@@ -12,6 +12,8 @@ const props = withDefaults(defineProps<Props>(), {
   locale: "ru-RU",
 });
 
+console.log(props);
+
 provide("eventContext", {
   event: computed(() => props.event),
   showDate: computed(() => props.showDate),

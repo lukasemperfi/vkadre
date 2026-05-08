@@ -76,7 +76,6 @@ const parsedEvents = computed<UiCalendarEvent[]>(() => {
       .filter((slot) => {
         const start = parseAbsoluteToLocal(slot.start_time);
 
-        // Один event на день для конкретной location
         const dayKey = `${start.year}-${start.month}-${start.day}`;
 
         if (uniqueDays.has(dayKey)) {
@@ -87,7 +86,7 @@ const parsedEvents = computed<UiCalendarEvent[]>(() => {
 
         return true;
       })
-      .map((slot) => ({
+      .map<UiCalendarEvent>((slot) => ({
         id: slot.id,
 
         title: location.title,
@@ -96,7 +95,13 @@ const parsedEvents = computed<UiCalendarEvent[]>(() => {
 
         end: parseAbsoluteToLocal(slot.end_time),
 
-        location: location.city,
+        isBooked: slot.is_booked,
+
+        locationId: location.id,
+
+        city: location.city,
+
+        location: location.address,
       }));
   });
 });
