@@ -1,29 +1,47 @@
 <script setup lang="ts">
+import { useForm, useField } from "vee-validate";
+
 const emit = defineEmits(["go-to-login", "success"]);
-const email = ref("");
 const isSent = ref(false);
 
-const handleSend = () => {
+const { handleSubmit, errors } = useForm({
+  validationSchema: forgotSchema,
+});
+
+const { value: email } = useField<string>("email");
+
+const handleSend = handleSubmit((values) => {
   isSent.value = true;
-  emit("success");
-};
+  emit("success", values);
+});
 </script>
 
 <template>
   <div class="auth-form">
     <template v-if="!isSent">
       <div class="auth-form__fields">
-        <UiInput v-model="email" placeholder="ЭЛЕКТРОННАЯ ПОЧТА" />
+        <UiInput
+          v-model="email"
+          placeholder="ЭЛЕКТРОННАЯ ПОЧТА"
+          :error="errors.email"
+        />
       </div>
-      <UiButton class="auth-form__submit" @click="handleSend" variant="outline"
-        >ВЫСЛАТЬ ПАРОЛЬ</UiButton
-      >
+      <UiButton class="auth-form__submit" @click="handleSend" variant="outline">
+        ВЫСЛАТЬ ПАРОЛЬ
+      </UiButton>
     </template>
 
     <div v-else class="auth-form__success">
       <p class="auth-form__text">
         Пароль будет выслан вам на почту в ближайшее время.
       </p>
+      <button
+        class="auth-form__link auth-form__link--center"
+        @click="$emit('go-to-login')"
+        type="button"
+      >
+        Вернуться назад
+      </button>
     </div>
   </div>
 </template>

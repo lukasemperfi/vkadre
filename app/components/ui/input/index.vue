@@ -218,10 +218,10 @@ defineExpose({
   &__error {
     position: absolute;
     left: 0;
-    top: calc(100% + 8px);
+    top: calc(100% + 2px);
 
     margin: 0;
-    font-size: 12px;
+    font-size: 10px;
     line-height: 16px;
     color: var(--error);
   }

@@ -22,9 +22,17 @@ const services = [
   },
 ];
 
-const selectedService = ref<string | number | undefined>(undefined);
-const name = ref<string | undefined>(undefined);
-const phone = ref<string | undefined>(undefined);
+const { handleSubmit, errors } = useForm({
+  validationSchema: contactsSchema,
+});
+
+const { value: name } = useField<string>("name");
+const { value: phone } = useField<string>("phone");
+const { value: selectedService } = useField<string>("selectedService");
+
+const onContactSubmit = handleSubmit((values) => {
+  console.log("Contact form submitted:", values);
+});
 </script>
 
 <template>
@@ -43,24 +51,37 @@ const phone = ref<string | undefined>(undefined);
         <form class="contacts__form contacts-form">
           <div class="contacts-form__title">Напишите нам</div>
           <div class="contacts-form__fields">
-            <UiInput placeholder="Имя" v-model="name">
+            <UiInput placeholder="Имя" v-model="name" :error="errors.name">
               <template #right>
-                <UiIcon name="mark" class="contacts-form__icon" v-if="name" />
+                <UiIcon
+                  name="mark"
+                  class="contacts-form__icon"
+                  v-if="name && !errors.name"
+                />
               </template>
             </UiInput>
-            <UiInput placeholder="Телефон" v-model="phone" />
+
+            <UiInput
+              placeholder="Телефон"
+              v-model="phone"
+              :error="errors.phone"
+            />
+
             <UiSelect
               v-model="selectedService"
               :options="services"
               placeholder="Интересующая услуга"
+              :error-message="errors.selectedService"
             />
           </div>
           <UiButton
-            type="submit"
+            type="button"
             variant="outline"
             class="contacts-form__button"
-            >Заказать звонок</UiButton
+            @click="onContactSubmit"
           >
+            Заказать звонок
+          </UiButton>
         </form>
       </div>
     </div>

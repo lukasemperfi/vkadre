@@ -191,12 +191,13 @@ const selectedLabel = computed(() => {
 }
 
 .select__error {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 2px);
   margin: 0;
   font-size: 10px;
-  color: var(--light-colors-errors---light);
-  position: absolute;
-  top: 100%;
-  left: 0;
+  line-height: 16px;
+  color: var(--error);
 }
 
 .is-open .select__trigger {

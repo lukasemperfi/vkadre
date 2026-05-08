@@ -15,7 +15,12 @@ export default defineNuxtConfig({
 
   css: ["@/assets/styles/main.scss"],
 
-  modules: ["@nuxtjs/supabase", "@vueuse/nuxt", "@nuxt/image"],
+  modules: [
+    "@nuxtjs/supabase",
+    "@vueuse/nuxt",
+    "@nuxt/image",
+    "@vee-validate/nuxt",
+  ],
 
   supabase: {
     types: "~~/types/supabase.ts",
