@@ -25,10 +25,24 @@ const isShowMonthNav = computed(() => {
 const locale = "ru-RU";
 
 const isPrevDisabled = computed(() => {
-  const currentView = startOfMonth(month.value);
-  const currentRealMonth = startOfMonth(today(getLocalTimeZone()));
+  const now = today(getLocalTimeZone());
 
-  return currentView.compare(currentRealMonth) <= 0;
+  // Для режима недели блокируем, если начало текущей недели <= началу текущей реальной недели
+  if (viewActiveTab.value === "week") {
+    const currentWeekStart = startOfWeek(month.value, locale);
+    const realWeekStart = startOfWeek(now, locale);
+    return currentWeekStart.compare(realWeekStart) <= 0;
+  }
+
+  // Для режима 3 дней блокируем, если первая дата <= сегодня
+  if (viewActiveTab.value === "3_days") {
+    return month.value.compare(now) <= 0;
+  }
+
+  // Стандартная логика для месяца (calendar / list)
+  const currentViewMonth = startOfMonth(month.value);
+  const realMonthStart = startOfMonth(now);
+  return currentViewMonth.compare(realMonthStart) <= 0;
 });
 
 const isDrawerOpen = computed({
