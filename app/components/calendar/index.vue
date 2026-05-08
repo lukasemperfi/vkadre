@@ -1,35 +1,50 @@
 <script setup lang="ts">
 import {
   CalendarDate,
-  parseZonedDateTime,
-  startOfMonth,
   today,
   getLocalTimeZone,
   startOfWeek,
   endOfWeek,
   endOfMonth,
-  parseDate,
+  startOfMonth,
+  parseAbsoluteToLocal,
+  type ZonedDateTime,
 } from "@internationalized/date";
+
 import type { UiCalendarEvent } from "~/components/ui/calendar/types";
 
 type ViewType = "calendar" | "list" | "week" | "3_days";
 type CityType = "odessa" | "south";
 
+const locatationsApi = useLocationsApi();
+
+const { data: locations } = await useAsyncData("locations-events", () =>
+  locatationsApi.getLocations(),
+);
+
+/////////////////////////////
+
 const todayDate = today(getLocalTimeZone());
+
 const month = shallowRef(todayDate);
+
 const selectedDay = shallowRef<CalendarDate | null>(null);
+
 const cityActiveTab = ref<CityType>("odessa");
+
 const viewActiveTab = ref<ViewType>("calendar");
-const isShowMonthNav = computed(() => {
-  return viewActiveTab.value === "calendar" || viewActiveTab.value === "week";
-});
+
 const locale = "ru-RU";
 
+/////////////////////////////
+
 const calendarEl = ref<HTMLElement | null>(null);
+
 const { width } = useElementSize(calendarEl);
-const isMobileByContainer = computed(
-  () => width.value > 0 && width.value < 650,
-);
+
+const isMobileByContainer = computed(() => {
+  return width.value > 0 && width.value < 650;
+});
 
 watch(
   isMobileByContainer,
@@ -47,136 +62,138 @@ watch(
   { immediate: true },
 );
 
+/////////////////////////////
+
+const parsedEvents = computed<UiCalendarEvent[]>(() => {
+  if (!locations.value) {
+    return [];
+  }
+
+  return locations.value.flatMap((location) => {
+    const uniqueDays = new Set<string>();
+
+    return location.slots
+      .filter((slot) => {
+        const start = parseAbsoluteToLocal(slot.start_time);
+
+        // Один event на день для конкретной location
+        const dayKey = `${start.year}-${start.month}-${start.day}`;
+
+        if (uniqueDays.has(dayKey)) {
+          return false;
+        }
+
+        uniqueDays.add(dayKey);
+
+        return true;
+      })
+      .map((slot) => ({
+        id: slot.id,
+
+        title: location.title,
+
+        start: parseAbsoluteToLocal(slot.start_time),
+
+        end: parseAbsoluteToLocal(slot.end_time),
+
+        location: location.city,
+      }));
+  });
+});
+
+/////////////////////////////
+
+const isWithinRange = (date: ZonedDateTime) => {
+  const targetDate = new CalendarDate(date.year, date.month, date.day);
+
+  if (viewActiveTab.value === "3_days") {
+    const endRange = month.value.add({ days: 2 });
+
+    return (
+      targetDate.compare(month.value) >= 0 && targetDate.compare(endRange) <= 0
+    );
+  }
+
+  if (viewActiveTab.value === "week") {
+    const start = startOfWeek(month.value, locale);
+
+    const end = endOfWeek(month.value, locale);
+
+    return targetDate.compare(start) >= 0 && targetDate.compare(end) <= 0;
+  }
+
+  const start = startOfMonth(month.value);
+
+  const end = endOfMonth(month.value);
+
+  return targetDate.compare(start) >= 0 && targetDate.compare(end) <= 0;
+};
+
+/////////////////////////////
+
+const filteredEvents = computed<UiCalendarEvent[]>(() => {
+  return parsedEvents.value
+    .filter((event) => isWithinRange(event.start))
+    .sort((a, b) => a.start.compare(b.start));
+});
+
+/////////////////////////////
+
+const selectedEvents = computed<UiCalendarEvent[]>(() => {
+  if (!selectedDay.value) {
+    return [];
+  }
+
+  return filteredEvents.value.filter((event) => {
+    return (
+      event.start.day === selectedDay.value?.day &&
+      event.start.month === selectedDay.value?.month &&
+      event.start.year === selectedDay.value?.year
+    );
+  });
+});
+
+/////////////////////////////
+
+const isShowMonthNav = computed(() => {
+  return viewActiveTab.value === "calendar" || viewActiveTab.value === "week";
+});
+
 const isPrevDisabled = computed(() => {
   const now = today(getLocalTimeZone());
 
-  // Для режима недели блокируем, если начало текущей недели <= началу текущей реальной недели
   if (viewActiveTab.value === "week") {
     const currentWeekStart = startOfWeek(month.value, locale);
+
     const realWeekStart = startOfWeek(now, locale);
+
     return currentWeekStart.compare(realWeekStart) <= 0;
   }
 
-  // Для режима 3 дней блокируем, если первая дата <= сегодня
   if (viewActiveTab.value === "3_days") {
     return month.value.compare(now) <= 0;
   }
 
-  // Стандартная логика для месяца (calendar / list)
   const currentViewMonth = startOfMonth(month.value);
+
   const realMonthStart = startOfMonth(now);
+
   return currentViewMonth.compare(realMonthStart) <= 0;
 });
 
+/////////////////////////////
+
 const isDrawerOpen = computed({
   get: () => selectedDay.value !== null,
+
   set: (value) => {
-    if (!value) selectedDay.value = null;
+    if (!value) {
+      selectedDay.value = null;
+    }
   },
 });
 
-// Имитация данных из БД (чистый JSON со строками)
-const events = ref([
-  {
-    id: 1,
-    start: "2026-05-04T10:00[Europe/Kyiv]",
-    end: "2026-05-04T12:00[Europe/Kyiv]",
-    title: "Встреча с командой",
-    location: "Одесса",
-  },
-  {
-    id: 2,
-    start: "2026-05-04T16:00[Europe/Kyiv]",
-    end: "2026-05-04T20:00[Europe/Kyiv]",
-    title: "Парк Шевченко: Магнолии",
-    location: "г. Одесса",
-  },
-  {
-    id: 3,
-    start: "2026-05-05T09:00[Europe/Kyiv]",
-    end: "2026-05-05T11:00[Europe/Kyiv]",
-    title: "Frontend Workshop",
-    location: "Южный",
-  },
-  {
-    id: 4,
-    start: "2026-05-06T14:30[Europe/Kyiv]",
-    end: "2026-05-06T16:00[Europe/Kyiv]",
-    title: "Code Review",
-    location: "г. Одесса",
-  },
-  {
-    id: 5,
-    start: "2026-05-08T11:00[Europe/Kyiv]",
-    end: "2026-05-08T13:00[Europe/Kyiv]",
-    title: "Refactoring Session",
-    location: "Южный",
-  },
-  {
-    id: 6,
-    start: "2026-05-11T18:00[Europe/Kyiv]",
-    end: "2026-05-11T20:00[Europe/Kyiv]",
-    title: "Футбол: Тренировка",
-    location: "Спортивная площадка",
-  },
-  {
-    id: 7,
-    start: "2026-05-13T10:00[Europe/Kyiv]",
-    end: "2026-05-13T11:30[Europe/Kyiv]",
-    title: "Planning Sprint",
-    location: "г. Одесса",
-  },
-  {
-    id: 8,
-    start: "2026-05-15T19:00[Europe/Kyiv]",
-    end: "2026-05-15T22:00[Europe/Kyiv]",
-    title: "Просмотр фильма",
-    location: "Дома",
-  },
-  {
-    id: 9,
-    start: "2026-05-19T14:00[Europe/Kyiv]",
-    end: "2026-05-19T15:30[Europe/Kyiv]",
-    title: "English Speaking Club",
-    location: "Online",
-  },
-  {
-    id: 10,
-    start: "2026-05-22T10:00[Europe/Kyiv]",
-    end: "2026-05-22T18:00[Europe/Kyiv]",
-    title: "UI Tech Conference",
-    location: "Online",
-  },
-  {
-    id: 11,
-    start: "2026-05-25T17:30[Europe/Kyiv]",
-    end: "2026-05-25T19:00[Europe/Kyiv]",
-    title: "Разбор логов и багфикс",
-    location: "г. Одесса",
-  },
-  {
-    id: 12,
-    start: "2026-05-28T12:00[Europe/Kyiv]",
-    end: "2026-05-28T13:00[Europe/Kyiv]",
-    title: "Sync with PM",
-    location: "Online",
-  },
-  {
-    id: 13,
-    start: "2026-05-31T15:00[Europe/Kyiv]",
-    end: "2026-05-31T18:00[Europe/Kyiv]",
-    title: "Прогулка у моря",
-    location: "Набережная",
-  },
-]);
-
-const parsedEvents = computed<UiCalendarEvent[]>(() => {
-  return events.value.map((event) => ({
-    ...event,
-    start: parseZonedDateTime(event.start),
-    end: parseZonedDateTime(event.end),
-  }));
-});
+/////////////////////////////
 
 const cities = [
   {
@@ -191,69 +208,13 @@ const cities = [
   },
 ];
 
-const isWithinRange = (dateStr: string) => {
-  const eventZoned = parseZonedDateTime(dateStr);
-  const targetDate = new CalendarDate(
-    eventZoned.year,
-    eventZoned.month,
-    eventZoned.day,
-  );
-
-  if (viewActiveTab.value === "3_days") {
-    const endRange = month.value.add({ days: 2 });
-    return (
-      targetDate.compare(month.value) >= 0 && targetDate.compare(endRange) <= 0
-    );
-  }
-
-  if (viewActiveTab.value === "week") {
-    const start = startOfWeek(month.value, locale);
-    const end = endOfWeek(month.value, locale);
-    return targetDate.compare(start) >= 0 && targetDate.compare(end) <= 0;
-  }
-
-  if (viewActiveTab.value === "calendar" || viewActiveTab.value === "list") {
-    const start = startOfMonth(month.value);
-    const end = endOfMonth(month.value);
-    return targetDate.compare(start) >= 0 && targetDate.compare(end) <= 0;
-  }
-
-  return true;
-};
-
-/**
- * Просто отфильтрованный плоский массив событий
- */
-const filteredEvents = computed(() => {
-  return events.value
-    .filter((event) => isWithinRange(event.start))
-    .map((event) => ({
-      ...event,
-      // Превращаем строки из "БД" в объекты для удобной работы в компонентах
-      start: parseZonedDateTime(event.start),
-      end: parseZonedDateTime(event.end),
-    }))
-    .sort((a, b) => a.start.compare(b.start)); // Сортировка по времени
-});
-
-const selectedEvents = computed<UiCalendarEvent[]>(() => {
-  if (!selectedDay.value) return [];
-  return filteredEvents.value.filter((event) => {
-    return (
-      event.start.day === selectedDay.value?.day &&
-      event.start.month === selectedDay.value?.month &&
-      event.start.year === selectedDay.value?.year
-    );
-  });
-});
+/////////////////////////////
 
 const handlePrev = () => {
-  console.log("Кликнули назад");
   changeMonth("prev");
 };
 
 const handleNext = () => {
-  console.log("Кликнули вперед");
   changeMonth("next");
 };
 
@@ -261,19 +222,27 @@ function changeMonth(direction: "prev" | "next") {
   const amount = direction === "next" ? 1 : -1;
 
   if (viewActiveTab.value === "week" || viewActiveTab.value === "3_days") {
-    // Переключаем по 7 дней
-    const newDate = month.value.add({ weeks: amount });
+    if (direction === "prev" && isPrevDisabled.value) {
+      return;
+    }
 
-    // Проверка на блокировку "назад" (если нужно ограничение по текущему моменту)
-    if (direction === "prev" && isPrevDisabled.value) return;
+    month.value = month.value.add({
+      weeks: amount,
+    });
 
-    month.value = newDate;
-  } else {
-    // Обычное переключение месяца
-    if (direction === "prev" && isPrevDisabled.value) return;
-    month.value = month.value.add({ months: amount });
+    return;
   }
+
+  if (direction === "prev" && isPrevDisabled.value) {
+    return;
+  }
+
+  month.value = month.value.add({
+    months: amount,
+  });
 }
+
+/////////////////////////////
 
 const handleCityTabChange = ({
   active,
@@ -283,7 +252,8 @@ const handleCityTabChange = ({
   prev: string | number;
 }) => {
   console.log("Была активна:", prev);
-  console.log("Стала активна (нажали):", active);
+
+  console.log("Стала активна:", active);
 };
 
 const handleViewTabChange = ({
@@ -294,19 +264,24 @@ const handleViewTabChange = ({
   prev: string | number;
 }) => {
   console.log("Была активна:", prev);
-  console.log("Стала активна (нажали):", active);
+
+  console.log("Стала активна:", active);
 };
 
 const handleMobileViewChange = (view: ViewType) => {
   viewActiveTab.value = view;
-  console.log("Активна:", view);
 };
 
+/////////////////////////////
+
 const formattedDateTitle = computed(() => {
-  if (!month.value) return "";
+  if (!month.value) {
+    return "";
+  }
 
   if (viewActiveTab.value === "week" || viewActiveTab.value === "3_days") {
     const start = startOfWeek(month.value, locale);
+
     const end = endOfWeek(month.value, locale);
 
     const startFormat = start.toDate("UTC").toLocaleDateString(locale, {
@@ -322,9 +297,9 @@ const formattedDateTitle = computed(() => {
     return `${startFormat} — ${endFormat}`.replace(/\s*г\.$/, "");
   }
 
-  return month.value
-    .toDate("UTC")
-    .toLocaleDateString(locale, { month: "long" });
+  return month.value.toDate("UTC").toLocaleDateString(locale, {
+    month: "long",
+  });
 });
 </script>
 
