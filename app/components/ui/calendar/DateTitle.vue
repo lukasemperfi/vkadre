@@ -32,6 +32,5 @@ withDefaults(
   font-size: 18px;
   color: var(--black);
   text-transform: capitalize;
-  margin-block: 24px;
 }
 </style>

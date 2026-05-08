@@ -18,7 +18,7 @@ type CityType = "odessa" | "south";
 const todayDate = today(getLocalTimeZone());
 const month = shallowRef(todayDate);
 const selectedDay = shallowRef<CalendarDate | null>(null);
-const cityActiveTab = ref("odessa");
+const cityActiveTab = ref<CityType>("odessa");
 const viewActiveTab = ref<ViewType>("calendar");
 const isShowMonthNav = computed(() => {
   return viewActiveTab.value === "calendar" || viewActiveTab.value === "week";
@@ -60,7 +60,7 @@ const events = ref([
     start: "2026-05-04T10:00[Europe/Kyiv]",
     end: "2026-05-04T12:00[Europe/Kyiv]",
     title: "Встреча с командой",
-    location: "Офис, Одесса",
+    location: "Одесса",
   },
   {
     id: 2,
@@ -74,7 +74,7 @@ const events = ref([
     start: "2026-05-05T09:00[Europe/Kyiv]",
     end: "2026-05-05T11:00[Europe/Kyiv]",
     title: "Frontend Workshop",
-    location: "Online",
+    location: "Южный",
   },
   {
     id: 4,
@@ -88,7 +88,7 @@ const events = ref([
     start: "2026-05-08T11:00[Europe/Kyiv]",
     end: "2026-05-08T13:00[Europe/Kyiv]",
     title: "Refactoring Session",
-    location: "Online",
+    location: "Южный",
   },
   {
     id: 6,
@@ -442,12 +442,15 @@ const formattedDateTitle = computed(() => {
     grid-template-columns: max-content 1fr max-content max-content;
     align-items: center;
     justify-content: space-between;
-
-    margin-bottom: globalFunctions.fluidValue(24px, 60px, 320px, 1440px);
+    margin-bottom: 60px;
 
     @container (width < 1150px) {
       grid-template-columns: repeat(2, max-content);
       gap: 30px;
+    }
+
+    @container (width < 650px) {
+      margin-bottom: 24px;
     }
   }
 
@@ -520,7 +523,7 @@ const formattedDateTitle = computed(() => {
   }
 
   &__month-nav-block {
-    display: none !important;
+    display: none;
 
     @container (width < 650px) {
       display: flex;
