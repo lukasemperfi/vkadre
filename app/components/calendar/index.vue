@@ -352,11 +352,18 @@ const formattedDateTitle = computed(() => {
         <UiCalendarWeek :date="month" :events="filteredEvents" />
       </div>
       <div class="days-calendar" v-show="viewActiveTab === '3_days'">
-        <UiCalendarThreeDays
-          :date="month"
-          :events="filteredEvents"
-          :city="`Одесса`"
-        />
+        <div class="three-days-cards">
+          <UiCalendarThreeDays
+            :date="month"
+            :events="filteredEvents"
+            :city="`Одесса`"
+          />
+          <UiCalendarThreeDays
+            :date="month"
+            :events="filteredEvents"
+            :city="`Южный`"
+          />
+        </div>
       </div>
       <UiCalendarDrawer
         v-model:is-open="isDrawerOpen"
@@ -489,6 +496,16 @@ const formattedDateTitle = computed(() => {
       &_active {
         opacity: 1;
       }
+    }
+  }
+
+  .three-days-cards {
+    display: flex;
+    gap: 32px;
+
+    @media (max-width: 1439px) {
+      flex-direction: column;
+      gap: 24px;
     }
   }
 }
