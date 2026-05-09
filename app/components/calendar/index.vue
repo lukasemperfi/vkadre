@@ -88,19 +88,12 @@ const parsedEvents = computed<UiCalendarEvent[]>(() => {
       })
       .map<UiCalendarEvent>((slot) => ({
         id: slot.id,
-
         title: location.title,
-
         start: parseAbsoluteToLocal(slot.start_time),
-
         end: parseAbsoluteToLocal(slot.end_time),
-
         isBooked: slot.is_booked,
-
         locationId: location.id,
-
         city: location.city,
-
         location: location.address,
       }));
   });
@@ -306,6 +299,16 @@ const formattedDateTitle = computed(() => {
     month: "long",
   });
 });
+
+const selectedEvent = ref<any>(null);
+const isBookingOpen = ref(false);
+
+const handleSelectBooking = (event: UiCalendarEvent) => {
+  console.log("Select booking:", event);
+  isDrawerOpen.value = false;
+  selectedEvent.value = event;
+  isBookingOpen.value = true;
+};
 </script>
 
 <template>
@@ -421,7 +424,9 @@ const formattedDateTitle = computed(() => {
         v-model:is-open="isDrawerOpen"
         :events="selectedEvents"
         :current-date="selectedDay"
+        @select-booking="handleSelectBooking"
       />
+      <BookingModal v-model:is-open="isBookingOpen" :event="selectedEvent" />
     </div>
   </div>
 </template>

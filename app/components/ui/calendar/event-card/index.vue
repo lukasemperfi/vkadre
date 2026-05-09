@@ -12,7 +12,13 @@ const props = withDefaults(defineProps<Props>(), {
   locale: "ru-RU",
 });
 
-console.log(props);
+const emit = defineEmits<{
+  (e: "select-booking", event: UiCalendarEvent): void;
+}>();
+
+const handleClick = () => {
+  emit("select-booking", props.event);
+};
 
 provide("eventContext", {
   event: computed(() => props.event),
@@ -22,7 +28,7 @@ provide("eventContext", {
 </script>
 
 <template>
-  <article class="event-card">
+  <article class="event-card" @click="handleClick">
     <slot />
   </article>
 </template>

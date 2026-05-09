@@ -22,6 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   "update:isOpen": [value: boolean];
+  "select-booking": [event: UiCalendarEvent];
   close: [];
 }>();
 
@@ -86,6 +87,7 @@ useEventListener(window, "resize", () => {
             :event="event"
             :show-date="showDate"
             :locale="locale"
+            @select-booking="emit('select-booking', $event)"
           >
             <UiCalendarEventCardTime />
             <UiCalendarEventCardTitle />
