@@ -54,8 +54,8 @@ const currentStep = ref<1 | 2>(1);
 const selectedSlot = ref<BookingSlot | null>(null);
 const selectedPackage = ref<(typeof packages)[0] | null>(packages[0]!);
 const sources = ref(false);
-
 const pending = ref(false);
+const SOURCES_PRICE = 199;
 
 const createBookingSlots = (
   start: ZonedDateTime | undefined,
@@ -136,6 +136,18 @@ const handleSlotClick = (slot: BookingSlot) => {
   selectedSlot.value = slot;
   console.log("selectedSlot", selectedSlot.value);
 };
+
+const sessionPrice = computed(() => {
+  return selectedPackage.value?.price ?? 0;
+});
+
+const sourcesPrice = computed(() => {
+  return sources.value ? SOURCES_PRICE : 0;
+});
+
+const totalPrice = computed(() => {
+  return sessionPrice.value + sourcesPrice.value;
+});
 </script>
 
 <template>
@@ -238,21 +250,19 @@ const handleSlotClick = (slot: BookingSlot) => {
               <div class="booking-modal__summary-list">
                 <div class="booking-modal__summary-row">
                   <span>Стоимость фотосессии:</span>
-                  <span> ₴ </span>
+                  <span> {{ sessionPrice }} ₴ </span>
                 </div>
 
                 <div class="booking-modal__summary-row">
                   <span>Исходники:</span>
-                  <span>
-                    {{ sources ? "199 ₴" : "0 ₴" }}
-                  </span>
+                  <span> {{ sources ? SOURCES_PRICE : 0 }} ₴ </span>
                 </div>
 
                 <div
                   class="booking-modal__summary-row booking-modal__summary-row_total"
                 >
                   <span>Итого:</span>
-                  <span> ₴</span>
+                  <span> {{ totalPrice }} ₴ </span>
                 </div>
               </div>
             </div>
