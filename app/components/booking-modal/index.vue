@@ -159,7 +159,7 @@ const totalPrice = computed(() => {
     <UiModalOverlay />
 
     <UiModalContent class="booking-modal">
-      <UiModalCloseButton />
+      <UiModalCloseButton class="booking-modal__close" />
 
       <UiLoadingOverlay v-if="pending" />
 
@@ -185,7 +185,7 @@ const totalPrice = computed(() => {
             </div>
           </div>
 
-          <div class="booking-modal__title">
+          <div class="booking-modal__title h-2">
             {{ formattedDate }}: {{ event.title }}
           </div>
 
@@ -198,6 +198,7 @@ const totalPrice = computed(() => {
               />
             </div>
 
+            <hr class="divider" />
             <div class="booking-modal__times">
               <div class="booking-modal__section-title">Выберите время</div>
 
@@ -237,13 +238,13 @@ const totalPrice = computed(() => {
                 </button>
               </div>
 
-              <label class="booking-modal__checkbox">
+              <label class="custom-checkbox">
                 <input v-model="sources" type="checkbox" />
-
-                <span>Исходники</span>
+                <span class="checkmark"></span>
+                <span>Исходники (весь отснятый материал)</span>
               </label>
             </div>
-
+            <hr class="divider" />
             <div class="booking-modal__summary">
               <div class="booking-modal__section-title">Сумма</div>
 
@@ -335,68 +336,80 @@ const totalPrice = computed(() => {
 <style scoped lang="scss">
 .booking-modal {
   width: 100%;
-  padding: 40px;
+  padding-block: 45px;
   height: 100vh;
   max-height: 100vh;
   margin-top: -5vh;
   margin-bottom: -5vh;
+  overflow-y: auto;
 
   &__steps {
     display: flex;
-    gap: 40px;
-    margin-bottom: 40px;
+    gap: globalFunctions.fluidValue(4px, 33px, 320px, 1440px);
+    margin-bottom: globalFunctions.fluidValue(40px, 82px, 320px, 1440px);
   }
 
   &__step {
     position: relative;
-    padding-bottom: 12px;
-    color: #b4b4b4;
-    font-size: 12px;
+    padding-top: 18px;
+    font-family: var(--font-family);
+    font-weight: 500;
+    font-size: 14px;
     text-transform: uppercase;
+    color: var(--gray);
+    width: 20.8vw;
+    border-top: 1px solid var(--gray);
+    white-space: nowrap;
 
-    &::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 1px;
-      background: #d8d8d8;
+    @media (max-width: 900px) {
+      color: white;
     }
 
     &_active {
-      color: #111;
+      color: var(--black);
+      border-top: 1px solid var(--black);
 
-      &::after {
-        background: #111;
+      @media (max-width: 900px) {
+        color: white;
       }
     }
   }
 
   &__title {
-    margin-bottom: 40px;
-    font-size: 34px;
-    font-weight: 600;
-    text-transform: uppercase;
+    margin-bottom: globalFunctions.fluidValue(24px, 60px, 320px, 1440px);
   }
 
   &__content {
     display: grid;
-    grid-template-columns: 240px 1fr 320px;
-    gap: 40px;
+    grid-template-columns: 280fr max-content 338fr max-content 359fr;
+    gap: 65px;
+
+    @media (max-width: 1439px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__image-wrapper {
+    aspect-ratio: 280/329;
+    max-width: 280px;
+
+    @media (max-width: 1439px) {
+      display: none;
+    }
   }
 
   &__image {
     width: 100%;
-    height: 320px;
+    height: 100%;
     object-fit: cover;
   }
 
   &__section-title {
-    margin-bottom: 20px;
+    font-family: var(--font-family);
+    font-weight: 700;
     font-size: 18px;
-    font-weight: 600;
-    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 30px;
   }
 
   &__slots,
@@ -407,18 +420,43 @@ const totalPrice = computed(() => {
     margin-bottom: 32px;
   }
 
+  &__slots {
+    height: 136px;
+    overflow: auto;
+    padding-right: 8px;
+    margin-right: -8px;
+
+    @media (max-width: 1439px) {
+      height: auto;
+      padding-right: 0;
+      margin-right: 0;
+    }
+  }
+
+  &__packages {
+    display: flex;
+    gap: 8px;
+  }
+
   &__slot,
   &__package {
-    border: 1px solid #d8d8d8;
     background: transparent;
-    padding: 10px 14px;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
     transition: 0.2s;
+    white-space: nowrap;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 16px;
+    border: 1px solid var(--gray);
 
     &_active {
-      background: #111;
       color: white;
-      border-color: #111;
+      border-color: var(--gray);
+      background-color: var(--black);
     }
   }
 
@@ -451,6 +489,12 @@ const totalPrice = computed(() => {
     display: flex;
     justify-content: flex-end;
     margin-top: 40px;
+
+    @media (max-width: 450px) {
+      button {
+        width: 100%;
+      }
+    }
   }
 
   &__payment {
@@ -488,6 +532,70 @@ const totalPrice = computed(() => {
     margin-bottom: 24px;
     font-size: 20px;
     font-weight: 700;
+  }
+
+  &__close {
+    right: globalFunctions.fluidValue(24px, 96px, 320px, 1440px);
+
+    // :deep(svg) {
+    //   width: 24px;
+    //   height: 24px;
+    // }
+  }
+
+  .divider {
+    height: 100%;
+    width: 1px;
+    background-color: var(--gray);
+
+    @media (max-width: 1439px) {
+      display: none;
+    }
+  }
+
+  .custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkmark {
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    background-color: transparent;
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid var(--black);
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 50%;
+    top: 50%;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .custom-checkbox input:checked ~ .checkmark:after {
+    display: block;
+  }
+  .custom-checkbox input:checked ~ .checkmark {
+    background-color: var(--black);
   }
 }
 </style>
