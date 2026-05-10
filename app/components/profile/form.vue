@@ -24,6 +24,10 @@ const { value: email } = useField<string | undefined>("email");
 const onProfileSubmit = handleSubmit((values, actions) => {
   emit("submit", { values, actions });
 });
+
+defineExpose({
+  submitForm: onProfileSubmit,
+});
 </script>
 
 <template>

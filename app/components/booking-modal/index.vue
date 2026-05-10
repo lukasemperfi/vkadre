@@ -56,6 +56,11 @@ const selectedPackage = ref<(typeof packages)[0] | null>(packages[0]!);
 const sources = ref(false);
 const pending = ref(false);
 const SOURCES_PRICE = 199;
+const isAcceptTerms = ref(false);
+
+const profileFormRef = ref<{
+  submitForm: () => void;
+} | null>(null);
 
 const createBookingSlots = (
   start: ZonedDateTime | undefined,
@@ -117,7 +122,25 @@ const goToNextStep = () => {
   currentStep.value = 2;
 };
 
-const handleSubmit = (formData: unknown) => {};
+const resetState = () => {
+  selectedSlot.value = null;
+  selectedPackage.value = packages[0]!;
+  sources.value = false;
+  pending.value = false;
+  currentStep.value = 1;
+};
+
+const triggerProfileSubmit = () => {
+  profileFormRef.value?.submitForm();
+};
+
+const handleProfileSubmit = async (data: any) => {
+  console.log("REAL SUBMIT", data);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  data.actions.resetForm();
+  resetState();
+  closeModal();
+};
 
 const handlePackageClick = (item: (typeof packages)[0]) => {
   selectedPackage.value = item;
@@ -147,6 +170,10 @@ const sourcesPrice = computed(() => {
 
 const totalPrice = computed(() => {
   return sessionPrice.value + sourcesPrice.value;
+});
+
+const cardLocation = computed(() => {
+  return `г. ${props.event?.city}, ${props.event?.title}`;
 });
 </script>
 
@@ -272,25 +299,16 @@ const totalPrice = computed(() => {
           <div v-else class="booking-modal__payment">
             <div class="booking-modal__payment-info">
               <div class="booking-modal__section-title">Оплата</div>
-
-              <div class="booking-modal__payment-item">
-                <UiIcon name="location" />
-                <span> г. {{ event.city }}, {{ event.location }} </span>
-              </div>
-
-              <div class="booking-modal__payment-item">
-                <UiIcon name="calendar" />
-                <span> </span>
-              </div>
-
-              <div class="booking-modal__payment-item">
-                <UiIcon name="clock" />
-                <span> </span>
-              </div>
+              <ProfileBookingCard
+                :title="event.title"
+                :location="cardLocation"
+                :date="`event.date`"
+                :time="`event.time`"
+              />
             </div>
 
             <div class="booking-modal__form">
-              <ProfileForm @submit="handleSubmit" />
+              <ProfileForm ref="profileFormRef" @submit="handleProfileSubmit" />
             </div>
 
             <div class="booking-modal__checkout">
@@ -323,7 +341,7 @@ const totalPrice = computed(() => {
               Далее
             </UiButton>
 
-            <UiButton v-else variant="outline" @click="closeModal">
+            <UiButton v-else variant="outline" @click="triggerProfileSubmit">
               Заказать экспресс-фотосессию
             </UiButton>
           </div>
@@ -504,9 +522,6 @@ const totalPrice = computed(() => {
   }
 
   &__payment-info {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
   }
 
   &__payment-item {
@@ -536,11 +551,6 @@ const totalPrice = computed(() => {
 
   &__close {
     right: globalFunctions.fluidValue(24px, 96px, 320px, 1440px);
-
-    // :deep(svg) {
-    //   width: 24px;
-    //   height: 24px;
-    // }
   }
 
   .divider {
@@ -596,6 +606,13 @@ const totalPrice = computed(() => {
   }
   .custom-checkbox input:checked ~ .checkmark {
     background-color: var(--black);
+  }
+
+  :deep(.booking-card) {
+    .booking-card__title,
+    .booking-card__actions {
+      display: none;
+    }
   }
 }
 </style>
