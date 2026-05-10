@@ -687,7 +687,7 @@ const slotsWithStatus = computed(() => {
     justify-content: space-between;
     margin-bottom: 32px;
     flex-wrap: wrap;
-    :deep(.ui-inpu) {
+    :deep(.ui-input) {
       flex: 50%;
     }
   }
