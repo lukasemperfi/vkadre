@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import type { UiCalendarEvent } from "../ui/calendar/types";
+import type { ZonedDateTime } from "@internationalized/date";
 
 interface Props {
   event: UiCalendarEvent | null;
   isOpen: boolean;
+}
+
+export interface BookingSlot {
+  start: ZonedDateTime;
+  end: ZonedDateTime;
 }
 
 const props = defineProps<Props>();
@@ -13,120 +19,90 @@ const emit = defineEmits<{
   (e: "update:isOpen", value: boolean): void;
 }>();
 
-const locationsApi = useLocationsApi();
+const packages = [
+  {
+    id: "5cf3706e-ea3a-4180-9404-f9c89989b67a",
+    price: 990,
+    currency: "UAH",
+    service_id: "dc3a1e83-165e-4072-811a-5c172fff9fcc",
+    location_id: null,
+    photo_count: 10,
+    duration_minutes: 10,
+  },
+  {
+    id: "361e4485-f572-4072-8d31-cfa243087c58",
+    price: 1990,
+    currency: "UAH",
+    service_id: "dc3a1e83-165e-4072-811a-5c172fff9fcc",
+    location_id: null,
+    photo_count: 20,
+    duration_minutes: 20,
+  },
+  {
+    id: "f753f33d-d26d-4810-a134-bd5e62e67dd3",
+    price: 2990,
+    currency: "UAH",
+    service_id: "dc3a1e83-165e-4072-811a-5c172fff9fcc",
+    location_id: null,
+    photo_count: 30,
+    duration_minutes: 30,
+  },
+];
 
 const currentStep = ref<1 | 2>(1);
 
-const selectedSlotId = ref<string | null>(null);
-const selectedPackageId = ref<string | null>(null);
-const includeSourceFiles = ref(false);
+const selectedSlot = ref<BookingSlot | null>(null);
+const selectedPackage = ref<(typeof packages)[0] | null>(packages[0]!);
+const sources = ref(false);
 
-const location = ref<LocationWithRelations | null>(null);
 const pending = ref(false);
 
-const loadLocation = async () => {
-  if (!props?.event?.locationId) return;
-  pending.value = true;
-
-  try {
-    location.value = await locationsApi.getLocation(props?.event?.locationId);
-  } finally {
-    pending.value = false;
+const createBookingSlots = (
+  start: ZonedDateTime | undefined,
+  end: ZonedDateTime | undefined,
+  intervalInMinutes: number,
+): BookingSlot[] => {
+  if (!start || !end) {
+    return [];
   }
-};
-watch(
-  () => props.isOpen,
-  async (isOpen) => {
-    if (isOpen && !location.value) {
-      await loadLocation();
+
+  const slots: BookingSlot[] = [];
+
+  let currentStart = start;
+
+  while (true) {
+    const currentEnd = currentStart.add({
+      minutes: intervalInMinutes,
+    });
+
+    if (currentEnd.compare(end) > 0) {
+      break;
     }
-  },
-);
 
-const selectedSlot = computed(() => {
-  if (!location.value || !selectedSlotId.value) {
-    return null;
+    slots.push({
+      start: currentStart,
+      end: currentEnd,
+    });
+
+    currentStart = currentEnd;
   }
 
-  return location.value.slots.find((slot) => slot.id === selectedSlotId.value);
-});
+  return slots;
+};
 
-const selectedPackage = computed(() => {
-  if (!location.value || !selectedPackageId.value) {
-    return null;
-  }
-
-  return location.value.service_packages.find(
-    (item) => item.id === selectedPackageId.value,
+const slots = computed(() => {
+  return createBookingSlots(
+    props?.event?.start,
+    props.event?.end,
+    selectedPackage.value?.duration_minutes ?? 10,
   );
 });
 
-const totalPrice = computed(() => {
-  if (!selectedPackage.value) {
-    return 0;
-  }
-
-  let total = Number(selectedPackage.value.price);
-
-  if (includeSourceFiles.value) {
-    total += 1290;
-  }
-
-  return total;
-});
-
-const formattedSlots = computed(() => {
-  if (!location.value) {
-    return [];
-  }
-
-  return location.value.slots
-    .filter((slot) => !slot.is_booked)
-    .map((slot) => {
-      const start = new Date(slot.start_time);
-
-      const end = new Date(slot.end_time);
-
-      return {
-        id: slot.id,
-        label: `${start.toLocaleTimeString("ru-RU", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}`,
-        fullLabel: `${start.toLocaleTimeString("ru-RU", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })} - ${end.toLocaleTimeString("ru-RU", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}`,
-      };
-    });
-});
-
-const formattedPackages = computed(() => {
-  if (!location.value) {
-    return [];
-  }
-
-  return location.value.service_packages.map((item: any) => ({
-    id: item.id,
-    duration: item.duration_minutes,
-    price: item.price,
-  }));
-});
-
 const formattedDate = computed(() => {
-  if (!selectedSlot.value) {
-    return "";
-  }
-
-  return new Date(selectedSlot.value.start_time)
-    .toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-    })
-    .toUpperCase();
+  return props.event?.start.toDate().toLocaleDateString("ru-RU", {
+    day: "numeric",
+    month: "long",
+  });
 });
 
 const closeModal = () => {
@@ -134,19 +110,31 @@ const closeModal = () => {
 };
 
 const goToNextStep = () => {
-  if (!selectedSlotId.value || !selectedPackageId.value) {
+  if (!selectedSlot.value || !selectedPackage.value) {
     return;
   }
 
   currentStep.value = 2;
 };
 
-const handleSubmit = (formData: unknown) => {
-  console.log("booking submit", {
-    formData,
-    slot: selectedSlot.value,
-    package: selectedPackage.value,
+const handleSubmit = (formData: unknown) => {};
+
+const handlePackageClick = (item: (typeof packages)[0]) => {
+  selectedPackage.value = item;
+  console.log("selectedPackage", selectedPackage.value);
+};
+
+const formatTime = (date: ZonedDateTime) => {
+  return date.toDate().toLocaleTimeString("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   });
+};
+
+const handleSlotClick = (slot: BookingSlot) => {
+  selectedSlot.value = slot;
+  console.log("selectedSlot", selectedSlot.value);
 };
 </script>
 
@@ -163,177 +151,171 @@ const handleSubmit = (formData: unknown) => {
 
       <UiLoadingOverlay v-if="pending" />
 
-      <template v-if="location">
-        <div class="booking-modal__steps">
-          <div
-            class="booking-modal__step"
-            :class="{
-              'booking-modal__step_active': currentStep === 1,
-            }"
-          >
-            Данные фотосессии
-          </div>
-
-          <div
-            class="booking-modal__step"
-            :class="{
-              'booking-modal__step_active': currentStep === 2,
-            }"
-          >
-            Оплата
-          </div>
-        </div>
-
-        <div class="booking-modal__title">
-          {{ formattedDate }}: {{ location.title }}
-        </div>
-
-        <div v-if="currentStep === 1" class="booking-modal__content">
-          <div class="booking-modal__image-wrapper">
-            <img
-              :src="location.image_url ?? ''"
-              :alt="location.title"
-              class="booking-modal__image"
-            />
-          </div>
-
-          <div class="booking-modal__times">
-            <div class="booking-modal__section-title">Выберите время</div>
-
-            <div class="booking-modal__slots">
-              <button
-                v-for="slot in formattedSlots"
-                :key="slot.id"
-                type="button"
-                class="booking-modal__slot"
-                :class="{
-                  'booking-modal__slot_active': selectedSlotId === slot.id,
-                }"
-                @click="selectedSlotId = slot.id"
-              >
-                {{ slot.label }}
-              </button>
+      <template v-if="event">
+        <div class="app-container">
+          <div class="booking-modal__steps">
+            <div
+              class="booking-modal__step"
+              :class="{
+                'booking-modal__step_active': currentStep === 1,
+              }"
+            >
+              Данные фотосессии
             </div>
 
-            <div class="booking-modal__section-title">
-              Длительность фотосессии
-            </div>
-
-            <div class="booking-modal__packages">
-              <button
-                v-for="item in formattedPackages"
-                :key="item.id"
-                type="button"
-                class="booking-modal__package"
-                :class="{
-                  'booking-modal__package_active':
-                    selectedPackageId === item.id,
-                }"
-                @click="selectedPackageId = item.id"
-              >
-                {{ item.duration }} мин
-              </button>
-            </div>
-
-            <label class="booking-modal__checkbox">
-              <input v-model="includeSourceFiles" type="checkbox" />
-
-              <span>Исходники</span>
-            </label>
-          </div>
-
-          <div class="booking-modal__summary">
-            <div class="booking-modal__section-title">Сумма</div>
-
-            <div class="booking-modal__summary-list">
-              <div class="booking-modal__summary-row">
-                <span>Стоимость фотосессии:</span>
-                <span> {{ selectedPackage?.price ?? 0 }} ₴ </span>
-              </div>
-
-              <div class="booking-modal__summary-row">
-                <span>Исходники:</span>
-                <span>
-                  {{ includeSourceFiles ? "1290 ₴" : "0 ₴" }}
-                </span>
-              </div>
-
-              <div
-                class="booking-modal__summary-row booking-modal__summary-row_total"
-              >
-                <span>Итого:</span>
-                <span>{{ totalPrice }} ₴</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-else class="booking-modal__payment">
-          <div class="booking-modal__payment-info">
-            <div class="booking-modal__section-title">Оплата</div>
-
-            <div class="booking-modal__payment-item">
-              <UiIcon name="location" />
-              <span> г. {{ location.city }}, {{ location.address }} </span>
-            </div>
-
-            <div class="booking-modal__payment-item">
-              <UiIcon name="calendar" />
-              <span>
-                {{ formattedDate }}
-              </span>
-            </div>
-
-            <div class="booking-modal__payment-item">
-              <UiIcon name="clock" />
-              <span>
-                {{
-                  formattedSlots.find((slot: any) => slot.id === selectedSlotId)
-                    ?.fullLabel
-                }}
-              </span>
+            <div
+              class="booking-modal__step"
+              :class="{
+                'booking-modal__step_active': currentStep === 2,
+              }"
+            >
+              Оплата
             </div>
           </div>
 
-          <div class="booking-modal__form">
-            <ProfileForm @submit="handleSubmit" />
+          <div class="booking-modal__title">
+            {{ formattedDate }}: {{ event.title }}
           </div>
 
-          <div class="booking-modal__checkout">
-            <div class="booking-modal__promo">
-              <input
-                type="text"
-                placeholder="№ сертификата"
-                class="booking-modal__input"
+          <div v-if="currentStep === 1" class="booking-modal__content">
+            <div class="booking-modal__image-wrapper">
+              <img
+                :src="event.image_url ?? ''"
+                :alt="event.title"
+                class="booking-modal__image"
               />
-
-              <UiButton variant="outline"> Применить </UiButton>
             </div>
 
-            <div class="booking-modal__checkout-total">
-              К оплате {{ totalPrice }} ₴
+            <div class="booking-modal__times">
+              <div class="booking-modal__section-title">Выберите время</div>
+
+              <div class="booking-modal__slots">
+                <button
+                  v-for="slot in slots"
+                  :key="slot.start.toString()"
+                  type="button"
+                  class="booking-modal__slot"
+                  :class="{
+                    'booking-modal__slot_active':
+                      selectedSlot?.start.toString() === slot.start.toString(),
+                  }"
+                  @click="handleSlotClick(slot)"
+                >
+                  {{ formatTime(slot.start) }} - {{ formatTime(slot.end) }}
+                </button>
+              </div>
+
+              <div class="booking-modal__section-title">
+                Длительность фотосессии
+              </div>
+
+              <div class="booking-modal__packages">
+                <button
+                  v-for="item in packages"
+                  :key="item.id"
+                  type="button"
+                  class="booking-modal__package"
+                  :class="{
+                    'booking-modal__package_active':
+                      selectedPackage?.id === item.id,
+                  }"
+                  @click="handlePackageClick(item)"
+                >
+                  {{ item.duration_minutes ?? 0 }} мин
+                </button>
+              </div>
+
+              <label class="booking-modal__checkbox">
+                <input v-model="sources" type="checkbox" />
+
+                <span>Исходники</span>
+              </label>
             </div>
 
-            <label class="booking-modal__checkbox">
-              <input type="checkbox" />
-              <span>Принимаю условия</span>
-            </label>
+            <div class="booking-modal__summary">
+              <div class="booking-modal__section-title">Сумма</div>
+
+              <div class="booking-modal__summary-list">
+                <div class="booking-modal__summary-row">
+                  <span>Стоимость фотосессии:</span>
+                  <span> ₴ </span>
+                </div>
+
+                <div class="booking-modal__summary-row">
+                  <span>Исходники:</span>
+                  <span>
+                    {{ sources ? "199 ₴" : "0 ₴" }}
+                  </span>
+                </div>
+
+                <div
+                  class="booking-modal__summary-row booking-modal__summary-row_total"
+                >
+                  <span>Итого:</span>
+                  <span> ₴</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="booking-modal__footer">
-          <UiButton
-            v-if="currentStep === 1"
-            variant="outline"
-            :disabled="!selectedSlotId || !selectedPackageId"
-            @click="goToNextStep"
-          >
-            Далее
-          </UiButton>
+          <div v-else class="booking-modal__payment">
+            <div class="booking-modal__payment-info">
+              <div class="booking-modal__section-title">Оплата</div>
 
-          <UiButton v-else variant="outline" @click="closeModal">
-            Заказать экспресс-фотосессию
-          </UiButton>
+              <div class="booking-modal__payment-item">
+                <UiIcon name="location" />
+                <span> г. {{ event.city }}, {{ event.location }} </span>
+              </div>
+
+              <div class="booking-modal__payment-item">
+                <UiIcon name="calendar" />
+                <span> </span>
+              </div>
+
+              <div class="booking-modal__payment-item">
+                <UiIcon name="clock" />
+                <span> </span>
+              </div>
+            </div>
+
+            <div class="booking-modal__form">
+              <ProfileForm @submit="handleSubmit" />
+            </div>
+
+            <div class="booking-modal__checkout">
+              <div class="booking-modal__promo">
+                <input
+                  type="text"
+                  placeholder="№ сертификата"
+                  class="booking-modal__input"
+                />
+
+                <UiButton variant="outline"> Применить </UiButton>
+              </div>
+
+              <div class="booking-modal__checkout-total">К оплате ₴</div>
+
+              <label class="booking-modal__checkbox">
+                <input type="checkbox" />
+                <span>Принимаю условия</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="booking-modal__footer">
+            <UiButton
+              v-if="currentStep === 1"
+              variant="outline"
+              :disabled="!selectedSlot?.start || !selectedPackage?.id"
+              @click="goToNextStep"
+            >
+              Далее
+            </UiButton>
+
+            <UiButton v-else variant="outline" @click="closeModal">
+              Заказать экспресс-фотосессию
+            </UiButton>
+          </div>
         </div>
       </template>
     </UiModalContent>
@@ -409,8 +391,8 @@ const handleSubmit = (formData: unknown) => {
 
   &__slots,
   &__packages {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 8px;
     margin-bottom: 32px;
   }

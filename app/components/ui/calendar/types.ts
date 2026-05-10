@@ -9,6 +9,7 @@ export interface UiCalendarEvent {
   isBooked?: boolean | null;
   locationId?: string;
   city?: string;
+  image_url?: string | null;
 }
 
 export interface UiCalendarDay {

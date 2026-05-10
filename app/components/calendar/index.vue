@@ -21,7 +21,7 @@ const locatationsApi = useLocationsApi();
 const { data: locations } = await useAsyncData("locations-events", () =>
   locatationsApi.getLocations(),
 );
-
+console.log("locations", locations.value);
 /////////////////////////////
 
 const todayDate = today(getLocalTimeZone());
@@ -95,6 +95,7 @@ const parsedEvents = computed<UiCalendarEvent[]>(() => {
         locationId: location.id,
         city: location.city,
         location: location.address,
+        image_url: location.image_url,
       }));
   });
 });
