@@ -50,8 +50,8 @@ const packages = [
 ];
 
 const bookingsApi = useBookingsApi();
+const bookings = ref<Booking[]>([]);
 const currentStep = ref<1 | 2>(1);
-
 const selectedSlot = shallowRef<BookingSlot | null>(null);
 const selectedPackage = ref<(typeof packages)[0] | null>(packages[0]!);
 const sources = ref(false);
@@ -63,6 +63,29 @@ const termsError = ref("");
 const profileFormRef = ref<{
   submitForm: () => void;
 } | null>(null);
+
+watch(
+  () => [props.isOpen, props.event],
+  async ([isOpen, event]) => {
+    if (!isOpen || !event?.locationId) {
+      return;
+    }
+
+    pending.value = true;
+
+    try {
+      bookings.value = await bookingsApi.getBookingsByLocation(
+        event.locationId,
+      );
+      console.log("bookings", bookings.value);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      pending.value = false;
+    }
+  },
+  { immediate: true },
+);
 
 const createBookingSlots = (
   start: ZonedDateTime | undefined,
@@ -146,6 +169,7 @@ const resetState = () => {
   isAcceptTerms.value = false;
   termsError.value = "";
   currentStep.value = 1;
+  bookings.value = [];
 };
 
 const closeModal = () => {
@@ -235,6 +259,29 @@ const totalPrice = computed(() => {
 const cardLocation = computed(() => {
   return `г. ${props.event?.city}, ${props.event?.title}`;
 });
+
+const isSlotBooked = (slot: BookingSlot) => {
+  const slotStart = slot.start.toDate().getTime();
+  const slotEnd = slot.end.toDate().getTime();
+
+  return bookings.value.some((b) => {
+    const bookingStart = new Date(b.start_time).getTime();
+    const bookingEnd = new Date(b.end_time).getTime();
+
+    return slotStart < bookingEnd && slotEnd > bookingStart;
+  });
+};
+
+const slotsWithStatus = computed(() => {
+  return createBookingSlots(
+    props?.event?.start,
+    props.event?.end,
+    selectedPackage.value?.duration_minutes ?? 10,
+  ).map((slot) => ({
+    ...slot,
+    disabled: isSlotBooked(slot),
+  }));
+});
 </script>
 
 <template>
@@ -292,15 +339,17 @@ const cardLocation = computed(() => {
 
               <div class="booking-modal__slots">
                 <button
-                  v-for="slot in slots"
+                  v-for="slot in slotsWithStatus"
                   :key="slot.start.toString()"
                   type="button"
                   class="booking-modal__slot"
+                  :disabled="slot.disabled"
                   :class="{
                     'booking-modal__slot_active':
                       selectedSlot?.start.toString() === slot.start.toString(),
+                    'booking-modal__slot_disabled': slot.disabled,
                   }"
-                  @click="handleSlotClick(slot)"
+                  @click="!slot.disabled && handleSlotClick(slot)"
                 >
                   {{ formatTime(slot.start) }} - {{ formatTime(slot.end) }}
                 </button>
@@ -555,6 +604,12 @@ const cardLocation = computed(() => {
       border-color: var(--gray);
       background-color: var(--black);
     }
+  }
+
+  &__slot_disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
   &__checkbox {
