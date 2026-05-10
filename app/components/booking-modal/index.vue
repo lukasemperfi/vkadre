@@ -51,12 +51,13 @@ const packages = [
 
 const currentStep = ref<1 | 2>(1);
 
-const selectedSlot = ref<BookingSlot | null>(null);
+const selectedSlot = shallowRef<BookingSlot | null>(null);
 const selectedPackage = ref<(typeof packages)[0] | null>(packages[0]!);
 const sources = ref(false);
 const pending = ref(false);
 const SOURCES_PRICE = 199;
 const isAcceptTerms = ref(false);
+const termsError = ref("");
 
 const profileFormRef = ref<{
   submitForm: () => void;
@@ -95,6 +96,10 @@ const createBookingSlots = (
   return slots;
 };
 
+const toSqlDateTime = (date: ZonedDateTime) => {
+  return date.toDate().toISOString();
+};
+
 const slots = computed(() => {
   return createBookingSlots(
     props?.event?.start,
@@ -110,7 +115,41 @@ const formattedDate = computed(() => {
   });
 });
 
+const eventCardDate = computed(() => {
+  return formateDate(props.event?.start, {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+  });
+});
+
+const eventCardTime = computed(() => {
+  if (!selectedSlot.value) {
+    return;
+  }
+  return `${formatTime(selectedSlot.value.start)}  -  ${formatTime(selectedSlot.value.end)}`;
+});
+
+const formateDate = (
+  date?: ZonedDateTime,
+  options?: Intl.DateTimeFormatOptions,
+) => {
+  return date?.toDate().toLocaleDateString("ru-RU", options);
+};
+
+const resetState = () => {
+  selectedSlot.value = null;
+  selectedPackage.value = packages[0]!;
+  sources.value = false;
+  pending.value = false;
+  isAcceptTerms.value = false;
+  termsError.value = "";
+  currentStep.value = 1;
+};
+
 const closeModal = () => {
+  resetState();
+
   emit("update:isOpen", false);
 };
 
@@ -122,20 +161,34 @@ const goToNextStep = () => {
   currentStep.value = 2;
 };
 
-const resetState = () => {
-  selectedSlot.value = null;
-  selectedPackage.value = packages[0]!;
-  sources.value = false;
-  pending.value = false;
-  currentStep.value = 1;
-};
-
 const triggerProfileSubmit = () => {
+  if (!isAcceptTerms.value) {
+    termsError.value = "Необходимо принять условия";
+    return;
+  }
+
+  termsError.value = "";
+
   profileFormRef.value?.submitForm();
 };
-
 const handleProfileSubmit = async (data: any) => {
-  console.log("REAL SUBMIT", data);
+  if (!selectedSlot.value || !selectedPackage.value || !props.event) {
+    return;
+  }
+
+  const bookingPayload = {
+    location_id: props.event.locationId,
+    start: toSqlDateTime(selectedSlot.value.start),
+    end: toSqlDateTime(selectedSlot.value.end),
+    name: data.values.name,
+    phone: data.values.phone,
+    email: data.values.email,
+    duration_minutes: selectedPackage.value.duration_minutes,
+    price: totalPrice.value,
+    source: sources.value ? 1 : 0,
+  };
+
+  console.log("bookingPayload", bookingPayload);
   await new Promise((resolve) => setTimeout(resolve, 1000));
   data.actions.resetForm();
   resetState();
@@ -147,7 +200,7 @@ const handlePackageClick = (item: (typeof packages)[0]) => {
   console.log("selectedPackage", selectedPackage.value);
 };
 
-const formatTime = (date: ZonedDateTime) => {
+const formatTime = (date: any) => {
   return date.toDate().toLocaleTimeString("ru-RU", {
     hour: "2-digit",
     minute: "2-digit",
@@ -186,7 +239,7 @@ const cardLocation = computed(() => {
     <UiModalOverlay />
 
     <UiModalContent class="booking-modal">
-      <UiModalCloseButton class="booking-modal__close" />
+      <UiModalCloseButton class="booking-modal__close" @click="closeModal" />
 
       <UiLoadingOverlay v-if="pending" />
 
@@ -302,10 +355,12 @@ const cardLocation = computed(() => {
               <ProfileBookingCard
                 :title="event.title"
                 :location="cardLocation"
-                :date="`event.date`"
-                :time="`event.time`"
+                :date="eventCardDate || ``"
+                :time="eventCardTime || ``"
               />
             </div>
+
+            <hr class="divider" />
 
             <div class="booking-modal__form">
               <ProfileForm ref="profileFormRef" @submit="handleProfileSubmit" />
@@ -313,20 +368,35 @@ const cardLocation = computed(() => {
 
             <div class="booking-modal__checkout">
               <div class="booking-modal__promo">
-                <input
-                  type="text"
+                <UiInput
                   placeholder="№ сертификата"
                   class="booking-modal__input"
                 />
 
-                <UiButton variant="outline"> Применить </UiButton>
+                <UiButton variant="outline" class="profile-form__button-apply">
+                  Применить
+                </UiButton>
               </div>
 
-              <div class="booking-modal__checkout-total">К оплате ₴</div>
+              <div class="booking-modal__checkout-total">
+                К оплате
+                <span class="booking-modal__checkout-total-price">
+                  {{ totalPrice }} ₴
+                </span>
+              </div>
 
-              <label class="booking-modal__checkbox">
-                <input type="checkbox" />
+              <label class="custom-checkbox booking-modal__checkbox-terms">
+                <input
+                  v-model="isAcceptTerms"
+                  type="checkbox"
+                  @change="termsError = ''"
+                />
+
+                <span class="checkmark"></span>
                 <span>Принимаю условия</span>
+                <div v-if="termsError" class="booking-modal__checkbox-error">
+                  {{ termsError }}
+                </div>
               </label>
             </div>
           </div>
@@ -485,6 +555,19 @@ const cardLocation = computed(() => {
     margin-top: 20px;
   }
 
+  &__checkbox-error {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    font-size: 10px;
+    line-height: 16px;
+    color: var(--error);
+  }
+
+  &__checkbox-terms {
+    position: relative;
+  }
+
   &__summary-list {
     display: flex;
     flex-direction: column;
@@ -517,8 +600,8 @@ const cardLocation = computed(() => {
 
   &__payment {
     display: grid;
-    grid-template-columns: 320px 1fr 320px;
-    gap: 40px;
+    grid-template-columns: 269fr max-content 360fr 424fr;
+    gap: 55px;
   }
 
   &__payment-info {
@@ -534,19 +617,6 @@ const cardLocation = computed(() => {
     display: flex;
     gap: 12px;
     margin-bottom: 32px;
-  }
-
-  &__input {
-    width: 100%;
-    border: 1px solid #d8d8d8;
-    padding: 12px 16px;
-    outline: none;
-  }
-
-  &__checkout-total {
-    margin-bottom: 24px;
-    font-size: 20px;
-    font-weight: 700;
   }
 
   &__close {
@@ -613,6 +683,27 @@ const cardLocation = computed(() => {
     .booking-card__actions {
       display: none;
     }
+  }
+
+  :deep(.profile-form__button) {
+    display: none;
+  }
+
+  &__checkout-total {
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-size: 16px;
+    color: var(--black);
+    margin-bottom: 40px;
+  }
+
+  &__checkout-total-price {
+    font-weight: 600;
+  }
+
+  .profile-form__button-apply {
+    border: 1px solid var(--gray);
+    color: var(--gray);
   }
 }
 </style>
