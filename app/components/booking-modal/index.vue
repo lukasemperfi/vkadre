@@ -49,6 +49,7 @@ const packages = [
   },
 ];
 
+const bookingsApi = useBookingsApi();
 const currentStep = ref<1 | 2>(1);
 
 const selectedSlot = shallowRef<BookingSlot | null>(null);
@@ -172,14 +173,20 @@ const triggerProfileSubmit = () => {
   profileFormRef.value?.submitForm();
 };
 const handleProfileSubmit = async (data: any) => {
-  if (!selectedSlot.value || !selectedPackage.value || !props.event) {
+  if (
+    !selectedSlot.value ||
+    !selectedPackage.value ||
+    !props.event?.locationId
+  ) {
     return;
   }
 
+  pending.value = true;
+
   const bookingPayload = {
     location_id: props.event.locationId,
-    start: toSqlDateTime(selectedSlot.value.start),
-    end: toSqlDateTime(selectedSlot.value.end),
+    start_time: toSqlDateTime(selectedSlot.value.start),
+    end_time: toSqlDateTime(selectedSlot.value.end),
     name: data.values.name,
     phone: data.values.phone,
     email: data.values.email,
@@ -188,8 +195,8 @@ const handleProfileSubmit = async (data: any) => {
     source: sources.value ? 1 : 0,
   };
 
-  console.log("bookingPayload", bookingPayload);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await bookingsApi.createBooking(bookingPayload);
+  pending.value = false;
   data.actions.resetForm();
   resetState();
   closeModal();
@@ -240,6 +247,7 @@ const cardLocation = computed(() => {
 
     <UiModalContent class="booking-modal">
       <UiModalCloseButton class="booking-modal__close" @click="closeModal" />
+      <UiLoadingOverlay v-if="pending" />
 
       <UiLoadingOverlay v-if="pending" />
 
@@ -430,6 +438,7 @@ const cardLocation = computed(() => {
   margin-top: -5vh;
   margin-bottom: -5vh;
   overflow-y: auto;
+  position: relative;
 
   &__steps {
     display: flex;
@@ -602,6 +611,10 @@ const cardLocation = computed(() => {
     display: grid;
     grid-template-columns: 269fr max-content 360fr 424fr;
     gap: 55px;
+
+    @media (max-width: 1439px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__payment-info {
@@ -616,7 +629,12 @@ const cardLocation = computed(() => {
   &__promo {
     display: flex;
     gap: 12px;
+    justify-content: space-between;
     margin-bottom: 32px;
+    flex-wrap: wrap;
+    :deep(.ui-inpu) {
+      flex: 50%;
+    }
   }
 
   &__close {
