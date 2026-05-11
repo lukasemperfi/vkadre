@@ -26,6 +26,15 @@ if (import.meta.dev && props.items.length % UI_PHOTO_GRID_BLOCK_SIZE !== 0) {
       `The last block will be incomplete and may render with empty cells.`,
   );
 }
+
+const isPicPreviewOpen = ref(false);
+const initialSlideIndex = ref(0);
+
+const handlePicPreviewSelect = (photoId: string | number) => {
+  const index = props.items.findIndex((p) => p.id === photoId);
+  initialSlideIndex.value = index !== -1 ? index : 0;
+  isPicPreviewOpen.value = true;
+};
 </script>
 
 <template>
@@ -38,6 +47,12 @@ if (import.meta.dev && props.items.length % UI_PHOTO_GRID_BLOCK_SIZE !== 0) {
       :key="blockIndex"
       :items="block"
       :eager="eager && blockIndex === 0"
+      @select="handlePicPreviewSelect"
+    />
+    <ModalPicPreview
+      v-model:is-open="isPicPreviewOpen"
+      :slides="items"
+      :initial-slide="initialSlideIndex"
     />
   </div>
 </template>

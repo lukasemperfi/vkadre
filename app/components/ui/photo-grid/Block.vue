@@ -9,6 +9,10 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   eager: false,
 });
+
+const emit = defineEmits<{
+  (e: "select", photoId: string | number): void;
+}>();
 </script>
 
 <template>
@@ -20,6 +24,11 @@ withDefaults(defineProps<Props>(), {
         'ui-photo-grid-block__item',
         `ui-photo-grid-block__item--${index + 1}`,
       ]"
+      role="button"
+      tabindex="0"
+      @click="emit('select', photo.id)"
+      @keydown.enter.prevent="emit('select', photo.id)"
+      @keydown.space.prevent="emit('select', photo.id)"
     >
       <NuxtImg
         :src="photo.src"
@@ -57,6 +66,7 @@ $_grid-column-gap: globalFunctions.fluidValue(8px, 36px, 320px, 1440px);
 
     width: 100%;
     overflow: hidden;
+    cursor: pointer;
 
     &--1 {
       grid-column: 1;
