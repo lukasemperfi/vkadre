@@ -21,27 +21,16 @@ const locatationsApi = useLocationsApi();
 const { data: locations } = await useAsyncData("locations-events", () =>
   locatationsApi.getLocations(),
 );
-console.log("locations", locations.value);
-/////////////////////////////
 
 const todayDate = today(getLocalTimeZone());
-
 const month = shallowRef(todayDate);
-
 const selectedDay = shallowRef<CalendarDate | null>(null);
-
 const cityActiveTab = ref<CityType>("odessa");
-
 const viewActiveTab = ref<ViewType>("calendar");
-
 const locale = "ru-RU";
 
-/////////////////////////////
-
 const calendarEl = ref<HTMLElement | null>(null);
-
 const { width } = useElementSize(calendarEl);
-
 const isMobileByContainer = computed(() => {
   return width.value > 0 && width.value < 650;
 });
@@ -61,8 +50,6 @@ watch(
   },
   { immediate: true },
 );
-
-/////////////////////////////
 
 const parsedEvents = computed<UiCalendarEvent[]>(() => {
   if (!locations.value) {
@@ -100,8 +87,6 @@ const parsedEvents = computed<UiCalendarEvent[]>(() => {
   });
 });
 
-/////////////////////////////
-
 const isWithinRange = (date: ZonedDateTime) => {
   const targetDate = new CalendarDate(date.year, date.month, date.day);
 
@@ -128,15 +113,11 @@ const isWithinRange = (date: ZonedDateTime) => {
   return targetDate.compare(start) >= 0 && targetDate.compare(end) <= 0;
 };
 
-/////////////////////////////
-
 const filteredEvents = computed<UiCalendarEvent[]>(() => {
   return parsedEvents.value
     .filter((event) => isWithinRange(event.start))
     .sort((a, b) => a.start.compare(b.start));
 });
-
-/////////////////////////////
 
 const selectedEvents = computed<UiCalendarEvent[]>(() => {
   if (!selectedDay.value) {
@@ -151,8 +132,6 @@ const selectedEvents = computed<UiCalendarEvent[]>(() => {
     );
   });
 });
-
-/////////////////////////////
 
 const isShowMonthNav = computed(() => {
   return viewActiveTab.value === "calendar" || viewActiveTab.value === "week";
@@ -180,8 +159,6 @@ const isPrevDisabled = computed(() => {
   return currentViewMonth.compare(realMonthStart) <= 0;
 });
 
-/////////////////////////////
-
 const isDrawerOpen = computed({
   get: () => selectedDay.value !== null,
 
@@ -191,8 +168,6 @@ const isDrawerOpen = computed({
     }
   },
 });
-
-/////////////////////////////
 
 const cities = [
   {
@@ -206,8 +181,6 @@ const cities = [
     value: "south",
   },
 ];
-
-/////////////////////////////
 
 const handlePrev = () => {
   changeMonth("prev");
@@ -241,8 +214,6 @@ function changeMonth(direction: "prev" | "next") {
   });
 }
 
-/////////////////////////////
-
 const handleCityTabChange = ({
   active,
   prev,
@@ -270,8 +241,6 @@ const handleViewTabChange = ({
 const handleMobileViewChange = (view: ViewType) => {
   viewActiveTab.value = view;
 };
-
-/////////////////////////////
 
 const formattedDateTitle = computed(() => {
   if (!month.value) {
@@ -305,7 +274,6 @@ const selectedEvent = ref<any>(null);
 const isBookingOpen = ref(false);
 
 const handleSelectBooking = (event: UiCalendarEvent) => {
-  console.log("Select booking:", event);
   isDrawerOpen.value = false;
   selectedEvent.value = event;
   isBookingOpen.value = true;
@@ -419,6 +387,7 @@ const handleSelectBooking = (event: UiCalendarEvent) => {
           :city-filter="cityActiveTab"
           :items-per-page="3"
           locale="ru-RU"
+          @select-booking="handleSelectBooking"
         />
       </div>
       <UiCalendarDrawer

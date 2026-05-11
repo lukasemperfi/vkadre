@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import type { UiCalendarEvent } from "./types";
+import { today, getLocalTimeZone, CalendarDate } from "@internationalized/date";
 
 interface Props {
   events: UiCalendarEvent[];
@@ -14,21 +15,38 @@ const props = withDefaults(defineProps<Props>(), {
   locale: "ru-RU",
 });
 
-const currentPage = ref(0);
+const emit = defineEmits<{
+  "select-booking": [event: UiCalendarEvent];
+}>();
 
+const currentPage = ref(0);
 const filteredByCity = computed(() => {
-  if (!props.cityFilter) return props.events;
+  const now = today(getLocalTimeZone());
 
   const filterMap: Record<string, string> = {
     odessa: "Одесса",
     south: "Южный",
   };
 
-  const targetCity = filterMap[props.cityFilter] || props.cityFilter;
+  const targetCity = props.cityFilter
+    ? filterMap[props.cityFilter] || props.cityFilter
+    : null;
 
-  return props.events.filter((event) => {
-    return event?.city?.toLowerCase() === targetCity.toLowerCase();
+  const filtered = props.events.filter((event) => {
+    const matchesCity =
+      !targetCity || event?.city?.toLowerCase() === targetCity.toLowerCase();
+
+    const eventDate = new CalendarDate(
+      event.start.year,
+      event.start.month,
+      event.start.day,
+    );
+    const isFutureOrToday = eventDate.compare(now) >= 0;
+
+    return matchesCity && isFutureOrToday;
   });
+
+  return filtered.sort((a, b) => a.start.compare(b.start));
 });
 
 const totalPages = computed(() =>
@@ -79,6 +97,7 @@ const visibleDots = computed(() => {
         :event="event"
         :show-date="true"
         :locale="locale"
+        @select-booking="emit('select-booking', $event)"
       >
         <UiCalendarEventCardTime />
         <UiCalendarEventCardTitle />
