@@ -47,6 +47,7 @@ const slidePhotos = computed(() => {
 
 const galleryCarouselRef = ref(null);
 const isSliderReady = ref(false);
+const isPicPreviewOpen = ref(false);
 
 onMounted(async () => {
   await nextTick();
@@ -57,6 +58,11 @@ const worksCarouselOptions = {
   slidesPerView: 1,
   spaceBetween: 20,
   autoplay: false,
+};
+
+const handlePicPreviewClick = () => {
+  console.log("Clicked");
+  isPicPreviewOpen.value = true;
 };
 </script>
 
@@ -80,6 +86,7 @@ const worksCarouselOptions = {
                     `photo-grid__item--${Number(index) + 1}`,
                     `photo-grid__item--${Number(index) + 1}_mobile`,
                   ]"
+                  @click="handlePicPreviewClick"
                 >
                   <NuxtImg
                     :src="photo.src"
@@ -111,6 +118,7 @@ const worksCarouselOptions = {
                       'photo-grid__item',
                       `photo-grid__item--${Number(i) + 1}`,
                     ]"
+                    @click="handlePicPreviewClick"
                   >
                     <NuxtImg
                       :src="photo.src"
@@ -139,6 +147,7 @@ const worksCarouselOptions = {
       </div>
     </div>
   </section>
+  <ModalPicPreview v-model:is-open="isPicPreviewOpen" :slides="photos" />
 </template>
 
 <style lang="scss" scoped>
@@ -210,6 +219,7 @@ $_grid-column-gap: globalFunctions.fluidValue(8px, 36px, 320px, 1440px);
     &__item {
       width: 100%;
       overflow: hidden;
+      cursor: pointer;
 
       &--1 {
         grid-column: 1;
