@@ -1,10 +1,7 @@
-<script setup lang="ts">
-const isExpressPhotoModalOpen = ref(false);
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="home-page">
-    <ExpressPhotoModal v-model:is-open="isExpressPhotoModalOpen" />
     <HomeHero />
     <HomeAbout />
     <HomeWorks />

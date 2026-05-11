@@ -1,4 +1,18 @@
 <script setup lang="ts">
+import { parseAbsoluteToLocal } from "@internationalized/date";
+const isExpressPhotoModalOpen = ref(false);
+
+const event = {
+  id: "5cf3706e-ea3a-4180-9404-f9c89989b67a",
+  title: "Фотосессия в Казани",
+  start: parseAbsoluteToLocal("2026-05-20T08:00:00Z"),
+  end: parseAbsoluteToLocal("2026-05-20T10:00:00Z"),
+  locationId: "5cf3706e-ea3a-4180-9404-f9c89989b67a",
+  city: "Казань",
+  image_url:
+    "https://images.unsplash.com/photo-1665739845403-a0b4e1c1f2a4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+};
+
 const carouselSlides = [
   {
     id: 1,
@@ -104,7 +118,11 @@ onMounted(async () => {
           </div>
 
           <div class="home-hero__cta">
-            <UiButton variant="outline" label="Заказать фотосессию" />
+            <UiButton
+              variant="outline"
+              label="Заказать фотосессию"
+              @click="isExpressPhotoModalOpen = true"
+            />
           </div>
 
           <div class="home-hero__gallery-wrap">
@@ -141,6 +159,7 @@ onMounted(async () => {
     </div>
     <!-- <UiSpline class="home-hero__spline" /> -->
   </section>
+  <ExpressPhotoModal v-model:is-open="isExpressPhotoModalOpen" :event="event" />
 </template>
 
 <style lang="scss" scoped>
