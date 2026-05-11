@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import {
   parseAbsoluteToLocal,
+  today,
+  getLocalTimeZone,
+  CalendarDate,
   type ZonedDateTime,
 } from "@internationalized/date";
 import type { UiCalendarEvent } from "../ui/calendar/types";
@@ -59,6 +62,7 @@ const currentStep = ref<1 | 2 | 3>(1);
 const selectedLocation = ref<LocationWithRelations | null>(null);
 const selectedSlot = shallowRef<BookingSlot | null>(null);
 const selectedPackage = ref(packages[0]);
+const currentSelectedDay = ref<any>(null);
 
 const sources = ref(false);
 const pending = ref(false);
@@ -71,7 +75,6 @@ const activeTab = ref<Tabs>("all");
 
 const profileFormRef = ref<{ submitForm: () => void } | null>(null);
 
-// Загрузка данных при открытии
 watch(
   () => props.isOpen,
   async (isOpen) => {
@@ -89,18 +92,54 @@ watch(
   { immediate: true },
 );
 
-// Фильтрация локаций по табам городов
 const filteredLocationsByCity = computed(() => {
+  const map: Record<Tabs, string> = {
+    all: "Все",
+    odessa: "Одесса",
+    south: "Южный",
+  };
   if (activeTab.value === "all") return locations.value;
-  return locations.value.filter((loc) => loc.city === activeTab.value);
+
+  return locations.value.filter(
+    (loc) => loc.city.toLowerCase() === map[activeTab.value].toLowerCase(),
+  );
 });
 
-// Создание объекта event на основе выбранной локации (Шаг 2)
+const locationEvents = computed<UiCalendarEvent[]>(() => {
+  if (!selectedLocation.value) return [];
+  return selectedLocation.value.slots.map((slot) => ({
+    id: slot.id,
+    title: selectedLocation.value!.title,
+    locationId: selectedLocation.value!.id,
+    start: parseAbsoluteToLocal(slot.start_time),
+    end: parseAbsoluteToLocal(slot.end_time),
+  }));
+});
+
+watch(locationEvents, (events) => {
+  if (events.length > 0 && !currentSelectedDay.value) {
+    const now = today(getLocalTimeZone());
+
+    const futureEvents = events.filter((e) => {
+      const eventDate = new CalendarDate(
+        e.start.year,
+        e.start.month,
+        e.start.day,
+      );
+      return eventDate.compare(now) >= 0;
+    });
+
+    if (futureEvents.length > 0) {
+      const sorted = [...futureEvents].sort((a, b) => a.start.compare(b.start));
+      currentSelectedDay.value = sorted[0]?.start;
+    }
+  }
+});
+
 const generatedEvent = computed<UiCalendarEvent | null>(() => {
   if (!selectedLocation.value) return null;
   const firstSlot = selectedLocation.value.slots[0];
   if (!firstSlot) return null;
-
   return {
     id: selectedLocation.value.id,
     title: selectedLocation.value.title,
@@ -113,12 +152,10 @@ const generatedEvent = computed<UiCalendarEvent | null>(() => {
   };
 });
 
-// Загрузка занятых слотов при выборе локации
 watch(selectedLocation, async (newLoc) => {
   if (newLoc) {
     try {
       bookings.value = await bookingsApi.getBookingsByLocation(newLoc.id);
-      console.log("bookings", bookings.value);
     } catch (e) {
       console.error(e);
     }
@@ -126,11 +163,10 @@ watch(selectedLocation, async (newLoc) => {
 });
 
 const createBookingSlots = (
-  start: ZonedDateTime | undefined,
-  end: ZonedDateTime | undefined,
+  start: ZonedDateTime,
+  end: ZonedDateTime,
   intervalInMinutes: number,
 ): BookingSlot[] => {
-  if (!start || !end) return [];
   const slots: BookingSlot[] = [];
   let currentStart = start;
   while (true) {
@@ -143,15 +179,27 @@ const createBookingSlots = (
 };
 
 const slotsWithStatus = computed(() => {
-  if (!generatedEvent.value) return [];
-  return createBookingSlots(
-    generatedEvent.value.start,
-    generatedEvent.value.end,
-    selectedPackage.value?.duration_minutes ?? 10,
-  ).map((slot) => ({
-    ...slot,
-    disabled: isSlotBooked(slot),
-  }));
+  if (!currentSelectedDay.value || !selectedLocation.value) return [];
+
+  const dayEvents = locationEvents.value.filter(
+    (e) =>
+      e.start.day === currentSelectedDay.value.day &&
+      e.start.month === currentSelectedDay.value.month &&
+      e.start.year === currentSelectedDay.value.year,
+  );
+
+  return dayEvents
+    .flatMap((event) =>
+      createBookingSlots(
+        event.start,
+        event.end,
+        selectedPackage.value?.duration_minutes ?? 10,
+      ),
+    )
+    .map((slot) => ({
+      ...slot,
+      disabled: isSlotBooked(slot),
+    }));
 });
 
 const isSlotBooked = (slot: BookingSlot) => {
@@ -165,15 +213,15 @@ const isSlotBooked = (slot: BookingSlot) => {
 };
 
 const formattedDate = computed(() => {
-  return generatedEvent.value?.start.toDate().toLocaleDateString("ru-RU", {
+  return currentSelectedDay.value?.toDate().toLocaleDateString("ru-RU", {
     day: "numeric",
     month: "long",
   });
 });
 
 const eventCardDate = computed(() => {
-  if (!generatedEvent.value) return "";
-  return generatedEvent.value.start.toDate().toLocaleDateString("ru-RU", {
+  if (!currentSelectedDay.value) return "";
+  return currentSelectedDay.value.toDate().toLocaleDateString("ru-RU", {
     day: "2-digit",
     month: "2-digit",
     year: "2-digit",
@@ -196,11 +244,13 @@ const formatTime = (date: any) => {
 const resetState = () => {
   selectedLocation.value = null;
   selectedSlot.value = null;
+  currentSelectedDay.value = null;
   selectedPackage.value = packages[0];
   currentStep.value = 1;
   sources.value = false;
   isAcceptTerms.value = false;
   bookings.value = [];
+  activeTab.value = "all";
 };
 
 const closeModal = () => {
@@ -209,11 +259,8 @@ const closeModal = () => {
 };
 
 const goToNextStep = () => {
-  if (currentStep.value === 1 && selectedLocation.value) {
-    currentStep.value = 2;
-  } else if (currentStep.value === 2 && selectedSlot.value) {
-    currentStep.value = 3;
-  }
+  if (currentStep.value === 1 && selectedLocation.value) currentStep.value = 2;
+  else if (currentStep.value === 2 && selectedSlot.value) currentStep.value = 3;
 };
 
 const handleProfileSubmit = async (data: any) => {
@@ -261,14 +308,23 @@ const triggerProfileSubmit = () => {
   profileFormRef.value?.submitForm();
 };
 
-const handleDayClick = (payload: any) => {
-  // Логика клика по календарю на шаге 2
+const handleDayClick = (payload: { date: any; events: UiCalendarEvent[] }) => {
+  currentSelectedDay.value = payload.date;
+  selectedSlot.value = null;
 };
 
 const handleLocationClick = (location: LocationWithRelations) => {
   selectedLocation.value = location;
+};
 
-  console.log("Selected location:", location);
+const getCellClass = (date: any) => {
+  const hasEvents = locationEvents.value.some(
+    (e) =>
+      e.start.day === date.day &&
+      e.start.month === date.month &&
+      e.start.year === date.year,
+  );
+  return hasEvents ? "" : "calendar-month__cell_empty";
 };
 </script>
 
@@ -279,13 +335,11 @@ const handleLocationClick = (location: LocationWithRelations) => {
     class="booking-modal-group"
   >
     <UiModalOverlay />
-
     <UiModalContent class="booking-modal">
       <UiModalCloseButton class="booking-modal__close" @click="closeModal" />
       <UiLoadingOverlay v-if="pending" />
 
       <div class="app-container">
-        <!-- Степы -->
         <div class="booking-modal__steps">
           <div
             class="booking-modal__step"
@@ -309,16 +363,12 @@ const handleLocationClick = (location: LocationWithRelations) => {
 
         <div class="booking-modal__title h-2">
           <template v-if="currentStep === 1">Выберите локацию</template>
-          <template v-else-if="currentStep === 2">
-            Выберите дату и время
-          </template>
+          <template v-else-if="currentStep === 2"
+            >Выберите дату и время</template
+          >
           <template v-else-if="currentStep === 3">Оплата</template>
-          <!-- <template v-else-if="generatedEvent"
-            >{{ formattedDate }}: {{ generatedEvent.title }}</template
-          > -->
         </div>
 
-        <!-- ШАГ 1: Локации -->
         <div v-if="currentStep === 1" class="booking-modal__locations">
           <UiTabs v-model="activeTab">
             <UiTabsList class="calendar__view-tabs-list">
@@ -326,7 +376,6 @@ const handleLocationClick = (location: LocationWithRelations) => {
               <UiTabsTrigger id="south">Южный</UiTabsTrigger>
               <UiTabsTrigger id="odessa">Одесса</UiTabsTrigger>
             </UiTabsList>
-
             <div class="booking-modal__locations-list">
               <div
                 v-for="location in filteredLocationsByCity"
@@ -353,82 +402,94 @@ const handleLocationClick = (location: LocationWithRelations) => {
           </UiTabs>
         </div>
 
-        <!-- ШАГ 2: Время и Данные -->
         <div
           v-else-if="currentStep === 2 && generatedEvent"
           class="booking-modal__content"
         >
-          <UiCalendarDatePicker @day-click="handleDayClick" />
+          <UiCalendarDatePicker
+            :events="locationEvents"
+            :current-selected-day="currentSelectedDay"
+            @day-click="handleDayClick"
+          />
 
-          <hr class="divider" />
-          <div class="booking-modal__times">
-            <div class="booking-modal__section-title">Выберите время</div>
-            <div class="booking-modal__slots">
-              <button
-                v-for="slot in slotsWithStatus"
-                :key="slot.start.toString()"
-                type="button"
-                class="booking-modal__slot"
-                :disabled="slot.disabled"
-                :class="{
-                  'booking-modal__slot_active':
-                    selectedSlot?.start.toString() === slot.start.toString(),
-                  'booking-modal__slot_disabled': slot.disabled,
-                }"
-                @click="!slot.disabled && handleSlotClick(slot)"
-              >
-                {{ formatTime(slot.start) }} - {{ formatTime(slot.end) }}
-              </button>
-            </div>
-
-            <div class="booking-modal__section-title">
-              Длительность фотосессии
-            </div>
-            <div class="booking-modal__packages">
-              <button
-                v-for="item in packages"
-                :key="item.id"
-                class="booking-modal__package"
-                :class="{
-                  'booking-modal__package_active':
-                    selectedPackage?.id === item.id,
-                }"
-                @click="handlePackageClick(item)"
-              >
-                {{ item.duration_minutes }} мин
-              </button>
-            </div>
-
-            <label class="custom-checkbox">
-              <input v-model="sources" type="checkbox" />
-              <span class="checkmark"></span>
-              <span>Исходники (весь отснятый материал)</span>
-            </label>
-          </div>
-
-          <hr class="divider" />
-          <div class="booking-modal__summary">
-            <div class="booking-modal__section-title">Сумма</div>
-            <div class="booking-modal__summary-list">
-              <div class="booking-modal__summary-row">
-                <span>Стоимость фотосессии:</span>
-                <span>{{ sessionPrice }} ₴</span>
+          <template v-if="currentSelectedDay">
+            <hr class="divider" />
+            <div class="booking-modal__times">
+              <div class="booking-modal__section-title">
+                Выберите подходящее время
               </div>
-              <div class="booking-modal__summary-row">
-                <span>Исходники:</span>
-                <span>{{ sources ? SOURCES_PRICE : 0 }} ₴</span>
+              <div class="booking-modal__slots">
+                <button
+                  v-for="slot in slotsWithStatus"
+                  :key="slot.start.toString()"
+                  type="button"
+                  class="booking-modal__slot"
+                  :disabled="slot.disabled"
+                  :class="{
+                    'booking-modal__slot_active':
+                      selectedSlot?.start.toString() === slot.start.toString(),
+                    'booking-modal__slot_disabled': slot.disabled,
+                  }"
+                  @click="!slot.disabled && handleSlotClick(slot)"
+                >
+                  {{ formatTime(slot.start) }} - {{ formatTime(slot.end) }}
+                </button>
+                <div
+                  v-if="slotsWithStatus.length === 0"
+                  class="booking-modal__no-slots"
+                >
+                  Нет доступных слотов на эту дату
+                </div>
               </div>
-              <div
-                class="booking-modal__summary-row booking-modal__summary-row_total"
-              >
-                <span>Итого:</span>
-                <span>{{ totalPrice }} ₴</span>
+
+              <div class="booking-modal__section-title">
+                Длительность фотосессии
+              </div>
+              <div class="booking-modal__packages">
+                <button
+                  v-for="item in packages"
+                  :key="item.id"
+                  class="booking-modal__package"
+                  :class="{
+                    'booking-modal__package_active':
+                      selectedPackage?.id === item.id,
+                  }"
+                  @click="handlePackageClick(item)"
+                >
+                  {{ item.duration_minutes }} мин
+                </button>
+              </div>
+
+              <label class="custom-checkbox">
+                <input v-model="sources" type="checkbox" />
+                <span class="checkmark"></span>
+                <span>Исходники (весь отснятый материал)</span>
+              </label>
+            </div>
+
+            <hr class="divider" />
+            <div class="booking-modal__summary">
+              <div class="booking-modal__section-title">Сумма</div>
+              <div class="booking-modal__summary-list">
+                <div class="booking-modal__summary-row">
+                  <span>Стоимость фотосессии:</span>
+                  <span>{{ sessionPrice }} ₴</span>
+                </div>
+                <div class="booking-modal__summary-row">
+                  <span>Исходники:</span>
+                  <span>{{ sources ? SOURCES_PRICE : 0 }} ₴</span>
+                </div>
+                <div
+                  class="booking-modal__summary-row booking-modal__summary-row_total"
+                >
+                  <span>Итого:</span>
+                  <span>{{ totalPrice }} ₴</span>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
         </div>
 
-        <!-- ШАГ 3: Оплата -->
         <div
           v-else-if="currentStep === 3 && generatedEvent"
           class="booking-modal__payment"
@@ -442,31 +503,26 @@ const handleLocationClick = (location: LocationWithRelations) => {
               :time="eventCardTime"
             />
           </div>
-
           <hr class="divider" />
-
           <div class="booking-modal__form">
             <ProfileForm ref="profileFormRef" @submit="handleProfileSubmit" />
           </div>
-
           <div class="booking-modal__checkout">
             <div class="booking-modal__promo">
               <UiInput
                 placeholder="№ сертификата"
                 class="booking-modal__input"
               />
-              <UiButton variant="outline" class="profile-form__button-apply">
-                Применить
-              </UiButton>
+              <UiButton variant="outline" class="profile-form__button-apply"
+                >Применить</UiButton
+              >
             </div>
-
             <div class="booking-modal__checkout-total">
               К оплате
-              <span class="booking-modal__checkout-total-price">
-                {{ totalPrice }} ₴
-              </span>
+              <span class="booking-modal__checkout-total-price"
+                >{{ totalPrice }} ₴</span
+              >
             </div>
-
             <label class="custom-checkbox booking-modal__checkbox-terms">
               <input
                 v-model="isAcceptTerms"
@@ -482,7 +538,6 @@ const handleLocationClick = (location: LocationWithRelations) => {
           </div>
         </div>
 
-        <!-- Футер с кнопкой "Далее" -->
         <div class="booking-modal__footer">
           <UiButton
             v-if="currentStep === 1 || currentStep === 2"
@@ -495,9 +550,8 @@ const handleLocationClick = (location: LocationWithRelations) => {
           >
             Далее
           </UiButton>
-
           <UiButton v-else variant="outline" @click="triggerProfileSubmit">
-            Заказать экспресс-фотосессию
+            Заказать фотосессию
           </UiButton>
         </div>
       </div>
@@ -842,6 +896,10 @@ const handleLocationClick = (location: LocationWithRelations) => {
     font-size: 14px;
     line-height: 22px;
     color: var(--black);
+  }
+
+  &__no-slots {
+    grid-column: 1 / -1;
   }
 }
 </style>

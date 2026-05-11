@@ -252,7 +252,7 @@ function handleDayClick(day: UiCalendarDay): void {
 
       @container (width < 700px) {
         outline: none;
-        background-color: var(--black);
+        background-color: var(--black) !important;
 
         .calendar-month__day,
         .calendar-month__caption {

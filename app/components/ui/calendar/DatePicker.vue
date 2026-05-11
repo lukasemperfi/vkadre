@@ -10,6 +10,7 @@ import type { UiCalendarEvent } from "./types";
 
 const props = defineProps<{
   events?: UiCalendarEvent[];
+  currentSelectedDay?: CalendarDate | null;
 }>();
 
 const emit = defineEmits<{
@@ -22,11 +23,9 @@ const emit = defineEmits<{
 const locale = "ru-RU";
 const todayDate = today(getLocalTimeZone());
 const month = shallowRef(todayDate);
-const selectedDay = shallowRef<CalendarDate | null>(null);
 
 const filteredEvents = computed(() => {
   if (!props.events) return [];
-
   const start = startOfMonth(month.value);
   const end = endOfMonth(month.value);
 
@@ -54,26 +53,23 @@ const handleNext = () => {
   month.value = month.value.add({ months: 1 });
 };
 
-watch(selectedDay, (newDate) => {
-  if (!newDate) return;
-
-  const dayEvents =
+const getEventsForDate = (date: CalendarDate) => {
+  return (
     props.events?.filter(
       (event) =>
-        event.start.day === newDate.day &&
-        event.start.month === newDate.month &&
-        event.start.year === newDate.year,
-    ) || [];
+        event.start.day === date.day &&
+        event.start.month === date.month &&
+        event.start.year === date.year,
+    ) || []
+  );
+};
 
-  emit("day-click", { date: newDate, events: dayEvents });
-});
-
-const formattedDateTitle = computed(() => {
-  return month.value.toDate("UTC").toLocaleDateString(locale, {
-    month: "long",
-    year: "numeric",
+const onDateSelected = (newDate: CalendarDate) => {
+  emit("day-click", {
+    date: newDate,
+    events: getEventsForDate(newDate),
   });
-});
+};
 </script>
 
 <template>
@@ -91,10 +87,11 @@ const formattedDateTitle = computed(() => {
 
     <div class="calendar__body">
       <UiCalendarMonth
-        v-model:selected="selectedDay"
+        :selected="currentSelectedDay"
         :month="month"
         :events="filteredEvents"
         @update:month="month = $event"
+        @update:selected="onDateSelected"
       />
     </div>
   </div>
