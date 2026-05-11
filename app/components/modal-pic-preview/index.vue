@@ -2,13 +2,15 @@
 const props = defineProps<{
   isOpen: boolean;
   slides: any[];
+  initialSlide?: number;
 }>();
 
 const emit = defineEmits<{
   (e: "update:isOpen", value: boolean): void;
 }>();
 
-const galleryCarouselOptions = {
+const galleryCarouselOptions = computed(() => ({
+  initialSlide: props.initialSlide || 0,
   slidesPerView: 1.15,
   spaceBetween: 0,
   speed: 800,
@@ -16,21 +18,11 @@ const galleryCarouselOptions = {
   centeredSlides: true,
   loop: true,
   breakpoints: {
-    450: {
-      slidesPerView: 2,
-      spaceBetween: 0,
-    },
-    600: {
-      slidesPerView: 3,
-      spaceBetween: 0,
-    },
-
-    1250: {
-      slidesPerView: 3,
-      spaceBetween: 0,
-    },
+    450: { slidesPerView: 2 },
+    600: { slidesPerView: 3 },
+    1250: { slidesPerView: 3 },
   },
-};
+}));
 
 const galleryCarouselRef = ref(null);
 const isSliderReady = ref(false);

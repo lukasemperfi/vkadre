@@ -48,6 +48,7 @@ const slidePhotos = computed(() => {
 const galleryCarouselRef = ref(null);
 const isSliderReady = ref(false);
 const isPicPreviewOpen = ref(false);
+const initialSlideIndex = ref(0);
 
 onMounted(async () => {
   await nextTick();
@@ -60,8 +61,9 @@ const worksCarouselOptions = {
   autoplay: false,
 };
 
-const handlePicPreviewClick = () => {
-  console.log("Clicked");
+const handlePicPreviewClick = (photoId: number) => {
+  const index = photos.findIndex((p) => p.id === photoId);
+  initialSlideIndex.value = index !== -1 ? index : 0;
   isPicPreviewOpen.value = true;
 };
 </script>
@@ -86,7 +88,7 @@ const handlePicPreviewClick = () => {
                     `photo-grid__item--${Number(index) + 1}`,
                     `photo-grid__item--${Number(index) + 1}_mobile`,
                   ]"
-                  @click="handlePicPreviewClick"
+                  @click="handlePicPreviewClick(photo.id)"
                 >
                   <NuxtImg
                     :src="photo.src"
@@ -118,7 +120,7 @@ const handlePicPreviewClick = () => {
                       'photo-grid__item',
                       `photo-grid__item--${Number(i) + 1}`,
                     ]"
-                    @click="handlePicPreviewClick"
+                    @click="handlePicPreviewClick(photo.id)"
                   >
                     <NuxtImg
                       :src="photo.src"
@@ -147,7 +149,11 @@ const handlePicPreviewClick = () => {
       </div>
     </div>
   </section>
-  <ModalPicPreview v-model:is-open="isPicPreviewOpen" :slides="photos" />
+  <ModalPicPreview
+    v-model:is-open="isPicPreviewOpen"
+    :slides="photos"
+    :initial-slide="initialSlideIndex"
+  />
 </template>
 
 <style lang="scss" scoped>
