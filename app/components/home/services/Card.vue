@@ -6,6 +6,7 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+const isExpressPhotoModalOpen = ref(false);
 </script>
 
 <template>
@@ -35,10 +36,16 @@ const props = defineProps<Props>();
       />
 
       <div class="service-card__cta">
-        <UiButton variant="outline" size="lg" label="Заказать фотосессию" />
+        <UiButton
+          variant="outline"
+          size="lg"
+          label="Заказать фотосессию"
+          @click="isExpressPhotoModalOpen = true"
+        />
       </div>
     </div>
   </article>
+  <ExpressPhotoModal v-model:is-open="isExpressPhotoModalOpen" />
 </template>
 
 <style scoped lang="scss">

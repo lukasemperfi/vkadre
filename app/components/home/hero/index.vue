@@ -159,7 +159,7 @@ onMounted(async () => {
     </div>
     <!-- <UiSpline class="home-hero__spline" /> -->
   </section>
-  <ExpressPhotoModal v-model:is-open="isExpressPhotoModalOpen" :event="event" />
+  <ExpressPhotoModal v-model:is-open="isExpressPhotoModalOpen" />
 </template>
 
 <style lang="scss" scoped>

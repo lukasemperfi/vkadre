@@ -4,7 +4,7 @@ import type { UiCalendarEvent } from "./types";
 
 interface Props {
   events: UiCalendarEvent[];
-  cityFilter: string; // "odessa" | "south" и т.д.
+  cityFilter: string;
   itemsPerPage?: number;
   locale?: string;
 }
@@ -16,7 +16,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const currentPage = ref(0);
 
-// 1. Фильтрация событий по городу (предполагаем, что в location есть название города)
 const filteredByCity = computed(() => {
   if (!props.cityFilter) return props.events;
 
@@ -27,12 +26,11 @@ const filteredByCity = computed(() => {
 
   const targetCity = filterMap[props.cityFilter] || props.cityFilter;
 
-  return props.events.filter((event) =>
-    event.location?.toLowerCase().includes(targetCity.toLowerCase()),
-  );
+  return props.events.filter((event) => {
+    return event?.city?.toLowerCase() === targetCity.toLowerCase();
+  });
 });
 
-// 2. Логика страниц
 const totalPages = computed(() =>
   Math.ceil(filteredByCity.value.length / props.itemsPerPage),
 );
@@ -42,7 +40,6 @@ const paginatedEvents = computed(() => {
   return filteredByCity.value.slice(start, start + props.itemsPerPage);
 });
 
-// Сброс страницы при смене фильтра
 watch(
   () => props.cityFilter,
   () => {
@@ -50,7 +47,6 @@ watch(
   },
 );
 
-// 3. Навигация
 const handlePrev = () => {
   if (currentPage.value > 0) currentPage.value--;
 };
@@ -59,7 +55,6 @@ const handleNext = () => {
   if (currentPage.value < totalPages.value - 1) currentPage.value++;
 };
 
-// 4. Логика "Скользящего окна" для буллетов (макс 5 видимых)
 const visibleDots = computed(() => {
   const maxVisible = 5;
   const total = totalPages.value;
@@ -77,7 +72,6 @@ const visibleDots = computed(() => {
 
 <template>
   <div class="event-list">
-    <!-- Список карточек -->
     <div class="event-list__content">
       <UiCalendarEventCard
         v-for="event in paginatedEvents"
@@ -96,9 +90,7 @@ const visibleDots = computed(() => {
       </div>
     </div>
 
-    <!-- Футер с пагинацией -->
     <div v-if="totalPages > 1" class="event-list__footer">
-      <!-- Буллеты (Sliding Window) -->
       <div class="event-list__pagination">
         <div
           v-for="pageIndex in visibleDots"
@@ -109,7 +101,6 @@ const visibleDots = computed(() => {
         />
       </div>
 
-      <!-- Кнопки навигации -->
       <div class="ui-calendar-nav-buttons">
         <button
           class="ui-calendar-nav-buttons__button"
