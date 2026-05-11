@@ -193,7 +193,8 @@ function handleDayClick(day: UiCalendarDay): void {
     text-transform: capitalize;
 
     @container (width < 700px) {
-      font-size: 2.5cqi;
+      font-size: 12px;
+      font-weight: 600;
     }
   }
 
@@ -234,12 +235,12 @@ function handleDayClick(day: UiCalendarDay): void {
       z-index: 1;
     }
 
-    &_other-month {
+    &_other-month,
+    &_past-date {
       cursor: default;
 
       .calendar-month__day,
       .calendar-month__caption {
-        color: var(--gray-light);
         opacity: 0.2;
       }
     }
@@ -289,7 +290,8 @@ function handleDayClick(day: UiCalendarDay): void {
     line-height: 1;
 
     @container (width < 700px) {
-      font-size: 2.5cqi;
+      font-size: 12px;
+      font-weight: 400;
       color: var(--black);
     }
   }
