@@ -5,8 +5,9 @@ const phoneAllowedCharsRegex = /^[0-9+\s().-]+$/;
 export const loginSchema = yup.object({
   email: yup
     .string()
-    .required("Введите email")
-    .email("Некорректный формат почты"),
+    .trim()
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, "Некорректный email")
+    .required("Введите email"),
   password: yup
     .string()
     .required("Введите пароль")
@@ -29,7 +30,11 @@ export const registerSchema = yup.object({
     )
     .max(25, "Телефон должен содержать не более 25 символов")
     .required("Телефон обязателен"),
-  email: yup.string().required("Введите email").email("Некорректный email"),
+  email: yup
+    .string()
+    .trim()
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, "Некорректный email")
+    .required("Введите email"),
   password: yup
     .string()
     .required("Введите пароль")
@@ -41,7 +46,11 @@ export const registerSchema = yup.object({
 });
 
 export const forgotSchema = yup.object({
-  email: yup.string().required("Введите email").email("Некорректный email"),
+  email: yup
+    .string()
+    .trim()
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, "Некорректный email")
+    .required("Введите email"),
 });
 
 export const contactsSchema = yup.object({
@@ -73,6 +82,7 @@ export const profileSchema = yup.object({
     .required("Phone is required"),
   email: yup
     .string()
-    .required("Введите имейл")
-    .email("Некорректный формат имейла"),
+    .trim()
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, "Некорректный email")
+    .required("Введите email"),
 });
