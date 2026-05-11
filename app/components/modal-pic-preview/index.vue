@@ -9,13 +9,22 @@ const emit = defineEmits<{
 }>();
 
 const galleryCarouselOptions = {
-  slidesPerView: 3,
+  slidesPerView: 1.15,
   spaceBetween: 0,
   speed: 800,
   autoplay: false,
   centeredSlides: true,
   loop: true,
   breakpoints: {
+    450: {
+      slidesPerView: 2,
+      spaceBetween: 0,
+    },
+    600: {
+      slidesPerView: 3,
+      spaceBetween: 0,
+    },
+
     1250: {
       slidesPerView: 3,
       spaceBetween: 0,
@@ -67,10 +76,19 @@ onMounted(async () => {
         </UiCarousel>
       </div>
       <div class="modal-pic-preview__footer">
-        <p class="modal-pic-preview__text">
-          Самый доступный вид фотосессии, в результате которой Вы получите
-          качественные
-        </p>
+        <div class="app-container">
+          <div class="modal-pic-preview__text modal-pic-preview__text_footer">
+            Самый доступный вид фотосессии, в результате которой Вы получите
+            качественные
+          </div>
+          <div class="modal-pic-preview__nav-controls">
+            <UiCarouselNavButtons
+              variant="arrow"
+              :carousel="galleryCarouselRef"
+              v-show="isSliderReady"
+            />
+          </div>
+        </div>
       </div>
     </UiModalContent>
   </UiModal>
@@ -79,7 +97,6 @@ onMounted(async () => {
 <style scoped lang="scss">
 .modal-pic-preview {
   width: 100%;
-  //   padding-block: 45px;
   height: 100vh;
   max-height: 100vh;
   margin-top: -5vh;
@@ -95,10 +112,26 @@ onMounted(async () => {
   }
 
   &__footer {
-    background-color: tan;
     flex: 1;
     display: flex;
     justify-content: center;
+    position: relative;
+
+    .app-container {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+  }
+
+  &__nav-controls {
+    position: absolute;
+    top: globalFunctions.fluidValue(24px, 40px, 320px, 1440px);
+    right: 96px;
+
+    @media (max-width: 1439px) {
+      display: none;
+    }
   }
 
   &__text {
@@ -107,9 +140,14 @@ onMounted(async () => {
     font-size: 16px;
     line-height: 26px;
     color: var(--black);
-    padding-top: 40px;
-    padding-bottom: 68px;
+    padding-top: globalFunctions.fluidValue(24px, 40px, 320px, 1440px);
+    padding-bottom: globalFunctions.fluidValue(58px, 68px, 320px, 1440px);
     max-width: 455px;
+
+    @media (max-width: 600px) {
+      font-size: 14px;
+      line-height: 22px;
+    }
 
     &_header {
       opacity: 0;
@@ -129,8 +167,6 @@ onMounted(async () => {
   }
 
   &__swiper {
-    // height: 95%;
-    // max-width: 1440px;
   }
 
   &__slide-image {
@@ -145,6 +181,10 @@ onMounted(async () => {
     opacity: 0.2;
     width: 100%;
     height: 100%;
+
+    @media (max-width: 600px) {
+      aspect-ratio: 272 / 348;
+    }
   }
 
   :deep(.swiper-slide-active) {
