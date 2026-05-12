@@ -1,46 +1,38 @@
 <script setup lang="ts">
-const photos = [
-  { id: 1, src: "https://picsum.photos/seed/w-a1/232/195", alt: "" },
-  { id: 2, src: "https://picsum.photos/seed/w-a2/232/195", alt: "" },
-  { id: 3, src: "https://picsum.photos/seed/w-a3/232/195", alt: "" },
-  { id: 4, src: "https://picsum.photos/seed/w-a4/232/195", alt: "" },
-  { id: 5, src: "https://picsum.photos/seed/w-a5/232/195", alt: "" },
-  { id: 6, src: "https://picsum.photos/seed/w-a6/232/195", alt: "" },
-  { id: 7, src: "https://picsum.photos/seed/w-a7/232/195", alt: "" },
-  { id: 8, src: "https://picsum.photos/seed/w-a8/232/195", alt: "" },
-  { id: 9, src: "https://picsum.photos/seed/w-a9/232/195", alt: "" },
-  { id: 10, src: "https://picsum.photos/seed/w-a10/232/195", alt: "" },
-  { id: 11, src: "https://picsum.photos/seed/w-a11/232/195", alt: "" },
-  { id: 12, src: "https://picsum.photos/seed/w-a12/232/195", alt: "" },
-  { id: 13, src: "https://picsum.photos/seed/w-a13/232/195", alt: "" },
-  { id: 14, src: "https://picsum.photos/seed/w-a14/232/195", alt: "" },
-  { id: 15, src: "https://picsum.photos/seed/w-a15/232/195", alt: "" },
-  { id: 16, src: "https://picsum.photos/seed/w-a16/232/195", alt: "" },
-  { id: 17, src: "https://picsum.photos/seed/w-a17/232/195", alt: "" },
-  { id: 18, src: "https://picsum.photos/seed/w-a18/232/195", alt: "" },
-  { id: 19, src: "https://picsum.photos/seed/w-a19/232/195", alt: "" },
-  { id: 20, src: "https://picsum.photos/seed/w-a20/232/195", alt: "" },
-  { id: 21, src: "https://picsum.photos/seed/w-a21/232/195", alt: "" },
-  { id: 22, src: "https://picsum.photos/seed/w-a22/232/195", alt: "" },
-  { id: 23, src: "https://picsum.photos/seed/w-a23/232/195", alt: "" },
-  { id: 24, src: "https://picsum.photos/seed/w-a24/232/195", alt: "" },
-  { id: 25, src: "https://picsum.photos/seed/w-a25/232/195", alt: "" },
-  { id: 26, src: "https://picsum.photos/seed/w-a26/232/195", alt: "" },
-  { id: 27, src: "https://picsum.photos/seed/w-a27/232/195", alt: "" },
-  { id: 28, src: "https://picsum.photos/seed/w-a28/232/195", alt: "" },
-  { id: 29, src: "https://picsum.photos/seed/w-a29/232/195", alt: "" },
-  { id: 30, src: "https://picsum.photos/seed/w-a30/232/195", alt: "" },
-];
+const { getPortfolios } = usePortfolioApi();
 
-type Photo = (typeof photos)[number];
-type PhotoSlide = Photo[];
+const { data: portfolios, pending } = await useAsyncData(
+  "home-works-portfolio",
+  () => getPortfolios(),
+);
+
+type WorkPhoto = {
+  id: string;
+  src: string;
+  alt: string;
+};
+
+const photos = computed<WorkPhoto[]>(() => {
+  return (
+    portfolios.value
+      ?.map((row) => ({
+        id: row.id,
+        src: row.image_url,
+        alt: row.title ?? "",
+      }))
+      .slice(0, 30) ?? []
+  );
+});
+
+type PhotoSlide = WorkPhoto[];
 
 const slidePhotos = computed(() => {
   const SLIDE_SIZE = 10;
   const slides: PhotoSlide[] = [];
+  const list = photos.value;
 
-  for (let i = 0; i < photos.length; i += SLIDE_SIZE) {
-    slides.push(photos.slice(i, i + SLIDE_SIZE));
+  for (let i = 0; i < list.length; i += SLIDE_SIZE) {
+    slides.push(list.slice(i, i + SLIDE_SIZE));
   }
   return slides;
 });
@@ -61,8 +53,8 @@ const worksCarouselOptions = {
   autoplay: false,
 };
 
-const handlePicPreviewClick = (photoId: number) => {
-  const index = photos.findIndex((p) => p.id === photoId);
+const handlePicPreviewClick = (photoId: string) => {
+  const index = photos.value.findIndex((p) => p.id === photoId);
   initialSlideIndex.value = index !== -1 ? index : 0;
   isPicPreviewOpen.value = true;
 };
@@ -103,7 +95,7 @@ const handlePicPreviewClick = (photoId: number) => {
             </template>
           </div>
           <div class="works__desktop-slider">
-            <HomeWorksSkeleton v-if="!isSliderReady" />
+            <HomeWorksSkeleton v-if="!isSliderReady || pending" />
             <UiCarousel
               v-else
               ref="galleryCarouselRef"
@@ -140,7 +132,7 @@ const handlePicPreviewClick = (photoId: number) => {
           <UiCarouselNavButtons
             variant="arrow"
             :carousel="galleryCarouselRef"
-            v-show="isSliderReady"
+            v-show="isSliderReady && !pending"
           />
         </div>
         <div class="works__bottom">
