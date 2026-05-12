@@ -323,7 +323,11 @@ const handleSelectBooking = (event: UiCalendarEvent) => {
         </div>
 
         <div class="calendar__city-tabs">
-          <UiTabs v-model="cityActiveTab" @change="handleCityTabChange">
+          <UiTabs
+            v-if="viewActiveTab === 'calendar' || viewActiveTab === 'week'"
+            v-model="cityActiveTab"
+            @change="handleCityTabChange"
+          >
             <UiTabsList class="calendar__city-tabs-list">
               <UiTabsTrigger id="odessa">Одесса</UiTabsTrigger>
               <UiTabsTrigger id="south">Южный</UiTabsTrigger>
@@ -365,7 +369,11 @@ const handleSelectBooking = (event: UiCalendarEvent) => {
         />
       </div>
       <div class="week-calendar" v-show="viewActiveTab === 'week'">
-        <UiCalendarWeek :date="month" :events="filteredEvents" />
+        <UiCalendarWeek
+          :date="month"
+          :events="filteredEvents"
+          @select-booking="handleSelectBooking"
+        />
       </div>
       <div class="days-calendar" v-show="viewActiveTab === '3_days'">
         <div class="three-days-cards">
@@ -373,11 +381,13 @@ const handleSelectBooking = (event: UiCalendarEvent) => {
             :date="month"
             :events="filteredEvents"
             :city="`Одесса`"
+            @select-booking="handleSelectBooking"
           />
           <UiCalendarThreeDays
             :date="month"
             :events="filteredEvents"
             :city="`Южный`"
+            @select-booking="handleSelectBooking"
           />
         </div>
       </div>

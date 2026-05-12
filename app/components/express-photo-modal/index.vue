@@ -753,9 +753,6 @@ const getCellClass = (date: any) => {
     }
   }
 
-  &__payment-info {
-  }
-
   &__payment-item {
     display: flex;
     align-items: center;
@@ -868,11 +865,16 @@ const getCellClass = (date: any) => {
     overflow-y: auto;
     padding-right: 24px;
     margin-right: -24px;
+    margin-top: 40px;
 
     @media (max-width: 1439px) {
       grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
       max-height: 65vh;
     }
+  }
+
+  &__location {
+    cursor: pointer;
   }
 
   &__location-image {

@@ -38,5 +38,6 @@ provide("eventContext", {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  cursor: pointer;
 }
 </style>

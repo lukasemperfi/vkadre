@@ -29,14 +29,13 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: "update:selected", date: CalendarDate): void;
   (e: "day-click", day: UiCalendarDay): void;
+  (e: "select-booking", event: UiCalendarEvent): void;
 }>();
 
 const now = today(getLocalTimeZone());
 
-// Внутреннее состояние текущей стартовой даты
 const currentStartDate = ref<CalendarDate>(props.date);
 
-// Синхронизация, если родитель изменит пропс date
 watch(
   () => props.date,
   (newDate) => {
@@ -44,12 +43,10 @@ watch(
   },
 );
 
-// Логика блокировки кнопки "Назад"
 const isPrevDisabled = computed(() => {
   return currentStartDate.value.compare(now) <= 0;
 });
 
-// Управление внутри компонента
 function handlePrev() {
   if (isPrevDisabled.value) return;
   currentStartDate.value = currentStartDate.value.subtract({ days: 3 });
@@ -59,7 +56,6 @@ function handleNext() {
   currentStartDate.value = currentStartDate.value.add({ days: 3 });
 }
 
-// Генерация дней на основе внутреннего состояния
 const visibleDays = computed<UiCalendarDay[]>(() => {
   return Array.from({ length: 3 }, (_, i) => {
     const date = currentStartDate.value.add({ days: i });
@@ -111,6 +107,7 @@ function getEventsForDay(day: CalendarDate): UiCalendarEvent[] {
         }"
         :current-day="day.date.compare(now) === 0"
         @click="handleDayClick(day)"
+        @select-booking="emit('select-booking', $event)"
       />
     </div>
   </div>

@@ -18,7 +18,10 @@ const props = withDefaults(defineProps<Props>(), {
   currentDay: false,
 });
 
-// "16 марта"
+const emit = defineEmits<{
+  "select-booking": [event: UiCalendarEvent];
+}>();
+
 const formattedDate = computed(() => {
   return props.date
     .toDate("UTC")
@@ -29,7 +32,6 @@ const formattedDate = computed(() => {
     .replace(/\s*г\.$/, "");
 });
 
-// "понедельник"
 const dayOfWeek = computed(() => {
   return props.date.toDate("UTC").toLocaleDateString(props.locale, {
     weekday: "long",
@@ -55,6 +57,7 @@ const dayOfWeek = computed(() => {
           :show-date="showDateInCard"
           :locale="locale"
           class="day__event-card"
+          @select-booking="emit('select-booking', $event)"
         >
           <UiCalendarEventCardTitle />
           <UiCalendarEventCardTime />

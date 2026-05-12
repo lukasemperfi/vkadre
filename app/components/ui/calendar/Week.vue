@@ -33,6 +33,7 @@ console.log(props.events);
 const emit = defineEmits<{
   "update:selected": [date: CalendarDate];
   "day-click": [day: UiCalendarDay];
+  "select-booking": [event: UiCalendarEvent];
 }>();
 
 const now = today(getLocalTimeZone());
@@ -98,6 +99,7 @@ function getEventsForDay(day: CalendarDate): UiCalendarEvent[] {
           'week__day_current-day': day.date.compare(now) === 0,
         }"
         :current-day="day.date.compare(now) === 0"
+        @select-booking="emit('select-booking', $event)"
       />
     </div>
   </div>
