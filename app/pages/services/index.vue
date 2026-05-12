@@ -116,6 +116,7 @@ console.log("services", services.value);
       overflow: hidden;
       aspect-ratio: 395/376;
       margin-bottom: globalFunctions.fluidValue(16px, 40px, 320px, 1440px);
+      width: 100%;
 
       &-img {
         width: 100%;
