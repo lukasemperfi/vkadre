@@ -168,10 +168,14 @@ function handleDayClick(day: UiCalendarDay): void {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     grid-template-rows: repeat(6, 100px);
-    gap: 1px;
-    background-color: #f1f1f1;
+    // gap: 1px;
+    gap: 0;
+    // background-color: #f1f1f1;
     width: 100%;
-    border: 1px solid #f1f1f1;
+    // border: 1px solid #f1f1f1;
+
+    border-top: 1px solid #f1f1f1;
+    border-left: 1px solid #f1f1f1;
 
     @container (width < 1248px) {
       grid-template-rows: repeat(6, minmax(0, 1fr));
@@ -181,7 +185,7 @@ function handleDayClick(day: UiCalendarDay): void {
 
   &__weekday,
   &__cell {
-    background-color: #ffffff;
+    // background-color: #ffffff;
   }
 
   &__weekday {
@@ -201,6 +205,8 @@ function handleDayClick(day: UiCalendarDay): void {
   &__weekday-label {
     &_desktop {
       display: block;
+      opacity: 0.3;
+
       @container (width < 1248px) {
         display: none;
       }
@@ -220,10 +226,16 @@ function handleDayClick(day: UiCalendarDay): void {
     padding: 20px;
     text-align: left;
     cursor: pointer;
-    border: 0;
+    // border: 0;
     appearance: none;
     color: var(--black);
     position: relative;
+
+    background-color: transparent; // Убираем фон
+    border-right: 1px solid #f1f1f1; // Граница справа
+    border-bottom: 1px solid #f1f1f1; // Граница снизу
+    border-left: 0; // Чтобы не двоилось с левой границей сетки
+    border-top: 0;
 
     @container (width < 1248px) {
       justify-content: center;

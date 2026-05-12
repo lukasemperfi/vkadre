@@ -12,11 +12,29 @@
     <HomeReviews />
     <HomeFaq />
     <HomeContacts />
+
+    <NuxtImg src="/images/home-background.png" class="home-page__background" />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .home-page {
+  &__background {
+    position: absolute;
+    top: globalFunctions.fluidValue(60px, 406px, 320px, 1440px);
+    left: globalFunctions.fluidValue(-381px, -345px, 320px, 1440px);
+    width: globalFunctions.fluidValue(870px, 2308px, 320px, 1440px);
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    max-width: none;
+    filter: blur(270px);
+
+    @media (max-width: 768px) {
+      opacity: 0.4;
+    }
+  }
+
   :deep(.home-hero) {
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }
@@ -55,6 +73,7 @@
 
   :deep(.contacts) {
     margin-top: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
+    margin-bottom: globalFunctions.fluidValue(40px, 100px, 320px, 1440px);
   }
 
   :deep(.photo-grid-demo) {

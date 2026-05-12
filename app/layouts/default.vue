@@ -15,6 +15,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
+  overflow: clip;
 }
 .main-content {
   flex: 1;

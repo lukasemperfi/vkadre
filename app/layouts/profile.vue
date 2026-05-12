@@ -80,6 +80,7 @@ const handleTabChange = (val: any) => {
           </div>
         </div>
       </div>
+      <NuxtImg src="/images/profile-bg.png" class="profile__background" />
     </section>
   </NuxtLayout>
 </template>
@@ -189,6 +190,22 @@ const handleTabChange = (val: any) => {
     .logout-button {
       margin-top: 40px;
       width: 100%;
+    }
+  }
+
+  &__background {
+    position: absolute;
+    bottom: 0;
+    right: 7.5%;
+    width: 692px;
+    height: 654px;
+    object-fit: cover;
+    z-index: -1;
+    max-width: none;
+    filter: blur(270px);
+
+    @media (max-width: 768px) {
+      opacity: 0.4;
     }
   }
 }
