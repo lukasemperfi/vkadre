@@ -6,6 +6,7 @@ const { data: reviews } = await useAsyncData("home-reviews", () =>
 );
 
 const galleryCarouselRef = ref(null);
+const isReviewOpen = ref(false);
 
 const reviewsCarouselOptions = {
   slidesPerView: 1.15,
@@ -48,12 +49,14 @@ const reviewsCarouselOptions = {
               variant="outline"
               label="Оставить отзыв"
               class="reviews__button"
+              @click="isReviewOpen = true"
             />
           </div>
         </div>
       </div>
     </div>
   </section>
+  <ReviewModal v-model:is-open="isReviewOpen" />
 </template>
 
 <style scoped lang="scss">
